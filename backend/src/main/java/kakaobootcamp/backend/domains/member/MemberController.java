@@ -29,7 +29,8 @@ public class MemberController {
 
 	@DeleteMapping
 	public ResponseEntity<?> deleteMember() {
-
+		// 이 부분 jwt 토큰에서 memberId를 추출하여 사용하도록 변경해야 함
+		memberService.deleteMember(1L);
 		return ResponseEntity.ok().build();
 	}
 
