@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "MEMBER API", description = "회원에 대한 API입니다.")
@@ -17,8 +18,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberController {
 
+	private final MemberService memberService;
+
 	@PostMapping
-	public ResponseEntity<?> createMember() {
+	public ResponseEntity<?> createMember(CreateMemberRequest request) {
+		memberService.createMember(request);
+
+		return ResponseEntity.ok().build();
+	}
+
+	@DeleteMapping
+	public ResponseEntity<?> deleteMember() {
 
 		return ResponseEntity.ok().build();
 	}

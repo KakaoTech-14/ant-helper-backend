@@ -54,7 +54,14 @@ public class Member {
 		this.secretKey = secretKey;
 	}
 
-	public static Member create(String loginId, String pw, MemberRole memberRole) {
-		return new Member(loginId, pw, memberRole);
+	public static Member create(CreateMemberRequest request, MemberRole memberRole) {
+		return new Member(
+			request.getLoginId(),
+			request.getPw(),
+			request.getEmail(),
+			memberRole,
+			request.getAppkey(),
+			request.getSecretkey()
+		);
 	}
 }
