@@ -35,6 +35,11 @@ jobs:
     - name: Build with Gradle Wrapper
       run: ./gradlew build --exclude-task test
       working-directory: backend
+      
+    - name: Print generated JAR file
+      run: |
+        echo "Generated JAR file:"
+        find backend/build/libs/ -name "*.jar"
 
   deploy:
     needs: build
