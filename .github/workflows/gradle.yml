@@ -27,7 +27,7 @@ jobs:
     - name: Deploy and Build on EC2 via SSH
       env:
         EC2_HOST: ${{ secrets.EC2_HOST }}
-        EC2_USER: ubuntu  # 여기서 사용자를 명확하게 지정합니다
+        EC2_USER: ubuntu  # 여기서 사용자를 명확하게 지정
         EC2_KEY: ${{ secrets.EC2_KEY }}
       run: |
         echo "${{ secrets.EC2_KEY }}" > key.pem
