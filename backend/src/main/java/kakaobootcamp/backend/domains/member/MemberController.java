@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "MEMBER API", description = "회원에 대한 API입니다.")
@@ -17,9 +18,19 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberController {
 
-	@PostMapping
-	public ResponseEntity<?> createMember() {
+	private final MemberService memberService;
 
+	@PostMapping
+	public ResponseEntity<?> createMember(CreateMemberRequest request) {
+		memberService.createMember(request);
+
+		return ResponseEntity.ok().build();
+	}
+
+	@DeleteMapping
+	public ResponseEntity<?> deleteMember() {
+		// 이 부분 jwt 토큰에서 memberId를 추출하여 사용하도록 변경해야 함
+		memberService.deleteMember(1L);
 		return ResponseEntity.ok().build();
 	}
 
