@@ -7,42 +7,7 @@ on:
     branches: ["main"]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@dbbdc275be76ac10734476cc723d82dfe7ec6eda # v3.4.2
-
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-      working-directory: backend
-
-    - name: Create application-db.properties
-      run: echo "${{ secrets.DB_PROPERTIES }}" > backend/src/main/resources/application-db.properties
-
-    - name: Build with Gradle Wrapper
-      run: ./gradlew build --exclude-task test
-      working-directory: backend
-      
-    - name: Print generated JAR file
-      run: |
-        echo "Generated JAR file:"
-        find backend/build/libs/ -name "*.jar"
-
   deploy:
-    needs: build
     runs-on: ubuntu-latest
 
     steps:
@@ -56,17 +21,34 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
 
-    - name: Deploy to EC2 via SSH
+    - name: Deploy and Build on EC2 via SSH
       env:
         EC2_HOST: ${{ secrets.EC2_HOST }}
-        EC2_USER: ${{ secrets.EC2_USER }}
+        EC2_USER: ubuntu
         EC2_KEY: ${{ secrets.EC2_KEY }}
       run: |
         echo "${{ secrets.EC2_KEY }}" > key.pem
         chmod 400 key.pem
-        scp -o StrictHostKeyChecking=no -i key.pem backend/build/libs/backend-0.0.1-SNAPSHOT.jar $EC2_USER@$EC2_HOST:/home/$EC2_USER/
-        ssh -o StrictHostKeyChecking-no -i key.pem $EC2_USER@$EC2_HOST << 'EOF'
-          pkill -f 'java -jar backend-0.0.1-SNAPSHOT.jar' || true
-          nohup java -jar /home/$EC2_USER/backend-0.0.1-SNAPSHOT.jar > /home/$EC2_USER/nohup.out 2>&1 &
+
+        # 프로젝트 전체를 EC2로 전송
+        scp -o StrictHostKeyChecking=no -i key.pem -r . $EC2_USER@$EC2_HOST:/home/$EC2_USER/project/
+
+        # EC2에 접속하여 빌드 및 실행
+        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST << 'EOF'
+          sudo apt-get update
+          sudo apt-get install openjdk-17-jdk -y  # Java 17 설치
+          sudo apt-get install gradle -y  # Gradle 설치
+
+          # 프로젝트 디렉터리로 이동
+          cd /home/$EC2_USER/project/backend
+
+          # 빌드 수행
+          ./gradlew clean build
+
+          # 기존 애플리케이션 종료
+          pkill -f 'java -jar build/libs/backend-0.0.1-SNAPSHOT.jar' || true
+
+          # 애플리케이션 실행
+          nohup java -jar build/libs/backend-0.0.1-SNAPSHOT.jar > /home/$EC2_USER/nohup.out 2>&1 &
         EOF
         rm key.pem
