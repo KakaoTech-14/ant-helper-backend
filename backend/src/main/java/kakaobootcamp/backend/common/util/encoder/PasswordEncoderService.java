@@ -12,7 +12,7 @@ public class PasswordEncoderService {
 	private final PasswordEncoder passwordEncoder;
 
 	// 패스워드 인코딩
-	private String encodePassword(String rawPw) {
+	public String encodePassword(String rawPw) {
 		return passwordEncoder.encode(rawPw);
 	}
 
