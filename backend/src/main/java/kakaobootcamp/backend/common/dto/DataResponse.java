@@ -19,4 +19,8 @@ public class DataResponse<T> extends BaseResponse {
 	public static <T> DataResponse<T> from(T data) {
 		return new DataResponse<>(true, HttpStatus.OK, data);
 	}
+
+	public static DataResponse<?> ok() {
+		return new DataResponse<>(true, HttpStatus.OK, null);
+	}
 }

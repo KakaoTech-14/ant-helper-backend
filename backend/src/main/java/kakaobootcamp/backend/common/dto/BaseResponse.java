@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 
 @Getter
-public class BaseResponse {
+public abstract class BaseResponse {
 
 	@JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
 	private final LocalDateTime timestamp = LocalDateTime.now();
@@ -21,9 +21,5 @@ public class BaseResponse {
 		this.isSuccess = isSuccess;
 		this.status = status.getReasonPhrase();
 		this.code = status.value();
-	}
-
-	public static BaseResponse ok() {
-		return new BaseResponse(true, HttpStatus.OK);
 	}
 }
