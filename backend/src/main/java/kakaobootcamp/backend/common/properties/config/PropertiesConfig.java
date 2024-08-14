@@ -3,6 +3,7 @@ package kakaobootcamp.backend.common.properties.config;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import kakaobootcamp.backend.common.properties.JwtProperties;
 import kakaobootcamp.backend.common.properties.KisProperties;
 import kakaobootcamp.backend.common.properties.RedisProperties;
 import kakaobootcamp.backend.common.properties.SecurityProperties;
@@ -11,7 +12,8 @@ import kakaobootcamp.backend.common.properties.SecurityProperties;
 @EnableConfigurationProperties(value = {
 	KisProperties.class,
 	RedisProperties.class,
-	SecurityProperties.class
+	SecurityProperties.class,
+	JwtProperties.class
 })
 public class PropertiesConfig {
 }
