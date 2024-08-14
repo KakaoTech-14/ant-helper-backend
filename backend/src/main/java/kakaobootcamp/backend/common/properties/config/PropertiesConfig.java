@@ -5,11 +5,13 @@ import org.springframework.context.annotation.Configuration;
 
 import kakaobootcamp.backend.common.properties.KisProperties;
 import kakaobootcamp.backend.common.properties.RedisProperties;
+import kakaobootcamp.backend.common.properties.SecurityProperties;
 
 @Configuration
 @EnableConfigurationProperties(value = {
 	KisProperties.class,
-	RedisProperties.class
+	RedisProperties.class,
+	SecurityProperties.class
 })
 public class PropertiesConfig {
 }
