@@ -20,7 +20,7 @@ public class DataResponse<T> extends BaseResponse {
 		return new DataResponse<>(true, HttpStatus.OK, data);
 	}
 
-	public static DataResponse<?> ok() {
+	public static DataResponse<Void> ok() {
 		return new DataResponse<>(true, HttpStatus.OK, null);
 	}
 }

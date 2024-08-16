@@ -5,10 +5,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -20,11 +22,11 @@ public class MemberController {
 
 	private final MemberService memberService;
 
-	@PostMapping
-	public ResponseEntity<?> createMember(CreateMemberRequest request) {
+	@PostMapping("/signup")
+	public ResponseEntity<DataResponse<Void>> createMember(@RequestBody CreateMemberRequest request) {
 		memberService.createMember(request);
 
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 
 	@DeleteMapping
