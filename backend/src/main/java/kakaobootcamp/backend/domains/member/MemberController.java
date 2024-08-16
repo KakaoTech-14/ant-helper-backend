@@ -29,6 +29,21 @@ public class MemberController {
 	private final MemberService memberService;
 
 	@PostMapping("/signup")
+	@Operation(
+		summary = "회원가입",
+		description = "사용자 이름, 비밀번호, 이메일, appKey, secretKey를 사용하여 회원가입",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "409",
+				description = "이미 존재하는 회원입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
 	public ResponseEntity<DataResponse<Void>> createMember(@RequestBody @Valid CreateMemberRequest request) {
 		memberService.createMember(request);
 
