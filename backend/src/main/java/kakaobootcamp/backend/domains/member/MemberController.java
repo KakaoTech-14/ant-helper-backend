@@ -57,12 +57,6 @@ public class MemberController {
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/login")
-	public ResponseEntity<?> loginMember() {
-
-		return ResponseEntity.ok().build();
-	}
-
 	@PostMapping("/logout")
 	public ResponseEntity<?> logoutMember() {
 
