@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import kakaobootcamp.backend.common.properties.SecurityProperties;
 import kakaobootcamp.backend.common.security.filter.exceptionHandlingFilter.ExceptionHandlingFilter;
@@ -32,9 +33,9 @@ public class SecurityConfig {
 	private final MemberRepository memberRepository;
 
 	private final UserDetailsService userDetailsService;
-
 	private final JwtTokenProvider jwtTokenProvider;
 
+	private final UrlBasedCorsConfigurationSource ConfigurationSource;
 	private final SecurityProperties securityProperties;
 	private final PasswordEncoder passwordEncoder;
 	private final AntPathMatcher pathMatcher = new AntPathMatcher();
@@ -50,16 +51,15 @@ public class SecurityConfig {
 			.sessionManagement(session -> session
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));  // 토큰을 사용하기 때문에 Session 사용 x
 
-		// http
-		// 	.cors(cors -> cors.configurationSource(ConfigurationSource))
+		// cors 설정
+		http
+			.cors(cors -> cors.configurationSource(ConfigurationSource));
 
 		// url 관리
 		http
 			.authorizeHttpRequests((authorize) -> authorize
 				.requestMatchers(securityProperties.getPermitUrls()).permitAll() // PERMIT_URLS만 바로 접근 가능
-				.anyRequest().authenticated()
-			)
-		;
+				.anyRequest().authenticated());
 
 		//필터 체인 추가
 		http
