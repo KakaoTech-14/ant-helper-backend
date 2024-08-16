@@ -1,5 +1,6 @@
 package kakaobootcamp.backend.domains.member.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,6 +21,7 @@ public class MemberDTO {
 		private String pw;
 
 		@NotBlank(message = "email은 비어있을 수 없습니다.")
+		@Email(message = "email 형식이 올바르지 않습니다.")
 		private String email;
 
 		@NotBlank(message = "appkey은 비어있을 수 없습니다.")
