@@ -9,8 +9,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import kakaobootcamp.backend.common.dto.DataResponse;
+import kakaobootcamp.backend.common.dto.ErrorResponse;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +29,7 @@ public class MemberController {
 	private final MemberService memberService;
 
 	@PostMapping("/signup")
-	public ResponseEntity<DataResponse<Void>> createMember(@RequestBody CreateMemberRequest request) {
+	public ResponseEntity<DataResponse<Void>> createMember(@RequestBody @Valid CreateMemberRequest request) {
 		memberService.createMember(request);
 
 		return ResponseEntity.ok(DataResponse.ok());
