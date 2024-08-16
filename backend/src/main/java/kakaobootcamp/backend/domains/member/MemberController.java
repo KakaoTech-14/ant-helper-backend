@@ -50,8 +50,26 @@ public class MemberController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
+	@GetMapping("/login-id/{loginId}/duplicate")
+	@Operation(
+		summary = "id 중복 조회",
+		description = "id가 중복되면 true, 중복되지 않으면 false를 반환",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Boolean>> checkLoginIdDuplicate(@PathVariable("loginId") String loginId) {
+		boolean isDuplicate = memberService.getLoginIdDuplicate(loginId);
+
+		return ResponseEntity.ok(DataResponse.from(isDuplicate));
+	}
+
 	@DeleteMapping
 	public ResponseEntity<?> deleteMember() {
+
 		// 이 부분 jwt 토큰에서 memberId를 추출하여 사용하도록 변경해야 함
 		memberService.deleteMember(1L);
 		return ResponseEntity.ok().build();

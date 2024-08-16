@@ -24,7 +24,7 @@ public enum ErrorCode {
 	RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 리소스를 찾을 수 없습니다."),
 
 	//409
-	MEMBER_DUPLICATE(HttpStatus.CONFLICT, "이미 존재하는 회원입니다."),
+	LOGIN_ID_DUPLICATE(HttpStatus.CONFLICT, "이미 존재하는 id입니다."),
 
 	//500
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에서 에러가 발생하였습니다.");

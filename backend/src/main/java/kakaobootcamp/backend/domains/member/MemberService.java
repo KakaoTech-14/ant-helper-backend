@@ -35,10 +35,17 @@ public class MemberService {
 		memberRepository.save(member);
 	}
 
+	// 로그인 아이디 중복 체크
 	private void checkLoginIdDuplicate(String loginId) {
-		if (memberRepository.existsByLoginId(loginId)) {
-			throw CustomException.from(ErrorCode.MEMBER_DUPLICATE);
+		boolean isDuplicate = getLoginIdDuplicate(loginId);
+		if (isDuplicate) {
+			throw CustomException.from(ErrorCode.LOGIN_ID_DUPLICATE);
 		}
+	}
+
+	// 로그인 아이디 중복 조회
+	public boolean getLoginIdDuplicate(String loginId) {
+		return memberRepository.existsByLoginId(loginId);
 	}
 
 	// 회원 삭제하기
