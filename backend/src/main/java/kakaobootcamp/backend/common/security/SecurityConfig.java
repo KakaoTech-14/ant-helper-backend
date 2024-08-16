@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.util.AntPathMatcher;
 
 import kakaobootcamp.backend.common.properties.SecurityProperties;
+import kakaobootcamp.backend.common.security.filter.exceptionHandlingFilter.ExceptionHandlingFilter;
 import kakaobootcamp.backend.common.security.filter.jwtFilter.JwtAuthenticationFilter;
 import kakaobootcamp.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import kakaobootcamp.backend.common.security.filter.loginFilter.LoginFilter;
@@ -63,7 +64,8 @@ public class SecurityConfig {
 		//필터 체인 추가
 		http
 			.addFilterAfter(loginFilter(), LogoutFilter.class)
-			.addFilterBefore(jwtAuthenticationFilter(), LoginFilter.class);
+			.addFilterBefore(jwtAuthenticationFilter(), LoginFilter.class)
+			.addFilterBefore(exceptionHandlingFilter(), JwtAuthenticationFilter.class);
 
 		return http.build();
 	}
@@ -90,5 +92,10 @@ public class SecurityConfig {
 	@Bean
 	public JwtAuthenticationFilter jwtAuthenticationFilter() {
 		return new JwtAuthenticationFilter(jwtTokenProvider, memberRepository, securityProperties, pathMatcher);
+	}
+
+	@Bean
+	public ExceptionHandlingFilter exceptionHandlingFilter() {
+		return new ExceptionHandlingFilter();
 	}
 }
