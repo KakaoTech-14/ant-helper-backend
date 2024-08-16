@@ -27,7 +27,9 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtTokenProvider jwtTokenProvider;
+
 	private final MemberRepository memberRepository;
+
 	private final SecurityProperties securityProperties;
 	private final AntPathMatcher pathMatcher;
 
@@ -44,8 +46,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	}
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-		FilterChain filterChain) throws ServletException, IOException, CustomException {
+	protected void doFilterInternal(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		FilterChain filterChain) throws ServletException, IOException, CustomException
+	{
 
 		final String refreshToken = jwtTokenProvider.extractRefreshToken(request).orElse(null);
 		final String accessToken = jwtTokenProvider.extractAccessToken(request).orElse(null);
