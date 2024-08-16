@@ -28,6 +28,9 @@ jobs:
     - name: Create application-db.properties
       run: echo "${{ secrets.DB_PROPERTIES }}" > backend/src/main/resources/application-db.properties
 
+    - name: Create application-security.properties
+      run: echo "${{ secrets.SECURITY_PROPERTIES }}" > backend/src/main/resources/application-security.properties
+
     - name: Build with Gradle Wrapper
       run: ./gradlew clean build -x test
       working-directory: backend
