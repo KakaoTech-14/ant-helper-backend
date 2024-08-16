@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 public class MemberDTO {
 
@@ -14,6 +15,7 @@ public class MemberDTO {
 		@NotBlank(message = "loginId는 비어있을 수 없습니다.")
 		private String loginId;
 
+		@Setter
 		@NotBlank(message = "pw는 비어있을 수 없습니다.")
 		private String pw;
 
