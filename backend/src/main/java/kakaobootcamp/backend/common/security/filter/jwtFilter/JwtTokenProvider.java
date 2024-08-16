@@ -13,7 +13,7 @@ public interface JwtTokenProvider {
 
 	Authentication getAuthentication(String accessToken);
 
-	String createAccessToken(Long memberId, MemberRole memberRole);
+	String createAccessToken(Long memberId);
 
 	String createRefreshToken();
 

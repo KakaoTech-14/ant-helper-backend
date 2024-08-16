@@ -75,11 +75,10 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 	}
 
 	@Override
-	public String createAccessToken(Long memberId, MemberRole role) {
+	public String createAccessToken(Long memberId) {
 		return Jwts.builder()
 			.setSubject(jwtProperties.getACCESS_TOKEN_SUBJECT())
 			.claim(jwtProperties.getMEMBER_ID_CLAIM(), memberId)
-			.claim(jwtProperties.getMEMBER_ROLE_CLAIM(), role.getValue())
 			.setExpiration(new Date(System.currentTimeMillis() + jwtProperties.getAccess().getExpiration() * 1000L))
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
@@ -211,11 +210,8 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 			.orElseThrow(() -> CustomException.from(INVALID_REFRESH_TOKEN));
 
 		Long memberId = refreshTokenObj.getMemberId();
-		Member member = memberRepository.findById(memberId)
-			.orElseThrow(() -> CustomException.from(INVALID_REFRESH_TOKEN));
-		MemberRole memberRole = member.getMemberRole();
 
-		String newAccessToken = createAccessToken(memberId, memberRole);
+		String newAccessToken = createAccessToken(memberId);
 		String newRefreshToken = createRefreshToken();
 
 		//기존 refreshToken 삭제 및 새로운 refreshToken 저장

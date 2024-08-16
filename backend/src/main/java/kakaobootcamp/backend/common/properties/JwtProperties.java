@@ -18,7 +18,6 @@ public class JwtProperties {
 	private String ACCESS_TOKEN_SUBJECT = "AccessToken";
 	private String REFRESH_TOKEN_SUBJECT = "RefreshToken";
 	private String MEMBER_ID_CLAIM = "member_id";
-	private String MEMBER_ROLE_CLAIM = "member_role";
 	private String BEARER = "Bearer ";
 
 	@Getter
