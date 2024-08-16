@@ -14,9 +14,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.util.AntPathMatcher;
 
 import kakaobootcamp.backend.common.properties.SecurityProperties;
+import kakaobootcamp.backend.common.security.filter.jwtFilter.JwtAuthenticationFilter;
+import kakaobootcamp.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import kakaobootcamp.backend.common.security.filter.loginFilter.LoginFilter;
+import kakaobootcamp.backend.domains.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -24,9 +28,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+	private final MemberRepository memberRepository;
+
+	private final UserDetailsService userDetailsService;
+
+	private final JwtTokenProvider jwtTokenProvider;
+
 	private final SecurityProperties securityProperties;
 	private final PasswordEncoder passwordEncoder;
-	private final UserDetailsService userDetailsService;
+	private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -52,7 +62,8 @@ public class SecurityConfig {
 
 		//필터 체인 추가
 		http
-			.addFilterAfter(loginFilter(), LogoutFilter.class);
+			.addFilterAfter(loginFilter(), LogoutFilter.class)
+			.addFilterBefore(jwtAuthenticationFilter(), LoginFilter.class);
 
 		return http.build();
 	}
@@ -69,10 +80,15 @@ public class SecurityConfig {
 
 	@Bean
 	public LoginFilter loginFilter() {
-		LoginFilter loginFilter = new LoginFilter();
+		LoginFilter loginFilter = new LoginFilter(jwtTokenProvider);
 
 		loginFilter.setAuthenticationManager(authenticationManager());
 
 		return loginFilter;
+	}
+
+	@Bean
+	public JwtAuthenticationFilter jwtAuthenticationFilter() {
+		return new JwtAuthenticationFilter(jwtTokenProvider, memberRepository, securityProperties, pathMatcher);
 	}
 }
