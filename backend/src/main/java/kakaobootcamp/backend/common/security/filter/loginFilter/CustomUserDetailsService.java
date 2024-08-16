@@ -21,12 +21,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 		Member member = memberRepository.findByLoginId(username)
 			.orElseThrow(() -> new UsernameNotFoundException("해당하는 회원을 찾을 수 없습니다."));
 
-		String memberId = member.getId().toString(); // 회원 login id를 감추기 위해 pk 사용
+		String loginId = member.getLoginId();
 		String pw = member.getPw();
 		String role = member.getMemberRole().getValue();
 
 		return User.builder()
-			.username(memberId)
+			.username(loginId)
 			.password(pw)
 			.roles(role)
 			.build();

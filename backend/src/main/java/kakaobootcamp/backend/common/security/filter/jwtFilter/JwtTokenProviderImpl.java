@@ -1,6 +1,5 @@
 package kakaobootcamp.backend.common.security.filter.jwtFilter;
 
-
 import static kakaobootcamp.backend.common.exception.ErrorCode.*;
 
 import java.security.Key;
@@ -36,7 +35,6 @@ import kakaobootcamp.backend.common.security.filter.jwtFilter.JwtDTO.AccessToken
 import kakaobootcamp.backend.common.util.responseWriter.ResponseWriter;
 import kakaobootcamp.backend.domains.member.MemberRepository;
 import kakaobootcamp.backend.domains.member.domain.Member;
-import kakaobootcamp.backend.domains.member.domain.MemberRole;
 import lombok.extern.slf4j.Slf4j;
 
 @Transactional(readOnly = true)
@@ -67,11 +65,12 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
 
+		String loginId = member.getLoginId();
 		String pw = member.getPw();
 
 		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(member.getMemberRole().getValue()));
 
-		return UsernamePasswordAuthenticationToken.authenticated(memberId, pw, authorities);
+		return UsernamePasswordAuthenticationToken.authenticated(loginId, pw, authorities);
 	}
 
 	@Override
