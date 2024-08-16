@@ -21,10 +21,10 @@ public class MemberDTO {
 		private String email;
 
 		@NotBlank(message = "appkey은 비어있을 수 없습니다.")
-		private String appkey;
+		private String appKey;
 
 		@NotBlank(message = "secretkey은 비어있을 수 없습니다.")
-		private String secretkey;
+		private String secretKey;
 	}
 
 }

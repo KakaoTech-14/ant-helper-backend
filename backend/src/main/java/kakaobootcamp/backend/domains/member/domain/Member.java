@@ -60,8 +60,8 @@ public class Member {
 			request.getPw(),
 			request.getEmail(),
 			memberRole,
-			request.getAppkey(),
-			request.getSecretkey()
+			request.getAppKey(),
+			request.getSecretKey()
 		);
 	}
 }
