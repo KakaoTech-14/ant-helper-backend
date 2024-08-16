@@ -1,5 +1,6 @@
 package kakaobootcamp.backend.domains.member;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.dto.ErrorResponse;
+import kakaobootcamp.backend.domains.member.dto.MemberDTO;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -66,6 +68,29 @@ public class MemberController {
 
 		return ResponseEntity.ok(DataResponse.from(isDuplicate));
 	}
+
+	@PostMapping(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	@Operation(
+		summary = "로그인",
+		description = "로그인 성공 시 accessToken, refreshToken을 반환",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "로그인 실패",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Void>> loginMember(MemberDTO.LoginRequest request) {
+		// 이 메소드는 실제로 실행되지 않습니다. 문서용도로만 사용됩니다.
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+
 
 	@DeleteMapping
 	public ResponseEntity<?> deleteMember() {

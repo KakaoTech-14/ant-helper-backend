@@ -31,4 +31,8 @@ public class MemberDTO {
 		private String secretKey;
 	}
 
+	public static class LoginRequest {
+		public String loginId;
+		public String pw;
+	}
 }
