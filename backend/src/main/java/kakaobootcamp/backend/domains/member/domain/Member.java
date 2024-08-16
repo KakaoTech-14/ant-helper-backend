@@ -16,7 +16,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+public class Member extends BaseEntity {
 
 	@Id
 	@Column(name = "member_id")
@@ -60,8 +60,8 @@ public class Member {
 			request.getPw(),
 			request.getEmail(),
 			memberRole,
-			request.getAppkey(),
-			request.getSecretkey()
+			request.getAppKey(),
+			request.getSecretKey()
 		);
 	}
 }

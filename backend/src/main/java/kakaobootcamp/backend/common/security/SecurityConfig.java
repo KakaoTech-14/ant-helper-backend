@@ -80,7 +80,7 @@ public class SecurityConfig {
 
 	@Bean
 	public LoginFilter loginFilter() {
-		LoginFilter loginFilter = new LoginFilter(jwtTokenProvider);
+		LoginFilter loginFilter = new LoginFilter(jwtTokenProvider, memberRepository);
 
 		loginFilter.setAuthenticationManager(authenticationManager());
 
