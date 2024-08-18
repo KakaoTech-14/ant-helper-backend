@@ -69,21 +69,21 @@ jobs:
       run: |
         echo "${{ secrets.EC2_KEY }}" > key.pem
         chmod 400 key.pem
-
-        # deleted
-        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST "rm -f /home/$EC2_USER/project/backend/build/libs/backend-0.0.1-SNAPSHOT.jar"
-
-        # Upload JAR to EC2
-        scp -o StrictHostKeyChecking=no -i key.pem backend-0.0.1-SNAPSHOT.jar ubuntu@$EC2_HOST:/home/ubuntu/project/backend/build/libs/
-        
-        # Verify file 
-        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST "ls -l /home/$EC2_USER/project/backend/build/libs/"
-
-        # Connect to EC2 and run the application
+  
+        # 기존 JAR 파일 삭제
+        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST "rm -f /home/$EC2_USER/backend-0.0.1-SNAPSHOT.jar"
+  
+        # 새로운 JAR 파일 업로드
+        scp -o StrictHostKeyChecking=no -i key.pem backend-0.0.1-SNAPSHOT.jar $EC2_USER@$EC2_HOST:/home/ubuntu/
+   
+        # 업로드된 파일 확인
+        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST "ls -l /home/$EC2_USER/"
+  
+        # 기존 애플리케이션 종료 및 새 애플리케이션 실행
         ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@$EC2_HOST << 'EOF'
-          cd /home/ubuntu/project/backend || exit 1
+          cd /home/ubuntu || exit 1
           pkill -f 'java -jar' || true
-          nohup java -jar build/libs/backend-0.0.1-SNAPSHOT.jar > /home/ubuntu/nohup.out 2>&1 &
+          nohup java -jar backend-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
         EOF
-
+  
         rm key.pem
