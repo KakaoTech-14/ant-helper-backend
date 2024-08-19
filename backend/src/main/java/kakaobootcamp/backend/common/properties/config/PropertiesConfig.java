@@ -4,6 +4,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 
 import kakaobootcamp.backend.common.properties.CorsProperties;
+import kakaobootcamp.backend.common.properties.EmailProperties;
 import kakaobootcamp.backend.common.properties.JwtProperties;
 import kakaobootcamp.backend.common.properties.KisProperties;
 import kakaobootcamp.backend.common.properties.RedisProperties;
@@ -15,7 +16,8 @@ import kakaobootcamp.backend.common.properties.SecurityProperties;
 	RedisProperties.class,
 	SecurityProperties.class,
 	JwtProperties.class,
-	CorsProperties.class
+	CorsProperties.class,
+	EmailProperties.class
 })
 public class PropertiesConfig {
 }

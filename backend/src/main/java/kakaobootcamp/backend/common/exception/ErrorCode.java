@@ -27,7 +27,11 @@ public enum ErrorCode {
 	LOGIN_ID_DUPLICATE(HttpStatus.CONFLICT, "이미 존재하는 id입니다."),
 
 	//500
-	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에서 에러가 발생하였습니다.");
+	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에서 에러가 발생하였습니다."),
+
+	//502
+	EMAIL_BAD_GATEWAY(HttpStatus.BAD_GATEWAY, "이메일 전송에 실패하였습니다.")
+	;
 
 	private final HttpStatus httpStatus;
 	private final String message;
