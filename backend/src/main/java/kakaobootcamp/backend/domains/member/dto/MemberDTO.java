@@ -15,7 +15,7 @@ public class MemberDTO {
 
 		@NotBlank(message = "loginId는 비어있을 수 없습니다.")
 		@Email(message = "email 형식이 올바르지 않습니다.")
-		private String loginId;
+		private String email;
 
 		@Setter
 		@NotBlank(message = "pw는 비어있을 수 없습니다.")
@@ -29,7 +29,7 @@ public class MemberDTO {
 	}
 
 	public static class LoginRequest {
-		public String loginId;
+		public String email;
 		public String pw;
 	}
 }

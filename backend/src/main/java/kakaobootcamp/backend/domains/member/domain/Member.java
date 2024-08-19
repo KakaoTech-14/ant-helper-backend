@@ -24,13 +24,10 @@ public class Member extends BaseEntity {
 	private Long id;
 
 	@Column(nullable = false, unique = true)
-	private String loginId;
+	private String email;
 
 	@Column(nullable = false)
 	private String pw;
-
-	@Column(nullable = false)
-	private String email;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -45,10 +42,9 @@ public class Member extends BaseEntity {
 	@Setter
 	private String approvalKey;
 
-	private Member(String loginId, String pw, String email, MemberRole memberRole, String appKey, String secretKey) {
-		this.loginId = loginId;
-		this.pw = pw;
+	private Member(String email, String pw, MemberRole memberRole, String appKey, String secretKey) {
 		this.email = email;
+		this.pw = pw;
 		this.memberRole = memberRole;
 		this.appKey = appKey;
 		this.secretKey = secretKey;
@@ -56,9 +52,8 @@ public class Member extends BaseEntity {
 
 	public static Member create(CreateMemberRequest request, MemberRole memberRole) {
 		return new Member(
-			request.getLoginId(),
+			request.getEmail(),
 			request.getPw(),
-			request.getLoginId(),
 			memberRole,
 			request.getAppKey(),
 			request.getSecretKey()

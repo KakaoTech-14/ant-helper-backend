@@ -64,7 +64,7 @@ public class MemberController {
 		}
 	)
 	public ResponseEntity<DataResponse<Boolean>> checkLoginIdDuplicate(@PathVariable("loginId") String loginId) {
-		boolean isDuplicate = memberService.getLoginIdDuplicate(loginId);
+		boolean isDuplicate = memberService.getEmailDuplicate(loginId);
 
 		return ResponseEntity.ok(DataResponse.from(isDuplicate));
 	}
