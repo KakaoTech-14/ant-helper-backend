@@ -90,11 +90,7 @@ public class MemberService {
 			.orElseThrow(() -> CustomException.from(ErrorCode.EMAIL_CODE_NOT_FOUND));
 
 		// 인증 코드 비교
-		if (Objects.equals(emailCode.getCode(), requestCode)) {
-			emailCodeRepository.delete(emailCode); // 인증 후 코드 삭제
-			return true;
-		}
-		return false;
+		return Objects.equals(emailCode.getCode(), requestCode);
 	}
 
 	// 인증 코드 생성
