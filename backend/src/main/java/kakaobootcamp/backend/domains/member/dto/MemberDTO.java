@@ -42,4 +42,15 @@ public class MemberDTO {
 		@Email(message = "email 형식이 올바르지 않습니다.")
 		private String email;
 	}
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class VerifyEmailCodeRequest {
+
+		@NotBlank(message = "email은 비어있을 수 없습니다.")
+		@Email(message = "email 형식이 올바르지 않습니다.")
+		private String email;
+
+		private Integer code;
+	}
 }

@@ -1,5 +1,6 @@
 package kakaobootcamp.backend.domains.member;
 
+import java.util.Objects;
 import java.util.Random;
 
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.member.domain.MemberRole;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.SendVerificationCodeRequest;
+import kakaobootcamp.backend.domains.member.dto.MemberDTO.VerifyEmailCodeRequest;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -76,6 +78,23 @@ public class MemberService {
 		// 인증 코드 저장
 		EmailCode emailCode = new EmailCode(email, verificationCode);
 		emailCodeRepository.save(emailCode);
+	}
+
+	// 이메일 인증 확인
+	public boolean verityEmailCode(VerifyEmailCodeRequest request) {
+		String email = request.getEmail();
+		Integer requestCode = request.getCode();
+
+		// 이메일로 인증 코드 검색
+		EmailCode emailCode = emailCodeRepository.findByEmail(email)
+			.orElseThrow(() -> CustomException.from(ErrorCode.EMAIL_CODE_NOT_FOUND));
+
+		// 인증 코드 비교
+		if (Objects.equals(emailCode.getCode(), requestCode)) {
+			emailCodeRepository.delete(emailCode); // 인증 후 코드 삭제
+			return true;
+		}
+		return false;
 	}
 
 	// 인증 코드 생성

@@ -21,6 +21,7 @@ import kakaobootcamp.backend.common.dto.ErrorResponse;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.LoginRequest;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.SendVerificationCodeRequest;
+import kakaobootcamp.backend.domains.member.dto.MemberDTO.VerifyEmailCodeRequest;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "MEMBER API", description = "회원에 대한 API입니다.")
@@ -53,7 +54,7 @@ public class MemberController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
-	@GetMapping("/email/verification-request")
+	@PostMapping("/email/verification-request")
 	@Operation(
 		summary = "email 인증 요청",
 		description = "email 인증을 위한 이메일을 전송",
@@ -69,10 +70,35 @@ public class MemberController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> sendVerificationCode(@RequestBody @Valid SendVerificationCodeRequest request) {
+	public ResponseEntity<DataResponse<Void>> sendVerificationCode(
+		@RequestBody @Valid SendVerificationCodeRequest request) {
 		memberService.validateEmailAndSendEmailVerification(request);
 
 		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@PostMapping("/email/verification")
+	@Operation(
+		summary = "email 인증 확인",
+		description = """
+			인증 요청을 한 email이 없으면 404
+			code가 일치하면 true, 일치하지 않으면 false를 반환한다.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "404",
+				description = "이메일 인증을 시도해주세요.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Boolean>> verifyEmailCode(@RequestBody @Valid VerifyEmailCodeRequest request) {
+		boolean isVerified = memberService.verityEmailCode(request);
+
+		return ResponseEntity.ok(DataResponse.from(isVerified));
 	}
 
 	@PostMapping(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -95,8 +121,6 @@ public class MemberController {
 		// 이 메소드는 실제로 실행되지 않습니다. 문서용도로만 사용됩니다.
 		return ResponseEntity.ok(DataResponse.ok());
 	}
-
-
 
 	@DeleteMapping
 	public ResponseEntity<?> deleteMember() {
