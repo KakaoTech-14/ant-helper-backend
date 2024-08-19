@@ -18,9 +18,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.dto.ErrorResponse;
-import kakaobootcamp.backend.domains.member.dto.MemberDTO;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.LoginRequest;
+import kakaobootcamp.backend.domains.member.dto.MemberDTO.SendVerificationCodeRequest;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "MEMBER API", description = "회원에 대한 API입니다.")
@@ -64,14 +64,15 @@ public class MemberController {
 			),
 			@ApiResponse(
 				responseCode = "409",
-				description = "이미 가입된 이메일입니다."
+				description = "이미 가입된 이메일입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Boolean>> checkLoginIdDuplicate(@PathVariable("loginId") String loginId) {
-		boolean isDuplicate = memberService.getEmailDuplicate(loginId);
+	public ResponseEntity<DataResponse<Void>> sendVerificationCode(@RequestBody @Valid SendVerificationCodeRequest request) {
+		memberService.validateEmailAndSendEmailVerification(request);
 
-		return ResponseEntity.ok(DataResponse.from(isDuplicate));
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 
 	@PostMapping(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
