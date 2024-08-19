@@ -13,16 +13,13 @@ public class MemberDTO {
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class CreateMemberRequest {
 
-		@NotBlank(message = "loginId는 비어있을 수 없습니다.")
-		private String loginId;
+		@NotBlank(message = "email은 비어있을 수 없습니다.")
+		@Email(message = "email 형식이 올바르지 않습니다.")
+		private String email;
 
 		@Setter
 		@NotBlank(message = "pw는 비어있을 수 없습니다.")
 		private String pw;
-
-		@NotBlank(message = "email은 비어있을 수 없습니다.")
-		@Email(message = "email 형식이 올바르지 않습니다.")
-		private String email;
 
 		@NotBlank(message = "appkey은 비어있을 수 없습니다.")
 		private String appKey;
@@ -32,7 +29,28 @@ public class MemberDTO {
 	}
 
 	public static class LoginRequest {
-		public String loginId;
+
+		public String email;
 		public String pw;
+	}
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class SendVerificationCodeRequest {
+
+		@NotBlank(message = "email은 비어있을 수 없습니다.")
+		@Email(message = "email 형식이 올바르지 않습니다.")
+		private String email;
+	}
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class VerifyEmailCodeRequest {
+
+		@NotBlank(message = "email은 비어있을 수 없습니다.")
+		@Email(message = "email 형식이 올바르지 않습니다.")
+		private String email;
+
+		private Integer code;
 	}
 }

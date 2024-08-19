@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import kakaobootcamp.backend.domains.member.MemberRepository;
+import kakaobootcamp.backend.domains.member.repository.MemberRepository;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 
@@ -18,15 +18,14 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Member member = memberRepository.findByLoginId(username)
+		Member member = memberRepository.findByEmail(username)
 			.orElseThrow(() -> new UsernameNotFoundException("해당하는 회원을 찾을 수 없습니다."));
 
-		String loginId = member.getLoginId();
 		String pw = member.getPw();
 		String role = member.getMemberRole().getValue();
 
 		return User.builder()
-			.username(loginId)
+			.username(username)
 			.password(pw)
 			.roles(role)
 			.build();

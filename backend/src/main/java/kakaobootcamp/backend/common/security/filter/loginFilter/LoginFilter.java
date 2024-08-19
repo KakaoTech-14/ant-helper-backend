@@ -17,14 +17,14 @@ import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.exception.CustomException;
 import kakaobootcamp.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import kakaobootcamp.backend.common.util.responseWriter.ResponseWriter;
-import kakaobootcamp.backend.domains.member.MemberRepository;
+import kakaobootcamp.backend.domains.member.repository.MemberRepository;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
-	private final static String LOGIN_ID_PARAMETER = "loginId";
+	private final static String EMAIL_PARAMETER = "email";
 	private final static String PW_PARAMETER = "pw";
 
 	private final JwtTokenProvider jwtTokenProvider;
@@ -44,10 +44,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 		log.info("LoginFilter");
 
-		String loginId = obtainLoginId(request);
+		String email = obtainEmail(request);
 		String password = obtainPw(request);
 
-		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginId, password,
+		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password,
 			null);
 
 		return getAuthenticationManager().authenticate(authToken);
@@ -60,10 +60,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		FilterChain chain,
 		Authentication authResult)
 	{
-		String loginId = extractLoginId(authResult);
+		String email = extractEmail(authResult);
 
 		// 회원 id 찾기
-		Member member = memberRepository.findByLoginId(loginId)
+		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
 		Long memberId = member.getId();
 
@@ -73,7 +73,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		jwtTokenProvider.sendAccessAndRefreshToken(response, accessToken, refreshToken);
 		jwtTokenProvider.updateRefreshToken(memberId, refreshToken);
 
-		log.info("로그인 성공: {}", loginId);
+		log.info("로그인 성공: {}", email);
 		log.info("accessToken={}", accessToken);
 		log.info("refreshToken={}", refreshToken);
 	}
@@ -84,15 +84,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		HttpServletResponse response,
 		AuthenticationException failed)
 	{
-		String loginId = obtainLoginId(request);
-		log.info("로그인 실패: {}", loginId);
+		String email = obtainEmail(request);
+		log.info("로그인 실패: {}", email);
 
 		ResponseWriter.writeResponse(response, DataResponse.ok(), HttpStatus.OK); // 보안을 위해 로그인 실패해도 200리턴
 	}
 
 	@Nullable
-	protected String obtainLoginId(HttpServletRequest request) {
-		return request.getParameter(LOGIN_ID_PARAMETER);
+	protected String obtainEmail(HttpServletRequest request) {
+		return request.getParameter(EMAIL_PARAMETER);
 	}
 
 	@Nullable
@@ -100,7 +100,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		return request.getParameter(PW_PARAMETER);
 	}
 
-	private String extractLoginId(Authentication authentication) {
+	private String extractEmail(Authentication authentication) {
 		UserDetails userDetails = (UserDetails)authentication.getPrincipal();
 
 		return userDetails.getUsername();

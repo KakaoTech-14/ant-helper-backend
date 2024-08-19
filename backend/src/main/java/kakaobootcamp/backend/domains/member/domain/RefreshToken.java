@@ -1,4 +1,4 @@
-package kakaobootcamp.backend.common.redis;
+package kakaobootcamp.backend.domains.member.domain;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;

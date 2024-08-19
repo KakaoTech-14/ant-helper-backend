@@ -27,13 +27,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.exception.CustomException;
 import kakaobootcamp.backend.common.properties.JwtProperties;
-import kakaobootcamp.backend.common.redis.LogoutRepository;
-import kakaobootcamp.backend.common.redis.RefreshToken;
-import kakaobootcamp.backend.common.redis.RefreshTokenRepository;
+import kakaobootcamp.backend.domains.member.repository.LogoutRepository;
+import kakaobootcamp.backend.domains.member.domain.RefreshToken;
+import kakaobootcamp.backend.domains.member.repository.RefreshTokenRepository;
 import kakaobootcamp.backend.common.security.filter.jwtFilter.JwtDTO.AccessAndRefreshTokenResponse;
 import kakaobootcamp.backend.common.security.filter.jwtFilter.JwtDTO.AccessTokenResponse;
 import kakaobootcamp.backend.common.util.responseWriter.ResponseWriter;
-import kakaobootcamp.backend.domains.member.MemberRepository;
+import kakaobootcamp.backend.domains.member.repository.MemberRepository;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import lombok.extern.slf4j.Slf4j;
 
@@ -65,12 +65,12 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
 
-		String loginId = member.getLoginId();
+		String email = member.getEmail();
 		String pw = member.getPw();
 
 		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(member.getMemberRole().getValue()));
 
-		return UsernamePasswordAuthenticationToken.authenticated(loginId, pw, authorities);
+		return UsernamePasswordAuthenticationToken.authenticated(email, pw, authorities);
 	}
 
 	@Override
