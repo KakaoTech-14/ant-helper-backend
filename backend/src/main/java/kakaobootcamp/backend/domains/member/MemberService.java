@@ -91,7 +91,7 @@ public class MemberService {
 
 		// 이메일로 인증 코드 검색
 		EmailCode emailCode = emailCodeRepository.findByEmail(email)
-			.orElseThrow(() -> CustomException.from(ErrorCode.EMAIL_CODE_NOT_FOUND));
+			.orElseThrow(() -> CustomException.from(ErrorCode.UNAUTHENTICATED_EMAIL));
 
 		// 인증 코드 비교 후 인증된 이메일 저장
 		if (Objects.equals(emailCode.getCode(), requestCode)) {

@@ -26,7 +26,7 @@ public enum ErrorCode {
 	EMAIL_CODE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 이메일 코드를 찾을 수 없습니다."),
 
 	//409
-	EMAIL_DUPLICATE(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
+	EMAIL_DUPLICATE(HttpStatus.CONFLICT, "이미 가입된 이메일입니다."),
 
 	//500
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에서 에러가 발생하였습니다."),

@@ -32,7 +32,7 @@ public class EmailService {
 		String text) {
 		SimpleMailMessage emailForm = createEmailForm(toEmail, title, text);
 
-		//메일 전송
+		// 이메일 전송
 		try {
 			emailSender.send(emailForm);
 		} catch (RuntimeException e) {
@@ -53,18 +53,20 @@ public class EmailService {
 		return message;
 	}
 
+	// 인증된 이메일 저장
 	@Transactional
 	public void saveVerifiedEmail(String email) {
 		VerifiedEmail verifiedEmail = new VerifiedEmail(email);
 		verifiedEmailRepository.save(verifiedEmail);
 	}
 
+	// 인증된 이메일 삭제
 	@Transactional
 	public void deleteVerifiedEmail(String email) {
 		verifiedEmailRepository.deleteById(email);
 	}
 
-	// 검증된 이메일인지 확인
+	// 인증된 이메일인지 확인
 	public void validateVerifiedEmail(String email) {
 		boolean isPresent = verifiedEmailRepository.findByEmail(email).isPresent();
 		if (!isPresent) {

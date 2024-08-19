@@ -81,7 +81,7 @@ public class MemberController {
 	@Operation(
 		summary = "email 인증 확인",
 		description = """
-			인증 요청을 한 email이 없으면 404
+			인증 요청을 한 email이 없으면 401
 			code가 일치하면 true, 일치하지 않으면 false를 반환한다.""",
 		responses = {
 			@ApiResponse(
@@ -89,7 +89,7 @@ public class MemberController {
 				description = "성공"
 			),
 			@ApiResponse(
-				responseCode = "404",
+				responseCode = "401",
 				description = "이메일 인증을 시도해주세요.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
