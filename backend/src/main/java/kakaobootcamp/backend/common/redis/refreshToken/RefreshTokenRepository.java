@@ -1,9 +1,11 @@
-package kakaobootcamp.backend.common.redis;
+package kakaobootcamp.backend.common.redis.refreshToken;
 
 import java.util.Optional;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+
+import kakaobootcamp.backend.common.redis.refreshToken.RefreshToken;
 
 @Repository
 public interface RefreshTokenRepository extends CrudRepository<RefreshToken, String> {

@@ -1,4 +1,4 @@
-package kakaobootcamp.backend.common.redis;
+package kakaobootcamp.backend.common.redis.refreshToken;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;

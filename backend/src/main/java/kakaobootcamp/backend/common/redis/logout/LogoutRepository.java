@@ -1,4 +1,4 @@
-package kakaobootcamp.backend.common.redis;
+package kakaobootcamp.backend.common.redis.logout;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
