@@ -1,4 +1,4 @@
-package kakaobootcamp.backend.common.redis.conf;
+package kakaobootcamp.backend.common.redis;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

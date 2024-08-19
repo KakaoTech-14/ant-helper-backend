@@ -22,7 +22,7 @@ import kakaobootcamp.backend.common.security.filter.exceptionHandlingFilter.Exce
 import kakaobootcamp.backend.common.security.filter.jwtFilter.JwtAuthenticationFilter;
 import kakaobootcamp.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import kakaobootcamp.backend.common.security.filter.loginFilter.LoginFilter;
-import kakaobootcamp.backend.domains.member.MemberRepository;
+import kakaobootcamp.backend.domains.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 
 @Configuration

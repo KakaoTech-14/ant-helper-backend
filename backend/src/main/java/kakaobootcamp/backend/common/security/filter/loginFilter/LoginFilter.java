@@ -17,7 +17,7 @@ import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.exception.CustomException;
 import kakaobootcamp.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import kakaobootcamp.backend.common.util.responseWriter.ResponseWriter;
-import kakaobootcamp.backend.domains.member.MemberRepository;
+import kakaobootcamp.backend.domains.member.repository.MemberRepository;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import lombok.extern.slf4j.Slf4j;
 

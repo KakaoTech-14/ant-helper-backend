@@ -1,10 +1,11 @@
-package kakaobootcamp.backend.common.redis.email;
+package kakaobootcamp.backend.domains.email.domain;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
@@ -14,5 +15,6 @@ public class EmailCode {
 	@Id
 	private String email;
 
+	@Setter
 	private Integer code;
 }

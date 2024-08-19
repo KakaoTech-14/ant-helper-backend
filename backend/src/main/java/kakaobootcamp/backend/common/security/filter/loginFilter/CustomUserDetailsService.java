@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import kakaobootcamp.backend.domains.member.MemberRepository;
+import kakaobootcamp.backend.domains.member.repository.MemberRepository;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 
