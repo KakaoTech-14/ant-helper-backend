@@ -20,6 +20,7 @@ import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.dto.ErrorResponse;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
+import kakaobootcamp.backend.domains.member.dto.MemberDTO.LoginRequest;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "MEMBER API", description = "회원에 대한 API입니다.")
@@ -85,7 +86,7 @@ public class MemberController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> loginMember(MemberDTO.LoginRequest request) {
+	public ResponseEntity<DataResponse<Void>> loginMember(LoginRequest request) {
 		// 이 메소드는 실제로 실행되지 않습니다. 문서용도로만 사용됩니다.
 		return ResponseEntity.ok(DataResponse.ok());
 	}

@@ -29,6 +29,7 @@ public class MemberDTO {
 	}
 
 	public static class LoginRequest {
+
 		public String email;
 		public String pw;
 	}
