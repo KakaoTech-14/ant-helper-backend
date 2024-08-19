@@ -1,4 +1,4 @@
-package kakaobootcamp.backend.domains.member;
+package kakaobootcamp.backend.domains.member.repository;
 
 import java.util.Optional;
 

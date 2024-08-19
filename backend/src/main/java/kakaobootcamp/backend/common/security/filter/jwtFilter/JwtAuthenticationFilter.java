@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import kakaobootcamp.backend.common.exception.CustomException;
 import kakaobootcamp.backend.common.exception.ErrorCode;
 import kakaobootcamp.backend.common.properties.SecurityProperties;
-import kakaobootcamp.backend.domains.member.MemberRepository;
+import kakaobootcamp.backend.domains.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

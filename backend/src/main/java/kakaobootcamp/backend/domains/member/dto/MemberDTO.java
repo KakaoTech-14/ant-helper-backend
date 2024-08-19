@@ -13,7 +13,7 @@ public class MemberDTO {
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class CreateMemberRequest {
 
-		@NotBlank(message = "loginId는 비어있을 수 없습니다.")
+		@NotBlank(message = "email은 비어있을 수 없습니다.")
 		@Email(message = "email 형식이 올바르지 않습니다.")
 		private String email;
 
@@ -32,5 +32,25 @@ public class MemberDTO {
 
 		public String email;
 		public String pw;
+	}
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class SendVerificationCodeRequest {
+
+		@NotBlank(message = "email은 비어있을 수 없습니다.")
+		@Email(message = "email 형식이 올바르지 않습니다.")
+		private String email;
+	}
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class VerifyEmailCodeRequest {
+
+		@NotBlank(message = "email은 비어있을 수 없습니다.")
+		@Email(message = "email 형식이 올바르지 않습니다.")
+		private String email;
+
+		private Integer code;
 	}
 }
