@@ -23,7 +23,7 @@ public class MemberService {
 	@Transactional
 	public void createMember(CreateMemberRequest request) {
 		// 로그인 아이디 중복 체크
-		checkLoginIdDuplicate(request.getLoginId());
+		validateEmail(request.getEmail());
 
 		// 패스워드 암호화
 		String encodedPassword = passwordEncoderService.encodePassword(request.getPw());
@@ -36,16 +36,16 @@ public class MemberService {
 	}
 
 	// 로그인 아이디 중복 체크
-	private void checkLoginIdDuplicate(String loginId) {
-		boolean isDuplicate = getLoginIdDuplicate(loginId);
+	private void validateEmail(String email) {
+		boolean isDuplicate = getEmailDuplicate(email);
 		if (isDuplicate) {
-			throw CustomException.from(ErrorCode.LOGIN_ID_DUPLICATE);
+			throw CustomException.from(ErrorCode.EMAIL_DUPLICATE);
 		}
 	}
 
 	// 로그인 아이디 중복 조회
-	public boolean getLoginIdDuplicate(String loginId) {
-		return memberRepository.existsByLoginId(loginId);
+	public boolean getEmailDuplicate(String email) {
+		return memberRepository.existsByEmail(email);
 	}
 
 	// 회원 삭제하기
