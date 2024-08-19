@@ -14,15 +14,12 @@ public class MemberDTO {
 	public static class CreateMemberRequest {
 
 		@NotBlank(message = "loginId는 비어있을 수 없습니다.")
+		@Email(message = "email 형식이 올바르지 않습니다.")
 		private String loginId;
 
 		@Setter
 		@NotBlank(message = "pw는 비어있을 수 없습니다.")
 		private String pw;
-
-		@NotBlank(message = "email은 비어있을 수 없습니다.")
-		@Email(message = "email 형식이 올바르지 않습니다.")
-		private String email;
 
 		@NotBlank(message = "appkey은 비어있을 수 없습니다.")
 		private String appKey;

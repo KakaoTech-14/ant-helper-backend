@@ -58,7 +58,7 @@ public class Member extends BaseEntity {
 		return new Member(
 			request.getLoginId(),
 			request.getPw(),
-			request.getEmail(),
+			request.getLoginId(),
 			memberRole,
 			request.getAppKey(),
 			request.getSecretKey()
