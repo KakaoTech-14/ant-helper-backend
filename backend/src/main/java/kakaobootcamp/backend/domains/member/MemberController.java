@@ -52,14 +52,18 @@ public class MemberController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
-	@GetMapping("/login-id/{loginId}/duplicate")
+	@GetMapping("/email/verification-request")
 	@Operation(
-		summary = "id 중복 조회",
-		description = "id가 중복되면 true, 중복되지 않으면 false를 반환",
+		summary = "email 인증 요청",
+		description = "email 인증을 위한 이메일을 전송",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "409",
+				description = "이미 가입된 이메일입니다."
 			)
 		}
 	)
