@@ -87,7 +87,4 @@ jobs:
         EOF
   
         rm key.pem
-        
-        # 서버 연결 확인
-        sleep 50  # 애플리케이션이 완전히 시작될 때까지 대기
-        curl -f http://$EC2_HOST:8080 || echo "Server connection failed"
+      
