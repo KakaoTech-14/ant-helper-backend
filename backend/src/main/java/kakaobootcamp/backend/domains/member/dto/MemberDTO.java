@@ -3,6 +3,7 @@ package kakaobootcamp.backend.domains.member.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ public class MemberDTO {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	@AllArgsConstructor
 	public static class CreateMemberRequest {
 
 		@NotBlank(message = "email은 비어있을 수 없습니다.")
