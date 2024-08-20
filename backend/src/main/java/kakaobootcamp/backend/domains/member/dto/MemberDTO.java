@@ -30,6 +30,7 @@ public class MemberDTO {
 		private String secretKey;
 	}
 
+	@AllArgsConstructor
 	public static class LoginRequest {
 
 		public String email;
