@@ -66,7 +66,7 @@ jobs:
 
     - name: Create database on RDS
       run: |
-        mysql -h ant-helper.cp8swyyky1dz.ap-northeast-2.rds.amazonaws.com -u admin -p'anthelper00' -e "CREATE DATABASE IF NOT EXISTS ant_helper"
+        mysql -h "${{ secrets.RDS_HOST }}" -u "${{ secrets.RDS_USERNAME }}" -p"${{ secrets.RDS_PASSWORD }}" -e "CREATE DATABASE IF NOT EXISTS ant_helper"
 
     - name: Upload and Deploy JAR to EC2
       env:
