@@ -49,12 +49,18 @@ public class MemberService {
 		request.setPw(encodedPassword);
 
 		// 회원 저장
-		MemberRole memberRole = MemberRole.USER;
-		Member member = Member.create(request, memberRole);
-		memberRepository.save(member);
+		saveMember(request);
 
 		// 이메일 삭제
 		emailService.deleteVerifiedEmail(email);
+	}
+
+	// 회원 저장하기
+	@Transactional
+	public void saveMember(CreateMemberRequest request) {
+		MemberRole memberRole = MemberRole.USER; // 기본 권한은 USER
+		Member member = Member.create(request, memberRole);
+		memberRepository.save(member);
 	}
 
 	// 이메일 중복 조회
