@@ -11,7 +11,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import kakaobootcamp.backend.common.exception.CustomException;
 
-public class AESUtil {
+public class EncryptUtil {
 
 	private static final String ALGORITHM = "AES";
 	private static final int KEY_SIZE = 128;

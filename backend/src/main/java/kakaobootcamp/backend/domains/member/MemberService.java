@@ -9,13 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kakaobootcamp.backend.common.exception.CustomException;
 import kakaobootcamp.backend.common.exception.ErrorCode;
-import kakaobootcamp.backend.common.util.encoder.AESUtil;
 import kakaobootcamp.backend.common.util.encoder.PasswordEncoderUtil;
 import kakaobootcamp.backend.domains.email.EmailService;
 import kakaobootcamp.backend.domains.email.domain.EmailCode;
 import kakaobootcamp.backend.domains.email.repository.EmailCodeRepository;
-import kakaobootcamp.backend.domains.key.domain.Salt;
-import kakaobootcamp.backend.domains.key.domain.KeyType;
+import kakaobootcamp.backend.common.util.encoder.EncryptUtil;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.member.domain.MemberRole;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
@@ -47,60 +45,32 @@ public class MemberService {
 		validateDuplicatedEmail(email);
 		emailService.validateVerifiedEmail(email);
 
-		// 암호화
-		encodePasswordInRequest(request);
-		String appKey = encryptAppKeyInRequestAndReturnKey(request);
-		String secretKey = encryptSecretKeyInRequestAndReturnKey(request);
+		// 비밀번호 암호화
+		String password = passwordEncoderUtil.encodePassword(request.getPw());
+
+		// appKey 암호화
+		SecretKey appKeySalt = EncryptUtil.generateKey();
+		String encryptedAppKey = EncryptUtil.encrypt(request.getAppKey(), appKeySalt);
+
+		// secretKey 암호화
+		SecretKey secretKeySalt = EncryptUtil.generateKey();
+		String encryptedSecretKey = EncryptUtil.encrypt(request.getSecretKey(), secretKeySalt);
 
 		// 회원 저장
-		MemberRole memberRole = MemberRole.USER; // 기본 권한은 USER
-		Member member = Member.of(request, memberRole);
-
-		Salt key1 = new Salt(KeyType.APP_KEY, appKey, member);
-		Salt key2 = new Salt(KeyType.SECRET_KEY, secretKey, member);
+		Member member = Member.builder()
+			.email(email)
+			.pw(password)
+			.memberRole(MemberRole.USER) // 기본 권한은 USER
+			.appKey(encryptedAppKey)
+			.secretKey(encryptedSecretKey)
+			.appKeySalt(EncryptUtil.keyToString(appKeySalt))
+			.secretKeySalt(EncryptUtil.keyToString(secretKeySalt))
+			.build();
 
 		memberRepository.save(member);
 
 		// 이메일 삭제
 		emailService.deleteVerifiedEmail(email);
-	}
-
-	// 요청에 있는 패스워드 암호화
-	private void encodePasswordInRequest(CreateMemberRequest request) {
-		String encodedPassword = passwordEncoderUtil.encodePassword(request.getPw());
-		request.setPw(encodedPassword);
-	}
-
-	// 요청에 있는 appKey 암호화 및 key 반환
-	private String encryptAppKeyInRequestAndReturnKey(CreateMemberRequest request) {
-		SecretKey key = AESUtil.generateKey();
-
-		// 발급한 key를 이용하여 text 암호화
-		String encodedAppKey = AESUtil.encrypt(request.getAppKey(), key);
-
-		request.setAppKey(encodedAppKey);
-
-		return AESUtil.keyToString(key);
-	}
-
-	// 요청에 있는 secretKey 암호화 및 key 반환
-	private String encryptSecretKeyInRequestAndReturnKey(CreateMemberRequest request) {
-		SecretKey key = AESUtil.generateKey();
-
-		// 발급한 key를 이용하여 text 암호화
-		String encodedSecretKey = AESUtil.encrypt(request.getSecretKey(), key);
-
-		request.setSecretKey(encodedSecretKey);
-
-		return AESUtil.keyToString(key);
-	}
-
-	// 회원 저장하기
-	@Transactional
-	public Member saveMember(CreateMemberRequest request) {
-		MemberRole memberRole = MemberRole.USER; // 기본 권한은 USER
-		Member member = Member.of(request, memberRole);
-		return memberRepository.save(member);
 	}
 
 	// 이메일 중복 조회
@@ -151,6 +121,22 @@ public class MemberService {
 	@Transactional
 	public void deleteMember(Long memberId) {
 		memberRepository.deleteById(memberId);
+	}
+
+	// AppKey 조회
+	public String getDecryptedAppKey(Member member) {
+		String appKey = member.getAppKey();
+		String appKeySalt = member.getAppKeySalt();
+
+		return EncryptUtil.decrypt(appKey, EncryptUtil.stringToKey(appKeySalt));
+	}
+
+	// SecretKey 조회
+	public String getDecryptedSecretKey(Member member) {
+		String secretKey = member.getSecretKey();
+		String secretKeySalt = member.getSecretKeySalt();
+
+		return EncryptUtil.decrypt(secretKey, EncryptUtil.stringToKey(secretKeySalt));
 	}
 
 	//Approval Key 저장
