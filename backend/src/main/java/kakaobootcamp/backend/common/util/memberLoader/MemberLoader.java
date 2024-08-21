@@ -2,9 +2,7 @@ package kakaobootcamp.backend.common.util.memberLoader;
 
 import static kakaobootcamp.backend.common.exception.ErrorCode.*;
 
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,12 +28,10 @@ public class MemberLoader {
 
 	// Authentication 객체에서 email을 추출하는 메서드
 	public String getEmail() {
-		Authentication authentication = SecurityContextHolder
+		return (String)SecurityContextHolder
 			.getContext()
-			.getAuthentication();
-		UserDetails userDetails = (UserDetails)authentication.getPrincipal();
-
-		return userDetails.getUsername();
+			.getAuthentication()
+			.getPrincipal();
 	}
 
 }
