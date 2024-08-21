@@ -21,7 +21,9 @@ import kakaobootcamp.backend.domains.member.dto.MemberDTO.SendVerificationCodeRe
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.VerifyEmailCodeRequest;
 import kakaobootcamp.backend.domains.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -56,6 +58,7 @@ public class MemberService {
 		SecretKey secretKeySalt = EncryptUtil.generateKey();
 		String encryptedSecretKey = EncryptUtil.encrypt(request.getSecretKey(), secretKeySalt);
 
+		log.info(encryptedSecretKey);
 		// 회원 저장
 		Member member = Member.builder()
 			.email(email)

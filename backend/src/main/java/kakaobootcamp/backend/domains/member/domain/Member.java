@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,18 +35,21 @@ public class Member extends BaseEntity {
 	private MemberRole memberRole;
 
 	@Setter
-	@Column(nullable = false)
+	@Column(nullable = false, length = 1000)
 	private String appKey;
 
 	@Setter
-	@Column(nullable = false)
+	@Column(nullable = false, length = 1000)
 	private String secretKey;
 
 	@Setter
 	private String approvalKey;
 
+
+	@NotBlank
 	private String appKeySalt;
 
+	@Column(nullable = false)
 	private String secretKeySalt;
 
 	@Builder
