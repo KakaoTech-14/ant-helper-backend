@@ -1,12 +1,19 @@
 package kakaobootcamp.backend.domains.member.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import kakaobootcamp.backend.domains.key.domain.Salt;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -42,6 +49,9 @@ public class Member extends BaseEntity {
 	@Setter
 	private String approvalKey;
 
+	@OneToMany(mappedBy = "member", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<Salt> salt = new ArrayList<>();
+
 	private Member(String email, String pw, MemberRole memberRole, String appKey, String secretKey) {
 		this.email = email;
 		this.pw = pw;
@@ -50,7 +60,7 @@ public class Member extends BaseEntity {
 		this.secretKey = secretKey;
 	}
 
-	public static Member create(CreateMemberRequest request, MemberRole memberRole) {
+	public static Member of(CreateMemberRequest request, MemberRole memberRole) {
 		return new Member(
 			request.getEmail(),
 			request.getPw(),

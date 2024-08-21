@@ -2,16 +2,20 @@ package kakaobootcamp.backend.domains.member;
 
 import java.util.Objects;
 
+import javax.crypto.SecretKey;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kakaobootcamp.backend.common.exception.CustomException;
 import kakaobootcamp.backend.common.exception.ErrorCode;
-import kakaobootcamp.backend.common.util.encoder.PasswordEncoderService;
+import kakaobootcamp.backend.common.util.encoder.AESUtil;
+import kakaobootcamp.backend.common.util.encoder.PasswordEncoderUtil;
 import kakaobootcamp.backend.domains.email.EmailService;
 import kakaobootcamp.backend.domains.email.domain.EmailCode;
 import kakaobootcamp.backend.domains.email.repository.EmailCodeRepository;
-import kakaobootcamp.backend.domains.email.repository.VerifiedEmailRepository;
+import kakaobootcamp.backend.domains.key.domain.Salt;
+import kakaobootcamp.backend.domains.key.domain.KeyType;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.member.domain.MemberRole;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
@@ -26,11 +30,10 @@ import lombok.RequiredArgsConstructor;
 public class MemberService {
 
 	private final MemberRepository memberRepository;
-	private final PasswordEncoderService passwordEncoderService;
+	private final PasswordEncoderUtil passwordEncoderUtil;
 
 	private final EmailService emailService;
 	private final EmailCodeRepository emailCodeRepository;
-	private final VerifiedEmailRepository verifiedEmailRepository;
 
 	private static final String EMAIL_TITLE = "ANT HELPER 이메일 인증 코드";
 	private static final String EMAIL_TEXT = "인증 코드는 %d 입니다.";
@@ -44,23 +47,60 @@ public class MemberService {
 		validateDuplicatedEmail(email);
 		emailService.validateVerifiedEmail(email);
 
-		// 패스워드 암호화
-		String encodedPassword = passwordEncoderService.encodePassword(request.getPw());
-		request.setPw(encodedPassword);
+		// 암호화
+		encodePasswordInRequest(request);
+		String appKey = encryptAppKeyInRequestAndReturnKey(request);
+		String secretKey = encryptSecretKeyInRequestAndReturnKey(request);
 
 		// 회원 저장
-		saveMember(request);
+		MemberRole memberRole = MemberRole.USER; // 기본 권한은 USER
+		Member member = Member.of(request, memberRole);
+
+		Salt key1 = new Salt(KeyType.APP_KEY, appKey, member);
+		Salt key2 = new Salt(KeyType.SECRET_KEY, secretKey, member);
+
+		memberRepository.save(member);
 
 		// 이메일 삭제
 		emailService.deleteVerifiedEmail(email);
 	}
 
+	// 요청에 있는 패스워드 암호화
+	private void encodePasswordInRequest(CreateMemberRequest request) {
+		String encodedPassword = passwordEncoderUtil.encodePassword(request.getPw());
+		request.setPw(encodedPassword);
+	}
+
+	// 요청에 있는 appKey 암호화 및 key 반환
+	private String encryptAppKeyInRequestAndReturnKey(CreateMemberRequest request) {
+		SecretKey key = AESUtil.generateKey();
+
+		// 발급한 key를 이용하여 text 암호화
+		String encodedAppKey = AESUtil.encrypt(request.getAppKey(), key);
+
+		request.setAppKey(encodedAppKey);
+
+		return AESUtil.keyToString(key);
+	}
+
+	// 요청에 있는 secretKey 암호화 및 key 반환
+	private String encryptSecretKeyInRequestAndReturnKey(CreateMemberRequest request) {
+		SecretKey key = AESUtil.generateKey();
+
+		// 발급한 key를 이용하여 text 암호화
+		String encodedSecretKey = AESUtil.encrypt(request.getSecretKey(), key);
+
+		request.setSecretKey(encodedSecretKey);
+
+		return AESUtil.keyToString(key);
+	}
+
 	// 회원 저장하기
 	@Transactional
-	public void saveMember(CreateMemberRequest request) {
+	public Member saveMember(CreateMemberRequest request) {
 		MemberRole memberRole = MemberRole.USER; // 기본 권한은 USER
-		Member member = Member.create(request, memberRole);
-		memberRepository.save(member);
+		Member member = Member.of(request, memberRole);
+		return memberRepository.save(member);
 	}
 
 	// 이메일 중복 조회
@@ -111,5 +151,11 @@ public class MemberService {
 	@Transactional
 	public void deleteMember(Long memberId) {
 		memberRepository.deleteById(memberId);
+	}
+
+	//Approval Key 저장
+	@Transactional
+	public void updateApprovalKey(Member member, String approvalKey) {
+		member.setApprovalKey(approvalKey);
 	}
 }

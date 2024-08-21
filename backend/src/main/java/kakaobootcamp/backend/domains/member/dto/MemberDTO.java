@@ -23,9 +23,11 @@ public class MemberDTO {
 		@NotBlank(message = "pw는 비어있을 수 없습니다.")
 		private String pw;
 
+		@Setter
 		@NotBlank(message = "appkey은 비어있을 수 없습니다.")
 		private String appKey;
 
+		@Setter
 		@NotBlank(message = "secretkey은 비어있을 수 없습니다.")
 		private String secretKey;
 	}
