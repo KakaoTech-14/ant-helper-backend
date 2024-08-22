@@ -28,7 +28,7 @@ public class StockController {
 	public ResponseEntity<DataResponse<Void>> buyStock() {
 		Member member = memberLoader.getMember();
 
-		StockDTO.OrderStockRequest request = new StockDTO.OrderStockRequest("64470093", "01", "005930", "01", "1", "0");
+		OrderStockRequest request = new OrderStockRequest("64470093", "01", "005930", "01", "1", "0");
 
 		stockService.orderStock(request, member);
 
@@ -36,9 +36,14 @@ public class StockController {
 	}
 
 	@PostMapping("/sell")
-	public ResponseEntity<?> sellStock() {
+	public ResponseEntity<DataResponse<Void>> sellStock() {
+		Member member = memberLoader.getMember();
 
-		return ResponseEntity.ok().build();
+		OrderStockRequest request = new OrderStockRequest("64470093", "01", "005930", "01", "1", "0");
+
+		stockService.sellStock(request, member);
+
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 
 	@GetMapping("/recommendations")

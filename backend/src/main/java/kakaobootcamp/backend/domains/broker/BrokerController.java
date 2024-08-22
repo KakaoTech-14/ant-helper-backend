@@ -45,7 +45,6 @@ public class BrokerController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
-
 	@PostMapping("/access-token")
 	@Operation(
 		summary = "Access Token 요청",

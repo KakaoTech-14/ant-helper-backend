@@ -1,5 +1,6 @@
 package kakaobootcamp.backend.domains.stock.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AccessLevel;
@@ -37,7 +38,7 @@ public class StockDTO {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public class OrderStockResponse {
+	public static class OrderStockResponse {
 
 		// 응답 코드
 		private String rt_cd;
@@ -46,7 +47,7 @@ public class StockDTO {
 		private String msg_cd;
 
 		// 메시지 내용
-		private String msg;
+		private String msg1;
 
 		// 출력 데이터
 		private Output output;
