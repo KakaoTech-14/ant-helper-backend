@@ -45,16 +45,27 @@ public class Member extends BaseEntity {
 	@Setter
 	private String approvalKey;
 
-
 	@NotBlank
 	private String appKeySalt;
 
 	@Column(nullable = false)
 	private String secretKeySalt;
 
+	private String comprehensiveAccountNumber;
+	private String accountProductCode;
+
 	@Builder
-	private Member(String email, String pw, MemberRole memberRole, String appKey, String secretKey, String appKeySalt,
-		String secretKeySalt) {
+	private Member(
+		String email,
+		String pw,
+		MemberRole memberRole,
+		String appKey,
+		String secretKey,
+		String appKeySalt,
+		String secretKeySalt,
+		String comprehensiveAccountNumber,
+		String accountProductCode)
+	{
 		this.email = email;
 		this.pw = pw;
 		this.memberRole = memberRole;
@@ -62,5 +73,7 @@ public class Member extends BaseEntity {
 		this.secretKey = secretKey;
 		this.appKeySalt = appKeySalt;
 		this.secretKeySalt = secretKeySalt;
+		this.comprehensiveAccountNumber = comprehensiveAccountNumber;
+		this.accountProductCode = accountProductCode;
 	}
 }

@@ -11,4 +11,6 @@ import lombok.Setter;
 public class KisProperties {
 
 	private String url;
+	private String orderTrId;
+	private String sellTrId;
 }

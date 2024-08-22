@@ -68,6 +68,8 @@ public class MemberService {
 			.secretKey(encryptedSecretKey)
 			.appKeySalt(EncryptUtil.keyToString(appKeySalt))
 			.secretKeySalt(EncryptUtil.keyToString(secretKeySalt))
+			.comprehensiveAccountNumber(request.getComprehensiveAccountNumber())
+			.accountProductCode(request.getAccountProductCode())
 			.build();
 
 		memberRepository.save(member);
