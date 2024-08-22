@@ -3,12 +3,17 @@ package kakaobootcamp.backend.domains.broker.service;
 import static kakaobootcamp.backend.common.exception.ErrorCode.*;
 import static kakaobootcamp.backend.domains.broker.dto.BrokerDTO.*;
 
+import java.util.HashMap;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import kakaobootcamp.backend.common.exception.ApiException;
+import kakaobootcamp.backend.common.exception.CustomException;
+import kakaobootcamp.backend.common.util.webClient.WebClientUtil;
 import kakaobootcamp.backend.domains.broker.KisAccessToken;
 import kakaobootcamp.backend.domains.member.MemberService;
 import kakaobootcamp.backend.domains.member.domain.Member;
@@ -23,6 +28,7 @@ public class BrokerService {
 	private final WebClient webClient;
 	private final MemberService memberService;
 	private final KisAccessTokenService kisAccessTokenService;
+	private WebClientUtil webClientUtil;
 
 	// 한국 투자 증권에서 Approval Key를 받아와서 저장하는 메서드
 	@Transactional
@@ -37,17 +43,12 @@ public class BrokerService {
 
 	// Approval Key를 받아오는 메서드
 	private GetAccessKeyResponse getApprovalKey(String appKey, String secretKey) {
+		String url = "/oauth2/Approval";
 		String grantType = "client_credentials";
+
 		GetAccessKeyRequest request = new GetAccessKeyRequest(appKey, secretKey, grantType);
 
-		return webClient
-			.post()
-			.uri("/oauth2/Approval")
-			.body(Mono.just(request), GetAccessKeyRequest.class)
-			.retrieve()
-			.onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(ApiException.from(INVALID_KEY)))
-			.bodyToMono(GetAccessKeyResponse.class)
-			.block();
+		return webClientUtil.post(new HashMap<>(), url, request, GetAccessKeyResponse.class);
 	}
 
 	// 한국 투자 증권에서 Access Token을 받아와서 저장하는 메서드
@@ -72,16 +73,11 @@ public class BrokerService {
 
 	// Access Token을 받아오는 메서드
 	private GetAccessTokenResponse getAccessToken(String appKey, String secretKey) {
+		String url = "/oauth2/tokenP";
 		String grantType = "client_credentials";
+
 		GetAccessTokenRequest request = new GetAccessTokenRequest(appKey, secretKey, grantType);
 
-		return webClient
-			.post()
-			.uri("/oauth2/tokenP")
-			.body(Mono.just(request), GetAccessTokenRequest.class)
-			.retrieve()
-			.onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(ApiException.from(INVALID_KEY)))
-			.bodyToMono(GetAccessTokenResponse.class)
-			.block();
+		return webClientUtil.post(new HashMap<>(), url, request, GetAccessTokenResponse.class);
 	}
 }

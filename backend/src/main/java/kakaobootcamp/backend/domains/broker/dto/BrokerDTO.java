@@ -42,5 +42,11 @@ public class BrokerDTO {
 		private String access_token_token_expired;
 	}
 
-
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class KisErrorResponse {
+		private String rt_cd;
+		private String msg_cd;
+		private String msg1;
+	}
 }
