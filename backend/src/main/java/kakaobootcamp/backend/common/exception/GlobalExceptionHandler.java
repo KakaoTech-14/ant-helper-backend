@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -20,6 +21,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+	@ExceptionHandler(CustomException.class)
+	public ResponseEntity<Object> handleCustomException(CustomException e) {
+		log.warn("handleApiException", e);
+
+		return makeErrorResponseEntity(e.getHttpStatus(), e.getMessage());
+	}
 
 	@ExceptionHandler(ApiException.class)
 	public ResponseEntity<Object> handleApiException(ApiException e) {
@@ -92,5 +100,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return ResponseEntity
 			.status(errorCode.getHttpStatus())
 			.body(ErrorResponse.of(errorCode, message));
+	}
+
+	private ResponseEntity<Object> makeErrorResponseEntity(HttpStatus httpStatus, String message) {
+		return ResponseEntity
+			.status(httpStatus)
+			.body(ErrorResponse.of(httpStatus, message));
 	}
 }
