@@ -1,8 +1,5 @@
 package kakaobootcamp.backend.domains.broker.dto;
 
-import java.util.List;
-
-import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +13,7 @@ public class BrokerDTO {
 
 		private String appkey;
 		private String secretkey;
-		private final String grant_type;
+		private String grant_type;
 	}
 
 	@Getter
@@ -25,4 +22,25 @@ public class BrokerDTO {
 
 		private String approval_key;
 	}
+
+	@Getter
+	@AllArgsConstructor
+	public static class GetAccessTokenRequest {
+
+		private String appkey;
+		private String appsecret;
+		private String grant_type;
+	}
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class GetAccessTokenResponse {
+
+		private String access_token;
+		private String token_type;
+		private int expires_in;
+		private String access_token_token_expired;
+	}
+
+
 }
