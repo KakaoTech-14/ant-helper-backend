@@ -9,7 +9,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kakaobootcamp.backend.common.exception.CustomException;
+import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.exception.ErrorCode;
 import kakaobootcamp.backend.domains.email.domain.EmailCode;
 import kakaobootcamp.backend.domains.email.domain.VerifiedEmail;
@@ -36,7 +36,7 @@ public class EmailService {
 		try {
 			emailSender.send(emailForm);
 		} catch (RuntimeException e) {
-			throw CustomException.from(EMAIL_BAD_GATEWAY);
+			throw ApiException.from(EMAIL_BAD_GATEWAY);
 		}
 	}
 
@@ -70,7 +70,7 @@ public class EmailService {
 	public void validateVerifiedEmail(String email) {
 		boolean isPresent = verifiedEmailRepository.findByEmail(email).isPresent();
 		if (!isPresent) {
-			throw CustomException.from(ErrorCode.UNAUTHENTICATED_EMAIL);
+			throw ApiException.from(ErrorCode.UNAUTHENTICATED_EMAIL);
 		}
 	}
 

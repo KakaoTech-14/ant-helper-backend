@@ -14,7 +14,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kakaobootcamp.backend.common.dto.DataResponse;
-import kakaobootcamp.backend.common.exception.CustomException;
+import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import kakaobootcamp.backend.common.util.responseWriter.ResponseWriter;
 import kakaobootcamp.backend.domains.member.repository.MemberRepository;
@@ -64,7 +64,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 		// 회원 id 찾기
 		Member member = memberRepository.findByEmail(email)
-			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+			.orElseThrow(() -> ApiException.from(MEMBER_NOT_FOUND));
 		Long memberId = member.getId();
 
 		String accessToken = jwtTokenProvider.createAccessToken(memberId);

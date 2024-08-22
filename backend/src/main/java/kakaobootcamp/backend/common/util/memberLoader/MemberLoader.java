@@ -6,7 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import kakaobootcamp.backend.common.exception.CustomException;
+import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class MemberLoader {
 		String email = getEmail();
 
 		return memberRepository.findByEmail(email)
-			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+			.orElseThrow(() -> ApiException.from(MEMBER_NOT_FOUND));
 	}
 
 	// Authentication 객체에서 email을 추출하는 메서드

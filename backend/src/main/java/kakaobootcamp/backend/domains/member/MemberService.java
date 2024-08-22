@@ -7,7 +7,7 @@ import javax.crypto.SecretKey;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kakaobootcamp.backend.common.exception.CustomException;
+import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.exception.ErrorCode;
 import kakaobootcamp.backend.common.util.encoder.PasswordEncoderUtil;
 import kakaobootcamp.backend.domains.email.EmailService;
@@ -39,7 +39,7 @@ public class MemberService {
 	private static final String EMAIL_TEXT = "인증 코드는 %d 입니다.";
 
 	// 회원가입하기
-	@Transactional(rollbackFor = CustomException.class)
+	@Transactional(rollbackFor = ApiException.class)
 	public void createMember(CreateMemberRequest request) {
 		String email = request.getEmail();
 
@@ -82,12 +82,12 @@ public class MemberService {
 	private void validateDuplicatedEmail(String email) {
 		boolean isDuplicated = memberRepository.existsByEmail(email);
 		if (isDuplicated) {
-			throw CustomException.from(ErrorCode.EMAIL_DUPLICATE);
+			throw ApiException.from(ErrorCode.EMAIL_DUPLICATE);
 		}
 	}
 
 	// 이메일 인증번호 보내기
-	@Transactional(rollbackFor = CustomException.class)
+	@Transactional(rollbackFor = ApiException.class)
 	public void validateEmailAndSendEmailVerification(SendVerificationCodeRequest request) {
 		String email = request.getEmail();
 
@@ -105,14 +105,14 @@ public class MemberService {
 	}
 
 	// 이메일 인증 확인
-	@Transactional(rollbackFor = CustomException.class)
+	@Transactional(rollbackFor = ApiException.class)
 	public boolean verityEmailCode(VerifyEmailCodeRequest request) {
 		String email = request.getEmail();
 		Integer requestCode = request.getCode();
 
 		// 이메일로 인증 코드 검색
 		EmailCode emailCode = emailCodeRepository.findByEmail(email)
-			.orElseThrow(() -> CustomException.from(ErrorCode.UNAUTHENTICATED_EMAIL));
+			.orElseThrow(() -> ApiException.from(ErrorCode.UNAUTHENTICATED_EMAIL));
 
 		// 인증 코드 비교 후 인증된 이메일 저장
 		if (Objects.equals(emailCode.getCode(), requestCode)) {

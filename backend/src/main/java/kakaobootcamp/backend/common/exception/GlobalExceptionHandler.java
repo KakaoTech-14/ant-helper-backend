@@ -21,9 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(CustomException.class)
-	public ResponseEntity<Object> handleCustomException(CustomException e) {
-		log.warn("handleCustomException", e);
+	@ExceptionHandler(ApiException.class)
+	public ResponseEntity<Object> handleApiException(ApiException e) {
+		log.warn("handleApiException", e);
 
 		return makeErrorResponseEntity(e.getErrorCode());
 	}

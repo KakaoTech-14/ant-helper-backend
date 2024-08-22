@@ -8,10 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import kakaobootcamp.backend.common.exception.CustomException;
+import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.domains.broker.KisAccessToken;
-import kakaobootcamp.backend.domains.broker.KisAccessTokenRepository;
-import kakaobootcamp.backend.domains.broker.dto.BrokerDTO.*;
 import kakaobootcamp.backend.domains.member.MemberService;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +45,7 @@ public class BrokerService {
 			.uri("/oauth2/Approval")
 			.body(Mono.just(request), GetAccessKeyRequest.class)
 			.retrieve()
-			.onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(CustomException.from(INVALID_KEY)))
+			.onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(ApiException.from(INVALID_KEY)))
 			.bodyToMono(GetAccessKeyResponse.class)
 			.block();
 	}
@@ -82,7 +80,7 @@ public class BrokerService {
 			.uri("/oauth2/tokenP")
 			.body(Mono.just(request), GetAccessTokenRequest.class)
 			.retrieve()
-			.onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(CustomException.from(INVALID_KEY)))
+			.onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(ApiException.from(INVALID_KEY)))
 			.bodyToMono(GetAccessTokenResponse.class)
 			.block();
 	}

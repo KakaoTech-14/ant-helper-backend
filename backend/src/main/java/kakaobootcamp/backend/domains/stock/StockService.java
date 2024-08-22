@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import kakaobootcamp.backend.common.exception.CustomException;
+import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.properties.KisProperties;
 import kakaobootcamp.backend.domains.broker.KisAccessToken;
 import kakaobootcamp.backend.domains.broker.dto.BrokerDTO;
@@ -32,7 +32,7 @@ public class StockService {
 
 		// accessToken 가져오기
 		KisAccessToken kisAccessToken = kisAccessTokenService.findKisAccessToken(member.getId()).
-			orElseThrow(() -> CustomException.from(KIS_ACCESS_TOKEN_NOT_FOUND));
+			orElseThrow(() -> ApiException.from(KIS_ACCESS_TOKEN_NOT_FOUND));
 		String accessToken = kisAccessToken.getAccessToken();
 
 		log.info("accessToken: {}", accessToken);
@@ -49,7 +49,7 @@ public class StockService {
 			})
 			.body(Mono.just(request), OrderStockRequest.class)
 			.retrieve()
-			.onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(CustomException.from(INVALID_KEY)))
+			.onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(ApiException.from(INVALID_KEY)))
 			.bodyToMono(BrokerDTO.GetAccessKeyResponse.class)
 			.block();
 	}

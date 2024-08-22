@@ -25,7 +25,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kakaobootcamp.backend.common.dto.DataResponse;
-import kakaobootcamp.backend.common.exception.CustomException;
+import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.properties.JwtProperties;
 import kakaobootcamp.backend.domains.member.repository.LogoutRepository;
 import kakaobootcamp.backend.domains.member.domain.RefreshToken;
@@ -60,10 +60,10 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 	//authentication을 만들어주는 메서드
 	@Override
 	public Authentication getAuthentication(String accessToken) {
-		Long memberId = extractMemberId(accessToken).orElseThrow(() -> CustomException.from(INVALID_ACCESS_TOKEN));
+		Long memberId = extractMemberId(accessToken).orElseThrow(() -> ApiException.from(INVALID_ACCESS_TOKEN));
 
 		Member member = memberRepository.findById(memberId)
-			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+			.orElseThrow(() -> ApiException.from(MEMBER_NOT_FOUND));
 
 		String email = member.getEmail();
 		String pw = member.getPw();
@@ -206,7 +206,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 	public void checkRefreshTokenAndReIssueAccessAndRefreshToken(HttpServletResponse response, String refreshToken) {
 		//refreshToken이 유효한지 확인
 		RefreshToken refreshTokenObj = refreshTokenRepository.findById(refreshToken)
-			.orElseThrow(() -> CustomException.from(INVALID_REFRESH_TOKEN));
+			.orElseThrow(() -> ApiException.from(INVALID_REFRESH_TOKEN));
 
 		Long memberId = refreshTokenObj.getMemberId();
 

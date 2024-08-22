@@ -9,7 +9,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import kakaobootcamp.backend.common.exception.CustomException;
+import kakaobootcamp.backend.common.exception.ApiException;
 
 public class EncryptUtil {
 
@@ -23,7 +23,7 @@ public class EncryptUtil {
 			keyGenerator.init(KEY_SIZE); // 키 크기 (128, 192, 256)
 			return keyGenerator.generateKey();
 		} catch (Exception e) {
-			throw CustomException.from(INTERNAL_SERVER_ERROR);
+			throw ApiException.from(INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -35,7 +35,7 @@ public class EncryptUtil {
 			byte[] encryptedData = cipher.doFinal(data.getBytes());
 			return Base64.getEncoder().encodeToString(encryptedData);
 		} catch (Exception e) {
-			throw CustomException.from(INTERNAL_SERVER_ERROR);
+			throw ApiException.from(INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -48,7 +48,7 @@ public class EncryptUtil {
 			byte[] decryptedData = cipher.doFinal(decodedData);
 			return new String(decryptedData);
 		} catch (Exception e) {
-			throw CustomException.from(INTERNAL_SERVER_ERROR);
+			throw ApiException.from(INTERNAL_SERVER_ERROR);
 		}
 	}
 
