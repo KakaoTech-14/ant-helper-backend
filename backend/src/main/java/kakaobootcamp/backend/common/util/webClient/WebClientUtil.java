@@ -28,7 +28,7 @@ public class WebClientUtil {
 				HttpStatusCode::is4xxClientError,
 				response -> response.bodyToMono(KisErrorResponse.class)
 					.flatMap(error -> Mono.error(CustomException.from(
-						(HttpStatus) response.statusCode(),
+						(HttpStatus)response.statusCode(),
 						error.getMsg1()
 					)))
 			)
@@ -36,7 +36,7 @@ public class WebClientUtil {
 				HttpStatusCode::is5xxServerError,
 				response -> response.bodyToMono(KisErrorResponse.class)
 					.flatMap(error -> Mono.error(CustomException.from(
-						(HttpStatus) response.statusCode(),
+						(HttpStatus)response.statusCode(),
 						error.getMsg1()
 					)))
 			)
@@ -44,18 +44,18 @@ public class WebClientUtil {
 			.block();
 	}
 
-	public <T,V> T post(Map<String, String> headersMap, String url, V request, Class<T> responseType) {
+	public <T, V> T post(Map<String, String> headersMap, String url, V request, Class<T> responseType) {
 		return webClient
 			.post()
 			.uri(url)
 			.headers(headers -> headersMap.forEach(headers::set))
-			.body(Mono.just(request), request.getClass())
+			.bodyValue(request)
 			.retrieve()
 			.onStatus(
 				HttpStatusCode::is4xxClientError,
 				response -> response.bodyToMono(KisErrorResponse.class)
 					.flatMap(error -> Mono.error(CustomException.from(
-						(HttpStatus) response.statusCode(),
+						(HttpStatus)response.statusCode(),
 						error.getMsg1()
 					)))
 			)
@@ -63,7 +63,7 @@ public class WebClientUtil {
 				HttpStatusCode::is5xxServerError,
 				response -> response.bodyToMono(KisErrorResponse.class)
 					.flatMap(error -> Mono.error(CustomException.from(
-						(HttpStatus) response.statusCode(),
+						(HttpStatus)response.statusCode(),
 						error.getMsg1()
 					)))
 			)

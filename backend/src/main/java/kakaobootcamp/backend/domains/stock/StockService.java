@@ -5,9 +5,7 @@ import static kakaobootcamp.backend.common.exception.ErrorCode.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.properties.KisProperties;
@@ -20,14 +18,12 @@ import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class StockService {
 
-	private final WebClient webClient;
 	private final KisProperties kisProperties;
 	private final KisAccessTokenService kisAccessTokenService;
 	private final MemberService memberService;

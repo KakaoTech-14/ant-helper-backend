@@ -27,11 +27,10 @@ public class WebClientConfig {
 	public WebClient kisWebClient() {
 		return WebClient.builder()
 			.baseUrl(kisProperties.getUrl())
-			.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+			.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
 			.codecs(configurer -> configurer.defaultCodecs()
 				.maxInMemorySize(2 * 1024 * 1024)) // 응답 payload가 클 경우 나는 에러 방지, 최대 2MB
 			.clientConnector(new ReactorClientHttpConnector(httpClient))
 			.build();
 	}
-
 }
