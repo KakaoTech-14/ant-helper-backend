@@ -6,9 +6,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kakaobootcamp.backend.common.dto.DataResponse;
+import kakaobootcamp.backend.common.dto.ErrorResponse;
 import kakaobootcamp.backend.common.util.memberLoader.MemberLoader;
 import kakaobootcamp.backend.domains.broker.service.BrokerService;
 import kakaobootcamp.backend.domains.member.domain.Member;
@@ -52,6 +55,11 @@ public class BrokerController {
 				responseCode = "200",
 				description = "성공"
 			),
+			@ApiResponse(
+				responseCode = "403",
+				description = "appkey 및 appsecret이 유효하지 않습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
 		}
 	)
 	public ResponseEntity<DataResponse<Void>> getAccessToken() {
