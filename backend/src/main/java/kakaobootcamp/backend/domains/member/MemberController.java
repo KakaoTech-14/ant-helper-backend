@@ -18,6 +18,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.dto.ErrorResponse;
+import kakaobootcamp.backend.common.util.memberLoader.MemberLoader;
+import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.LoginRequest;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.SendVerificationCodeRequest;
@@ -31,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 
 	private final MemberService memberService;
+	private final MemberLoader memberLoader;
 
 	@PostMapping("/signup")
 	@Operation(
@@ -123,11 +126,27 @@ public class MemberController {
 	}
 
 	@DeleteMapping
-	public ResponseEntity<?> deleteMember() {
+	@Operation(
+		summary = "회원 탈퇴",
+		description = "회원 탈퇴",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "유효하지 않은 액세스 토큰입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Void>> deleteMember() {
+		Member member = memberLoader.getMember();
 
-		// 이 부분 jwt 토큰에서 memberId를 추출하여 사용하도록 변경해야 함
-		memberService.deleteMember(1L);
-		return ResponseEntity.ok().build();
+		memberService.deleteMember(member);
+
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 
 	@PostMapping("/logout")

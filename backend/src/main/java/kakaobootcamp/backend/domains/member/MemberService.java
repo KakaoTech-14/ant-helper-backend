@@ -124,8 +124,8 @@ public class MemberService {
 
 	// 회원 삭제하기
 	@Transactional
-	public void deleteMember(Long memberId) {
-		memberRepository.deleteById(memberId);
+	public void deleteMember(Member member) {
+		memberRepository.delete(member);
 	}
 
 	// AppKey 조회
