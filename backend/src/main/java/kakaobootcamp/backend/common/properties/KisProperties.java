@@ -9,4 +9,8 @@ import lombok.Setter;
 @Setter
 @ConfigurationProperties(prefix = "kis")
 public class KisProperties {
+
+	private String url;
+	private String orderTrId;
+	private String sellTrId;
 }

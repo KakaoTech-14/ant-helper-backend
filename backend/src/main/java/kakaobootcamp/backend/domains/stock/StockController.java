@@ -7,6 +7,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kakaobootcamp.backend.common.dto.DataResponse;
+import kakaobootcamp.backend.common.util.memberLoader.MemberLoader;
+import kakaobootcamp.backend.domains.member.domain.Member;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "STOCK API", description = "주식에 대한 API입니다.")
@@ -15,16 +20,30 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class StockController {
 
-	@PostMapping("/buy")
-	public ResponseEntity<?> buyStock() {
+	private final MemberLoader memberLoader;
+	private final StockService stockService;
 
-		return ResponseEntity.ok().build();
+	// 삭제될 API
+	@PostMapping("/buy")
+	public ResponseEntity<DataResponse<Void>> buyStock() {
+		Member member = memberLoader.getMember();
+
+		OrderStockRequest request = new OrderStockRequest("64470093", "01", "005930", "01", "1", "0");
+
+		stockService.orderStock(request, member);
+
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 
 	@PostMapping("/sell")
-	public ResponseEntity<?> sellStock() {
+	public ResponseEntity<DataResponse<Void>> sellStock() {
+		Member member = memberLoader.getMember();
 
-		return ResponseEntity.ok().build();
+		OrderStockRequest request = new OrderStockRequest("64470093", "01", "005930", "01", "1", "0");
+
+		stockService.sellStock(request, member);
+
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 
 	@GetMapping("/recommendations")

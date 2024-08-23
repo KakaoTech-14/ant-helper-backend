@@ -15,7 +15,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kakaobootcamp.backend.common.exception.CustomException;
+import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.exception.ErrorCode;
 import kakaobootcamp.backend.common.properties.SecurityProperties;
 import kakaobootcamp.backend.domains.member.repository.MemberRepository;
@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(
 		HttpServletRequest request,
 		HttpServletResponse response,
-		FilterChain filterChain) throws ServletException, IOException, CustomException
+		FilterChain filterChain) throws ServletException, IOException, ApiException
 	{
 
 		final String refreshToken = jwtTokenProvider.extractRefreshToken(request).orElse(null);
@@ -65,13 +65,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			jwtTokenProvider.checkRefreshTokenAndReIssueAccessAndRefreshToken(response, refreshToken);
 		} else if (refreshToken != null && !jwtTokenProvider.isTokenValid(refreshToken)) {
 			 log.info("refresh토큰 인증 실패");
-			 throw CustomException.from(INVALID_REFRESH_TOKEN);
+			 throw ApiException.from(INVALID_REFRESH_TOKEN);
 		 } else if (accessToken != null && jwtTokenProvider.isTokenValid(accessToken)) {
 
 			//토큰이 logout된 토큰인지 검사
 			if (jwtTokenProvider.isLogout(accessToken)) {
 				log.info("logout된 accessToken으로 인증 실패");
-				throw CustomException.from(INVALID_ACCESS_TOKEN);
+				throw ApiException.from(INVALID_ACCESS_TOKEN);
 			}
 
 			log.info("access토큰 인증 성공");
@@ -80,10 +80,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			filterChain.doFilter(request, response);
 		} else if (accessToken != null && !jwtTokenProvider.isTokenValid(accessToken)) {
 			log.info("access토큰 인증 실패");
-			throw CustomException.from(REISSUE_ACCESS_TOKEN);
+			throw ApiException.from(REISSUE_ACCESS_TOKEN);
 		} else {
 			log.info("인증 실패");
-			throw CustomException.from(ErrorCode.UNAUTHORIZED);
+			throw ApiException.from(ErrorCode.UNAUTHORIZED);
 		}
 	}
 

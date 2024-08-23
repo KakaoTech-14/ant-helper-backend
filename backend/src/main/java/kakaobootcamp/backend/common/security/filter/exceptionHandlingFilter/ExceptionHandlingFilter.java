@@ -3,7 +3,6 @@ package kakaobootcamp.backend.common.security.filter.exceptionHandlingFilter;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
@@ -11,7 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kakaobootcamp.backend.common.dto.ErrorResponse;
-import kakaobootcamp.backend.common.exception.CustomException;
+import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.exception.ErrorCode;
 import kakaobootcamp.backend.common.util.responseWriter.ResponseWriter;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +25,7 @@ public class ExceptionHandlingFilter extends OncePerRequestFilter {
 	{
 		try {
 			filterChain.doFilter(request, response);
-		} catch (CustomException e) {
+		} catch (ApiException e) {
 			log.warn("ExceptionHandlingFilter: {}", e.getMessage());
 
 			ErrorResponse errorResponse = ErrorResponse.from(e.getErrorCode());
