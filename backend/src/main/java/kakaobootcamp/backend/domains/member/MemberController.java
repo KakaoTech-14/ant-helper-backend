@@ -15,15 +15,18 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.dto.ErrorResponse;
+import kakaobootcamp.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import kakaobootcamp.backend.common.util.memberLoader.MemberLoader;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.LoginRequest;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.SendVerificationCodeRequest;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.VerifyEmailCodeRequest;
+import kakaobootcamp.backend.domains.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "MEMBER API", description = "회원에 대한 API입니다.")
@@ -34,6 +37,7 @@ public class MemberController {
 
 	private final MemberService memberService;
 	private final MemberLoader memberLoader;
+	private final JwtTokenProvider jwtTokenProvider;
 
 	@PostMapping("/signup")
 	@Operation(
@@ -150,9 +154,28 @@ public class MemberController {
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<?> logoutMember() {
+	@Operation(
+		summary = "로그아웃",
+		description = "로그아웃",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "유효하지 않은 액세스 토큰입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Void>> logoutMember(HttpServletRequest request) {
+		Member member = memberLoader.getMember();
+		String accessToken = jwtTokenProvider.extractAccessToken(request).orElse(null);
 
-		return ResponseEntity.ok().build();
+		memberService.logoutMember(member, accessToken);
+
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 
 	@GetMapping("/stocks/watchlist")
