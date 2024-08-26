@@ -18,6 +18,7 @@ import kakaobootcamp.backend.domains.broker.KisAccessToken;
 import kakaobootcamp.backend.domains.broker.service.KisAccessTokenService;
 import kakaobootcamp.backend.domains.member.MemberService;
 import kakaobootcamp.backend.domains.member.domain.Member;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceRealizedProfitAndLossResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.KisOrderStockRequest;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
@@ -110,9 +111,33 @@ public class StockService {
 		return webClientUtil.get(headers, uri, params, GetStockBalanceResponse.class);
 	}
 
+	// 주식잔고조회_실현손익
+	public GetStockBalanceRealizedProfitAndLossResponse getBalanceRealizedProfitAndLoss(Member member) {
+		String uri = "/uapi/domestic-stock/v1/trading/inquire-balance-rlz-pl";
+
+		// 헤더 설정
+		Map<String, String> headers = makeHeaders(member, kisProperties.getGetBalanceRealizedProfitAndLossTrId());
+
+		// 파라미터 설정
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("CANO", member.getComprehensiveAccountNumber()); // 종합계좌번호
+		params.add("ACNT_PRDT_CD", member.getAccountProductCode()); // 계좌상품코드
+		params.add("AFHR_FLPR_YN", "N"); // 시간외단일가여부 (기본값 N)
+		params.add("OFL_YN", ""); // 오프라인여부
+		params.add("INQR_DVSN", "00"); // 조회구분 (기본값 00)
+		params.add("UNPR_DVSN", "01"); // 단가구분 (기본값 01)
+		params.add("FUND_STTL_ICLD_YN", "N"); // 펀드결제포함여부 (기본값 N)
+		params.add("FNCG_AMT_AUTO_RDPT_YN", "N"); // 융자금액자동상환여부 (기본값 N)
+		params.add("PRCS_DVSN", "00"); // PRCS_DVSN (기본값 00)
+		params.add("COST_ICLD_YN", ""); // 비용포함여부
+		params.add("CTX_AREA_FK100", ""); // 연속조회검색조건100 (최초 조회시 공란)
+		params.add("CTX_AREA_NK100", ""); // 연속조회키100 (최초 조회시 공란)
+
+		return webClientUtil.get(headers, uri, params, GetStockBalanceRealizedProfitAndLossResponse.class);
+	}
+
 	// 헤더 설정
 	private Map<String, String> makeHeaders(Member member, String trId) {
-		log.info("trId: {}", trId);
 		KisAccessToken kisAccessToken = kisAccessTokenService.findKisAccessToken(member.getId()).
 			orElseThrow(() -> ApiException.from(KIS_ACCESS_TOKEN_NOT_FOUND));
 		String accessToken = kisAccessToken.getAccessToken();

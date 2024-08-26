@@ -16,6 +16,7 @@ import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.dto.ErrorResponse;
 import kakaobootcamp.backend.common.util.memberLoader.MemberLoader;
 import kakaobootcamp.backend.domains.member.domain.Member;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceRealizedProfitAndLossResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
 import lombok.RequiredArgsConstructor;
@@ -80,6 +81,33 @@ public class StockController {
 		Member member = memberLoader.getMember();
 
 		GetStockBalanceResponse response = stockService.getStockBalance(member, fk, nk);
+
+		return ResponseEntity.ok(DataResponse.from(response));
+	}
+
+	@GetMapping("/balance/realized-profit-and-loss")
+	@Operation(
+		summary = "실현 손익 조회",
+		description = """
+			실현 손익 조회 api 입니다.
+			실전에서만 사용가능한 api 입니다.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "유효하지 않은 액세스 토큰입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<GetStockBalanceRealizedProfitAndLossResponse>> getBalanceRealizedProfitAndLoss() {
+		Member member = memberLoader.getMember();
+
+		GetStockBalanceRealizedProfitAndLossResponse response = stockService
+			.getBalanceRealizedProfitAndLoss(member);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}

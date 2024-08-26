@@ -14,4 +14,5 @@ public class KisProperties {
 	private String orderTrId;
 	private String sellTrId;
 	private String getBalanceTrId;
+	private String getBalanceRealizedProfitAndLossTrId;
 }
