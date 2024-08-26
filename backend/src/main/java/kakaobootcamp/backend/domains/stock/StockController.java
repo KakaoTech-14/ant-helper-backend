@@ -18,6 +18,7 @@ import kakaobootcamp.backend.common.util.memberLoader.MemberLoader;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceRealizedProfitAndLossResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockPriceResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -69,8 +70,18 @@ public class StockController {
 				description = "성공"
 			),
 			@ApiResponse(
+				responseCode = "400",
+				description = "요청 오류입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
 				responseCode = "401",
 				description = "유효하지 않은 액세스 토큰입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "500",
+				description = "요청 오류입니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
@@ -97,8 +108,18 @@ public class StockController {
 				description = "성공"
 			),
 			@ApiResponse(
+				responseCode = "400",
+				description = "요청 오류입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
 				responseCode = "401",
 				description = "유효하지 않은 액세스 토큰입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "500",
+				description = "요청 오류입니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
@@ -108,6 +129,42 @@ public class StockController {
 
 		GetStockBalanceRealizedProfitAndLossResponse response = stockService
 			.getBalanceRealizedProfitAndLoss(member);
+
+		return ResponseEntity.ok(DataResponse.from(response));
+	}
+
+	@GetMapping("/price")
+	@Operation(
+		summary = "주식 가격 조회",
+		description = """
+			주식 가격 조회 api 입니다.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 오류입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "유효하지 않은 액세스 토큰입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "500",
+				description = "요청 오류입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<GetStockPriceResponse>> getStockPrice(
+		@RequestParam("productNumber") String productNumber) {
+		Member member = memberLoader.getMember();
+
+		GetStockPriceResponse response = stockService.getStockPrice(member, productNumber);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}

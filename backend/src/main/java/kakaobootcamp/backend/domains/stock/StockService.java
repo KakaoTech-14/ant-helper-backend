@@ -18,8 +18,11 @@ import kakaobootcamp.backend.domains.broker.KisAccessToken;
 import kakaobootcamp.backend.domains.broker.service.KisAccessTokenService;
 import kakaobootcamp.backend.domains.member.MemberService;
 import kakaobootcamp.backend.domains.member.domain.Member;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceRealizedProfitAndLossResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockPriceResponse;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.KisBaseResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.KisOrderStockRequest;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockResponse;
@@ -36,6 +39,29 @@ public class StockService {
 	private final MemberService memberService;
 	private final WebClientUtil webClientUtil;
 
+	// 헤더 설정
+	private Map<String, String> makeHeaders(Member member, String trId) {
+		KisAccessToken kisAccessToken = kisAccessTokenService.findKisAccessToken(member.getId()).
+			orElseThrow(() -> ApiException.from(KIS_ACCESS_TOKEN_NOT_FOUND));
+		String accessToken = kisAccessToken.getAccessToken();
+
+		Map<String, String> headers = new HashMap<>();
+		headers.put("authorization", accessToken);
+		headers.put("appkey", memberService.getDecryptedAppKey(member));
+		headers.put("appsecret", memberService.getDecryptedSecretKey(member));
+		headers.put("tr_id", trId);
+
+		return headers;
+	}
+
+	// 응답 확인
+	private void checkResponse(KisBaseResponse response) {
+		if (!response.getRt_cd().equals("0")) {
+			throw CustomException.from(HttpStatus.BAD_REQUEST, response.getMsg1());
+		}
+
+	}
+
 	public void orderStock(OrderStockRequest request, Member member) {
 		String uri = "/uapi/domestic-stock/v1/trading/order-cash";
 
@@ -48,7 +74,7 @@ public class StockService {
 
 		OrderStockResponse response = webClientUtil.post(headers, uri, kisOrderStockRequest, OrderStockResponse.class);
 
-		checkOrderAndSellStockResponse(response);
+		checkResponse(response);
 	}
 
 	public void sellStock(OrderStockRequest request, Member member) {
@@ -63,15 +89,7 @@ public class StockService {
 
 		OrderStockResponse response = webClientUtil.post(headers, uri, kisOrderStockRequest, OrderStockResponse.class);
 
-		checkOrderAndSellStockResponse(response);
-	}
-
-	// 주문 및 매도 응답 확인
-	private void checkOrderAndSellStockResponse(OrderStockResponse response) {
-		if (!response.getRt_cd().equals("0")) {
-			throw CustomException.from(HttpStatus.BAD_REQUEST, response.getMsg1());
-		}
-
+		checkResponse(response);
 	}
 
 	// KisOrderStockRequest를 OrderStockRequest와 Member로 만들어주는 메서드
@@ -108,7 +126,11 @@ public class StockService {
 		params.add("CTX_AREA_FK100", fk); // 연속 조회 검색 조건 100 (최초 조회 시 공란)
 		params.add("CTX_AREA_NK100", nk); // 연속 조회 키 100 (최초 조회 시 공란)
 
-		return webClientUtil.get(headers, uri, params, GetStockBalanceResponse.class);
+		GetStockBalanceResponse response = webClientUtil.get(headers, uri, params, GetStockBalanceResponse.class);
+
+		checkResponse(response);
+
+		return response;
 	}
 
 	// 주식잔고조회_실현손익
@@ -117,6 +139,7 @@ public class StockService {
 
 		// 헤더 설정
 		Map<String, String> headers = makeHeaders(member, kisProperties.getGetBalanceRealizedProfitAndLossTrId());
+		headers.put("custtype", "P"); // 고객타입(P: 개인, B: 기업)
 
 		// 파라미터 설정
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -133,22 +156,34 @@ public class StockService {
 		params.add("CTX_AREA_FK100", ""); // 연속조회검색조건100 (최초 조회시 공란)
 		params.add("CTX_AREA_NK100", ""); // 연속조회키100 (최초 조회시 공란)
 
-		return webClientUtil.get(headers, uri, params, GetStockBalanceRealizedProfitAndLossResponse.class);
+		GetStockBalanceRealizedProfitAndLossResponse response = webClientUtil.get(
+			headers,
+			uri,
+			params,
+			GetStockBalanceRealizedProfitAndLossResponse.class);
+
+		checkResponse(response);
+
+		return response;
 	}
 
-	// 헤더 설정
-	private Map<String, String> makeHeaders(Member member, String trId) {
-		KisAccessToken kisAccessToken = kisAccessTokenService.findKisAccessToken(member.getId()).
-			orElseThrow(() -> ApiException.from(KIS_ACCESS_TOKEN_NOT_FOUND));
-		String accessToken = kisAccessToken.getAccessToken();
+	// 주식 현재가 조회
+	public GetStockPriceResponse getStockPrice(Member member, String productNumber) {
+		String uri = "/uapi/domestic-stock/v1/quotations/inquire-price";
 
-		Map<String, String> headers = new HashMap<>();
-		headers.put("authorization", accessToken);
-		headers.put("appkey", memberService.getDecryptedAppKey(member));
-		headers.put("appsecret", memberService.getDecryptedSecretKey(member));
-		headers.put("tr_id", trId);
+		// 헤더 설정
+		Map<String, String> headers = makeHeaders(member, kisProperties.getGetPriceTrId());
 
-		return headers;
+		// 파라미터 설정
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("FID_COND_MRKT_DIV_CODE", "J"); // 'J': 주식, ETF, ETN / 'W': ELW
+		params.add("FID_INPUT_ISCD", productNumber); // FID 입력 종목코드: 6자리 종목번호 또는 ETN의 경우 'Q'로 시작하는 코드
+
+		GetStockPriceResponse response = webClientUtil.get(headers, uri, params, GetStockPriceResponse.class);
+
+		checkResponse(response);
+
+		return response;
 	}
 }
 
