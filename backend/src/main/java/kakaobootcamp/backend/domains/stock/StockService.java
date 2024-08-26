@@ -14,7 +14,7 @@ import kakaobootcamp.backend.common.properties.KisProperties;
 import kakaobootcamp.backend.common.util.webClient.WebClientUtil;
 import kakaobootcamp.backend.domains.broker.KisAccessToken;
 import kakaobootcamp.backend.domains.broker.service.KisAccessTokenService;
-import kakaobootcamp.backend.domains.member.service.MemberService;
+import kakaobootcamp.backend.domains.member.MemberService;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockResponse;

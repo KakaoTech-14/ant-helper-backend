@@ -1,4 +1,4 @@
-package kakaobootcamp.backend.domains.member.service;
+package kakaobootcamp.backend.domains.member;
 
 import java.util.Objects;
 import java.util.UUID;

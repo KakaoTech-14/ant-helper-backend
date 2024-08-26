@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kakaobootcamp.backend.common.util.webClient.WebClientUtil;
 import kakaobootcamp.backend.domains.broker.KisAccessToken;
-import kakaobootcamp.backend.domains.member.service.MemberService;
+import kakaobootcamp.backend.domains.member.MemberService;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
