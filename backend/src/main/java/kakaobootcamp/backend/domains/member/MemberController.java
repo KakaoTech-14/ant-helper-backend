@@ -177,24 +177,6 @@ public class MemberController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
-	@GetMapping("/stocks/watchlist")
-	public ResponseEntity<?> getWatchList() {
-
-		return ResponseEntity.ok().build();
-	}
-
-	@PostMapping("/stocks/watchlist")
-	public ResponseEntity<?> addWatchList() {
-
-		return ResponseEntity.ok().build();
-	}
-
-	@DeleteMapping("stocks/watchlist/{watchListId}")
-	public ResponseEntity<?> deleteWatchList(@PathVariable("watchListId") Long watchListId) {
-
-		return ResponseEntity.ok().build();
-	}
-
 	@GetMapping("/stocks/purchases")
 	public ResponseEntity<?> getPurchases() {
 
