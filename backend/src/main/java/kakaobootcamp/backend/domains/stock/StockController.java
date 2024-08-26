@@ -24,10 +24,8 @@ public class StockController {
 
 	// 삭제될 API
 	@PostMapping("/buy")
-	public ResponseEntity<DataResponse<Void>> buyStock() {
+	public ResponseEntity<DataResponse<Void>> buyStock(OrderStockRequest request) {
 		Member member = memberLoader.getMember();
-
-		OrderStockRequest request = new OrderStockRequest("64470093", "01", "005930", "01", "1", "0");
 
 		stockService.orderStock(request, member);
 
@@ -35,10 +33,8 @@ public class StockController {
 	}
 
 	@PostMapping("/sell")
-	public ResponseEntity<DataResponse<Void>> sellStock() {
+	public ResponseEntity<DataResponse<Void>> sellStock(OrderStockRequest request) {
 		Member member = memberLoader.getMember();
-
-		OrderStockRequest request = new OrderStockRequest("64470093", "01", "005930", "01", "1", "0");
 
 		stockService.sellStock(request, member);
 

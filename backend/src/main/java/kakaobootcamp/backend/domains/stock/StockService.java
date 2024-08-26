@@ -16,6 +16,7 @@ import kakaobootcamp.backend.domains.broker.KisAccessToken;
 import kakaobootcamp.backend.domains.broker.service.KisAccessTokenService;
 import kakaobootcamp.backend.domains.member.MemberService;
 import kakaobootcamp.backend.domains.member.domain.Member;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.KisOrderStockRequest;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockResponse;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +47,11 @@ public class StockService {
 		headers.put("appsecret", memberService.getDecryptedSecretKey(member));
 		headers.put("tr_id", kisProperties.getOrderTrId());
 
-		OrderStockResponse response = webClientUtil.post(headers, uri, request, OrderStockResponse.class);
+		// 본문 설정
+		KisOrderStockRequest kisOrderStockRequest = makeKisOrderStockRequestFromOrderStockRequestAndMember(request,
+			member);
+
+		OrderStockResponse response = webClientUtil.post(headers, uri, kisOrderStockRequest, OrderStockResponse.class);
 
 		checkOrderAndSellStockResponse(response);
 	}
@@ -66,7 +71,11 @@ public class StockService {
 		headers.put("appsecret", memberService.getDecryptedSecretKey(member));
 		headers.put("tr_id", kisProperties.getSellTrId());
 
-		OrderStockResponse response = webClientUtil.post(headers, uri, request, OrderStockResponse.class);
+		// 본문 설정
+		KisOrderStockRequest kisOrderStockRequest = makeKisOrderStockRequestFromOrderStockRequestAndMember(request,
+			member);
+
+		OrderStockResponse response = webClientUtil.post(headers, uri, kisOrderStockRequest, OrderStockResponse.class);
 
 		checkOrderAndSellStockResponse(response);
 	}
@@ -76,5 +85,17 @@ public class StockService {
 			throw CustomException.from(HttpStatus.BAD_REQUEST, response.getMsg1());
 		}
 
+	}
+
+	private KisOrderStockRequest makeKisOrderStockRequestFromOrderStockRequestAndMember(OrderStockRequest request,
+		Member member) {
+		return KisOrderStockRequest.builder()
+			.CANO(member.getComprehensiveAccountNumber())
+			.ACNT_PRDT_CD(member.getAccountProductCode())
+			.PDNO(request.getPDNO())
+			.ORD_DVSN(request.getORD_DVSN())
+			.ORD_QTY(request.getORD_QTY())
+			.ORD_UNPR(request.getORD_UNPR())
+			.build();
 	}
 }
