@@ -1,6 +1,7 @@
 package kakaobootcamp.backend.domains.member;
 
 import java.util.Objects;
+import java.util.UUID;
 
 import javax.crypto.SecretKey;
 
@@ -14,12 +15,16 @@ import kakaobootcamp.backend.domains.email.EmailService;
 import kakaobootcamp.backend.domains.email.domain.EmailCode;
 import kakaobootcamp.backend.domains.email.repository.EmailCodeRepository;
 import kakaobootcamp.backend.common.util.encoder.EncryptUtil;
+import kakaobootcamp.backend.domains.member.domain.LogoutToken;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.member.domain.MemberRole;
+import kakaobootcamp.backend.domains.member.domain.RefreshToken;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.SendVerificationCodeRequest;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.VerifyEmailCodeRequest;
+import kakaobootcamp.backend.domains.member.repository.LogoutRepository;
 import kakaobootcamp.backend.domains.member.repository.MemberRepository;
+import kakaobootcamp.backend.domains.member.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +39,8 @@ public class MemberService {
 
 	private final EmailService emailService;
 	private final EmailCodeRepository emailCodeRepository;
+	private final RefreshTokenRepository refreshTokenRepository;
+	private final LogoutRepository logoutRepository;
 
 	private static final String EMAIL_TITLE = "ANT HELPER 이메일 인증 코드";
 	private static final String EMAIL_TEXT = "인증 코드는 %d 입니다.";
@@ -124,8 +131,8 @@ public class MemberService {
 
 	// 회원 삭제하기
 	@Transactional
-	public void deleteMember(Long memberId) {
-		memberRepository.deleteById(memberId);
+	public void deleteMember(Member member) {
+		memberRepository.delete(member);
 	}
 
 	// AppKey 조회
@@ -148,5 +155,16 @@ public class MemberService {
 	@Transactional
 	public void updateApprovalKey(Member member, String approvalKey) {
 		member.setApprovalKey(approvalKey);
+	}
+
+	public void logoutMember(Member member, String accessToken) {
+		Long memberId = member.getId();
+
+		// 회원의 refreshToken 삭제
+		RefreshToken refreshToken = refreshTokenRepository.findByMemberId(memberId).orElse(null);
+		refreshTokenRepository.deleteById(refreshToken.getRefreshToken());
+
+		// 같은 accessToken으로 다시 로그인하지 못하도록 블랙리스트에 저장
+		logoutRepository.save(new LogoutToken(UUID.randomUUID().toString(), accessToken));
 	}
 }

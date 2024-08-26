@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.util.memberLoader.MemberLoader;
 import kakaobootcamp.backend.domains.member.domain.Member;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
 import lombok.RequiredArgsConstructor;
 
