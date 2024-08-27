@@ -30,13 +30,13 @@ public class MemberDTO {
 		@NotBlank(message = "secretkey은 비어있을 수 없습니다.")
 		private String secretKey;
 
-			@NotBlank
-			@Size(min = 8, max = 8, message = "comprehensiveAccountNumber은 8자리여야 합니다.")
-			private String comprehensiveAccountNumber;
+		@NotBlank
+		@Size(min = 8, max = 8, message = "comprehensiveAccountNumber은 8자리여야 합니다.")
+		private String comprehensiveAccountNumber;
 
-			@NotBlank
-			@Size(min = 2, max = 2, message = "accountProductCode은 2자리여야 합니다.")
-			private String accountProductCode;
+		@NotBlank
+		@Size(min = 2, max = 2, message = "accountProductCode은 2자리여야 합니다.")
+		private String accountProductCode;
 	}
 
 	@AllArgsConstructor

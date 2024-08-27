@@ -18,7 +18,6 @@ import kakaobootcamp.backend.domains.broker.KisAccessToken;
 import kakaobootcamp.backend.domains.broker.service.KisAccessTokenService;
 import kakaobootcamp.backend.domains.member.MemberService;
 import kakaobootcamp.backend.domains.member.domain.Member;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceRealizedProfitAndLossResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockPriceResponse;
@@ -72,7 +71,7 @@ public class StockService {
 		KisOrderStockRequest kisOrderStockRequest = makeKisOrderStockRequestFromOrderStockRequestAndMember(request,
 			member);
 
-		OrderStockResponse response = webClientUtil.post(headers, uri, kisOrderStockRequest, OrderStockResponse.class);
+		OrderStockResponse response = webClientUtil.postFromKis(headers, uri, kisOrderStockRequest, OrderStockResponse.class);
 
 		checkResponse(response);
 	}
@@ -87,7 +86,7 @@ public class StockService {
 		KisOrderStockRequest kisOrderStockRequest = makeKisOrderStockRequestFromOrderStockRequestAndMember(request,
 			member);
 
-		OrderStockResponse response = webClientUtil.post(headers, uri, kisOrderStockRequest, OrderStockResponse.class);
+		OrderStockResponse response = webClientUtil.postFromKis(headers, uri, kisOrderStockRequest, OrderStockResponse.class);
 
 		checkResponse(response);
 	}
@@ -126,7 +125,7 @@ public class StockService {
 		params.add("CTX_AREA_FK100", fk); // 연속 조회 검색 조건 100 (최초 조회 시 공란)
 		params.add("CTX_AREA_NK100", nk); // 연속 조회 키 100 (최초 조회 시 공란)
 
-		GetStockBalanceResponse response = webClientUtil.get(headers, uri, params, GetStockBalanceResponse.class);
+		GetStockBalanceResponse response = webClientUtil.getFromKis(headers, uri, params, GetStockBalanceResponse.class);
 
 		checkResponse(response);
 
@@ -156,7 +155,7 @@ public class StockService {
 		params.add("CTX_AREA_FK100", ""); // 연속조회검색조건100 (최초 조회시 공란)
 		params.add("CTX_AREA_NK100", ""); // 연속조회키100 (최초 조회시 공란)
 
-		GetStockBalanceRealizedProfitAndLossResponse response = webClientUtil.get(
+		GetStockBalanceRealizedProfitAndLossResponse response = webClientUtil.getFromKis(
 			headers,
 			uri,
 			params,
@@ -179,7 +178,7 @@ public class StockService {
 		params.add("FID_COND_MRKT_DIV_CODE", "J"); // 'J': 주식, ETF, ETN / 'W': ELW
 		params.add("FID_INPUT_ISCD", productNumber); // FID 입력 종목코드: 6자리 종목번호 또는 ETN의 경우 'Q'로 시작하는 코드
 
-		GetStockPriceResponse response = webClientUtil.get(headers, uri, params, GetStockPriceResponse.class);
+		GetStockPriceResponse response = webClientUtil.getFromKis(headers, uri, params, GetStockPriceResponse.class);
 
 		checkResponse(response);
 

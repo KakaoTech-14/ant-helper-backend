@@ -157,6 +157,8 @@ public class MemberService {
 		member.setApprovalKey(approvalKey);
 	}
 
+	//로그아웃
+	@Transactional
 	public void logoutMember(Member member, String accessToken) {
 		Long memberId = member.getId();
 
