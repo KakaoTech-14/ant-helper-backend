@@ -195,21 +195,5 @@ public class MemberController {
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping("/stocks/purchases")
-	public ResponseEntity<?> getPurchases() {
 
-		return ResponseEntity.ok().build();
-	}
-
-	@PostMapping("/stocks/purchases")
-	public ResponseEntity<?> addPurchase() {
-
-		return ResponseEntity.ok().build();
-	}
-
-	@DeleteMapping("stocks/purchases/{purchaseId}")
-	public ResponseEntity<?> deletePurchase(@PathVariable("purchaseId") Long purchaseId) {
-
-		return ResponseEntity.ok().build();
-	}
 }
