@@ -45,13 +45,16 @@ public class Member extends BaseEntity {
 	@Setter
 	private String approvalKey;
 
-	@NotBlank
+	@Column(nullable = false)
 	private String appKeySalt;
 
 	@Column(nullable = false)
 	private String secretKeySalt;
 
+	@Column(nullable = false)
 	private String comprehensiveAccountNumber;
+
+	@Column(nullable = false)
 	private String accountProductCode;
 
 	@Builder
