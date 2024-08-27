@@ -5,6 +5,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import kakaobootcamp.backend.common.exception.CustomException;
@@ -18,10 +19,13 @@ public class WebClientUtil {
 
 	private final WebClient webClient;
 
-	public <T> T get(Map<String, String> headersMap, String url, Class<T> responseType) {
+	public <T> T get(Map<String, String> headersMap, String url, MultiValueMap<String, String> params, Class<T> responseType) {
 		return webClient
 			.get()
-			.uri(url)
+			.uri(uriBuilder -> uriBuilder
+				.path(url)
+				.queryParams(params)
+				.build())
 			.headers(headers -> headersMap.forEach(headers::set))
 			.retrieve()
 			.onStatus(
