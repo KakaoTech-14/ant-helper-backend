@@ -7,8 +7,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,30 +34,46 @@ public class Member extends BaseEntity {
 	@Column(nullable = false)
 	private MemberRole memberRole;
 
-	@Column(nullable = false)
+	@Setter
+	@Column(nullable = false, length = 1000)
 	private String appKey;
 
-	@Column(nullable = false)
+	@Setter
+	@Column(nullable = false, length = 1000)
 	private String secretKey;
 
 	@Setter
 	private String approvalKey;
 
-	private Member(String email, String pw, MemberRole memberRole, String appKey, String secretKey) {
+	@NotBlank
+	private String appKeySalt;
+
+	@Column(nullable = false)
+	private String secretKeySalt;
+
+	private String comprehensiveAccountNumber;
+	private String accountProductCode;
+
+	@Builder
+	private Member(
+		String email,
+		String pw,
+		MemberRole memberRole,
+		String appKey,
+		String secretKey,
+		String appKeySalt,
+		String secretKeySalt,
+		String comprehensiveAccountNumber,
+		String accountProductCode)
+	{
 		this.email = email;
 		this.pw = pw;
 		this.memberRole = memberRole;
 		this.appKey = appKey;
 		this.secretKey = secretKey;
-	}
-
-	public static Member create(CreateMemberRequest request, MemberRole memberRole) {
-		return new Member(
-			request.getEmail(),
-			request.getPw(),
-			memberRole,
-			request.getAppKey(),
-			request.getSecretKey()
-		);
+		this.appKeySalt = appKeySalt;
+		this.secretKeySalt = secretKeySalt;
+		this.comprehensiveAccountNumber = comprehensiveAccountNumber;
+		this.accountProductCode = accountProductCode;
 	}
 }

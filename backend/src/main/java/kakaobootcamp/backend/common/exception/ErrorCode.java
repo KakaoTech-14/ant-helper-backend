@@ -10,6 +10,7 @@ public enum ErrorCode {
 	//400
 	BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
 	INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "요청 파라미터가 잘 못 되었습니다."),
+	INVALID_KEY(HttpStatus.BAD_REQUEST, "유효하지 않은 키입니다."),
 
 	//401
 	UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증이 필요합니다."),
@@ -24,6 +25,8 @@ public enum ErrorCode {
 	MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 회원을 찾을 수 없습니다."),
 	RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 리소스를 찾을 수 없습니다."),
 	EMAIL_CODE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 이메일 코드를 찾을 수 없습니다."),
+	APP_KEY_OR_SECRET_KEY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 앱키 또는 시크릿키를 찾을 수 없습니다."),
+	KIS_ACCESS_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "한국 투자 증권 api의 액세스 토큰을 찾을 수 없습니다."),
 
 	//409
 	EMAIL_DUPLICATE(HttpStatus.CONFLICT, "이미 가입된 이메일입니다."),

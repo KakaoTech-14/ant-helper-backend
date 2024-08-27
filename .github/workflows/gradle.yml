@@ -61,6 +61,13 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
 
+    - name: Install MySQL client
+      run: sudo apt-get install -y mysql-client
+
+    - name: Create database on RDS
+      run: |
+        mysql -h "${{ secrets.RDS_HOST }}" -u "${{ secrets.RDS_USERNAME }}" -p"${{ secrets.RDS_PASSWORD }}" -e "CREATE DATABASE IF NOT EXISTS ant_helper"
+
     - name: Upload and Deploy JAR to EC2
       env:
         EC2_HOST: ${{ secrets.EC2_HOST }}
@@ -87,4 +94,7 @@ jobs:
         EOF
   
         rm key.pem
-      
+        
+        # 서버 연결 확인
+        sleep 50  # 애플리케이션이 완전히 시작될 때까지 대기
+        curl -f http://$EC2_HOST:8080 || echo "Server connection failed"

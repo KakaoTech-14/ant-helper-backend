@@ -21,7 +21,7 @@ public class ErrorResponse extends BaseResponse {
 		this.reasons = null;
 	}
 
-	public ErrorResponse(Boolean isSuccess, HttpStatus status, String message, List<String> reasons) {
+	private ErrorResponse(Boolean isSuccess, HttpStatus status, String message, List<String> reasons) {
 		super(isSuccess, status);
 		this.message = message;
 		this.reasons = reasons;
@@ -41,5 +41,10 @@ public class ErrorResponse extends BaseResponse {
 		String message = errorCode.getMessage();
 
 		return new ErrorResponse(isSuccess, status, message);
+	}
+
+	public static ErrorResponse of(HttpStatus httpStatus, String message) {
+		Boolean isSuccess = false;
+		return new ErrorResponse(isSuccess, httpStatus, message);
 	}
 }
