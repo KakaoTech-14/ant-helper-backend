@@ -80,7 +80,7 @@ public class OrderController {
 		return ResponseEntity.ok(DataResponse.from(responses));
 	}
 
-	@GetMapping
+	@DeleteMapping("/all")
 	@Operation(
 		summary = "주문 전체 삭제하기 하기",
 		description = "회원이 작성한 주문 목록을 삭제한다.",
@@ -96,7 +96,6 @@ public class OrderController {
 			)
 		}
 	)
-	@DeleteMapping("/all")
 	public ResponseEntity<DataResponse<Void>> deleteOrders() {
 		Member member = memberLoader.getMember();
 
