@@ -3,6 +3,7 @@ package kakaobootcamp.backend.domains.member.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import kakaobootcamp.backend.domains.member.domain.AutoTradeState;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -64,5 +65,13 @@ public class MemberDTO {
 		private String email;
 
 		private Integer code;
+	}
+
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class UpdateAutoTradeStateRequest {
+
+		private AutoTradeState autoTradeState;
 	}
 }

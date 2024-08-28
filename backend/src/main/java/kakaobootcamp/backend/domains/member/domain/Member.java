@@ -60,6 +60,10 @@ public class Member extends BaseEntity {
 	@Column(nullable = false)
 	private String accountProductCode;
 
+	@Enumerated(EnumType.STRING)
+	@Setter
+	private AutoTradeState autoTradeState;
+
 	@OneToMany(mappedBy = "member")
 	private List<OrderItem> orderItems;
 
@@ -72,6 +76,7 @@ public class Member extends BaseEntity {
 		String secretKey,
 		String appKeySalt,
 		String secretKeySalt,
+		AutoTradeState autoTradeState,
 		String comprehensiveAccountNumber,
 		String accountProductCode)
 	{
@@ -82,6 +87,7 @@ public class Member extends BaseEntity {
 		this.secretKey = secretKey;
 		this.appKeySalt = appKeySalt;
 		this.secretKeySalt = secretKeySalt;
+		this.autoTradeState = autoTradeState;
 		this.comprehensiveAccountNumber = comprehensiveAccountNumber;
 		this.accountProductCode = accountProductCode;
 	}
