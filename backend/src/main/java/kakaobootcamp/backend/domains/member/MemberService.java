@@ -1,5 +1,6 @@
 package kakaobootcamp.backend.domains.member;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -15,6 +16,7 @@ import kakaobootcamp.backend.domains.email.EmailService;
 import kakaobootcamp.backend.domains.email.domain.EmailCode;
 import kakaobootcamp.backend.domains.email.repository.EmailCodeRepository;
 import kakaobootcamp.backend.common.util.encoder.EncryptUtil;
+import kakaobootcamp.backend.domains.member.domain.AutoTradeState;
 import kakaobootcamp.backend.domains.member.domain.LogoutToken;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.member.domain.MemberRole;
@@ -75,6 +77,7 @@ public class MemberService {
 			.secretKey(encryptedSecretKey)
 			.appKeySalt(EncryptUtil.keyToString(appKeySalt))
 			.secretKeySalt(EncryptUtil.keyToString(secretKeySalt))
+			.autoTradeState(AutoTradeState.OFF)
 			.comprehensiveAccountNumber(request.getComprehensiveAccountNumber())
 			.accountProductCode(request.getAccountProductCode())
 			.build();
@@ -157,6 +160,8 @@ public class MemberService {
 		member.setApprovalKey(approvalKey);
 	}
 
+	//로그아웃
+	@Transactional
 	public void logoutMember(Member member, String accessToken) {
 		Long memberId = member.getId();
 
@@ -166,5 +171,21 @@ public class MemberService {
 
 		// 같은 accessToken으로 다시 로그인하지 못하도록 블랙리스트에 저장
 		logoutRepository.save(new LogoutToken(UUID.randomUUID().toString(), accessToken));
+	}
+
+	// 자동 거래 상태 변경
+	@Transactional
+	public void updateAutoTradeState(Member member, AutoTradeState autoTradeState) {
+		member.setAutoTradeState(autoTradeState);
+	}
+
+	// 자동 거래를 ON한 모든 멤버 조회
+	public List<Member> findAllAutoTradeOnMember() {
+		return memberRepository.findAllByAutoTradeState(AutoTradeState.ON);
+	}
+
+	// 자동 거래 상태 확인
+	public boolean isAutoTradeStateOn(Member member) {
+		return member.getAutoTradeState() == AutoTradeState.ON;
 	}
 }

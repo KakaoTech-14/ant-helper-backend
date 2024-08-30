@@ -27,16 +27,17 @@ public enum ErrorCode {
 	EMAIL_CODE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 이메일 코드를 찾을 수 없습니다."),
 	APP_KEY_OR_SECRET_KEY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 앱키 또는 시크릿키를 찾을 수 없습니다."),
 	KIS_ACCESS_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "한국 투자 증권 api의 액세스 토큰을 찾을 수 없습니다."),
+	TRANSACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 거래를 찾을 수 없습니다."),
 
 	//409
 	EMAIL_DUPLICATE(HttpStatus.CONFLICT, "이미 가입된 이메일입니다."),
 
 	//500
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에서 에러가 발생하였습니다."),
+	AUTO_TRADE_STATE_OFF(HttpStatus.INTERNAL_SERVER_ERROR, "자동 거래 상태가 꺼져 있습니다."),
 
 	//502
-	EMAIL_BAD_GATEWAY(HttpStatus.BAD_GATEWAY, "이메일 전송에 실패하였습니다.")
-	;
+	EMAIL_BAD_GATEWAY(HttpStatus.BAD_GATEWAY, "이메일 전송에 실패하였습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;

@@ -42,7 +42,7 @@ public class BrokerService {
 
 		GetAccessKeyRequest request = new GetAccessKeyRequest(appKey, secretKey, grantType);
 
-		return webClientUtil.post(new HashMap<>(), url, request, GetAccessKeyResponse.class);
+		return webClientUtil.postFromKis(new HashMap<>(), url, request, GetAccessKeyResponse.class);
 	}
 
 	// 한국 투자 증권에서 Access Token을 받아와서 저장하는 메서드
@@ -74,6 +74,6 @@ public class BrokerService {
 
 		GetAccessTokenRequest request = new GetAccessTokenRequest(appKey, secretKey, grantType);
 
-		return webClientUtil.post(new HashMap<>(), url, request, GetAccessTokenResponse.class);
+		return webClientUtil.postFromKis(new HashMap<>(), url, request, GetAccessTokenResponse.class);
 	}
 }
