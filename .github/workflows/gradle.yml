@@ -25,12 +25,12 @@ jobs:
       run: chmod +x gradlew
       working-directory: backend
 
-    - name: Create application-db.properties
-      run: echo "${{ secrets.DB_PROPERTIES }}" > backend/src/main/resources/application-db.properties
+    - name: Create application-dev.properties
+      run: echo "${{ secrets.APPLICATION_DEV_PROPERTIES }}" > backend/src/main/resources/application-dev.properties
 
-    - name: Create application-security.properties
-      run: echo "${{ secrets.SECURITY_PROPERTIES }}" > backend/src/main/resources/application-security.properties
-
+    - name: Create application-common.properties
+      run: echo "${{ secrets.APPLICATION_COMMON_PROPERTIES }}" > backend/src/main/resources/application-common.properties
+      
     - name: Build with Gradle Wrapper
       run: ./gradlew clean build -x test
       working-directory: backend
