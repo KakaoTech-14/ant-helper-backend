@@ -1,4 +1,4 @@
-package kakaobootcamp.backend.domains.order;
+package kakaobootcamp.backend.domains.transaction.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,7 +7,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import kakaobootcamp.backend.domains.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,10 +15,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OrderItem {
+public class TransactionItem {
 
 	@Id
-	@Column(name = "order_item_id")
+	@Column(name = "transaction_item_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
@@ -30,18 +29,18 @@ public class OrderItem {
 	private String name;
 
 	@ManyToOne
-	@JoinColumn(name = "member_id")
-	private Member member;
+	@JoinColumn(name = "transaction_id")
+	private Transaction transaction;
 
 	@Builder
-	private OrderItem(String productNumber, String name, Member member) {
+	private TransactionItem(String productNumber, String name, Transaction transaction) {
 		this.productNumber = productNumber;
 		this.name = name;
-		setMember(member);
+		setTransaction(transaction);
 	}
 
-	private void setMember(Member member) {
-		this.member = member;
-		member.getOrderItems().add(this);
+	public void setTransaction(Transaction transaction) {
+		this.transaction = transaction;
+		transaction.getTransactionItems().add(this);
 	}
 }

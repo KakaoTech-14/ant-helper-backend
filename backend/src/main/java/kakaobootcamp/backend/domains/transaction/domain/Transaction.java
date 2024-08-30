@@ -3,6 +3,7 @@ package kakaobootcamp.backend.domains.transaction.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,10 +28,11 @@ public class Transaction {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(nullable = false)
 	private int amount;
 
-	@OneToMany(mappedBy = "transaction")
-	private List<TransactionItem> transactionItems= new ArrayList<>();
+	@OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL)
+	private List<TransactionItem> transactionItems = new ArrayList<>();
 
 	@ManyToOne
 	@JoinColumn(name = "member_id")
@@ -39,7 +41,7 @@ public class Transaction {
 	@Builder
 	private Transaction(int amount, Member member) {
 		this.amount = amount;
-		setMember(member);
+		this.member = member;
 	}
 
 	private void setMember(Member member) {
