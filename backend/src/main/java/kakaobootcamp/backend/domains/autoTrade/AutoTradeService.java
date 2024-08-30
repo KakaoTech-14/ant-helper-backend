@@ -11,7 +11,6 @@ import kakaobootcamp.backend.domains.aiServer.AiServerService;
 import kakaobootcamp.backend.domains.aiServer.dto.AiServerDTO.GetOrderListRequest;
 import kakaobootcamp.backend.domains.aiServer.dto.AiServerDTO.GetOrderListResponse;
 import kakaobootcamp.backend.domains.aiServer.dto.AiServerDTO.GetOrderListResponse.Element;
-import kakaobootcamp.backend.domains.autoTrade.dto.AutoTradeDTO.QuantitiesDTO;
 import kakaobootcamp.backend.domains.member.MemberService;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.stock.StockService;
@@ -123,10 +122,8 @@ public class AutoTradeService {
 
 		if (isBuy) {
 			stockService.orderStock(member, request);
-			System.out.println("Buying " + quantity + " of product " + productNumber);
 		} else {
 			stockService.sellStock(member, request);
-			System.out.println("Selling " + quantity + " of product " + productNumber);
 		}
 	}
 }
