@@ -17,6 +17,6 @@ public class SchedulingService {
 	@Async
 	@Scheduled(cron = "0 0 11 * * MON-FRI")
 	public void doAutoTrade() {
-		autoTradeService.doAutoTradeForAutoTradeMembers();
+		autoTradeService.executeAutoTradeForAllMembers();
 	}
 }

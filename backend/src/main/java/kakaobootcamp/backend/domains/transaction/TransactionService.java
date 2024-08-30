@@ -1,5 +1,7 @@
 package kakaobootcamp.backend.domains.transaction;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -8,7 +10,7 @@ import kakaobootcamp.backend.common.exception.ErrorCode;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.transaction.domain.Transaction;
 import kakaobootcamp.backend.domains.transaction.domain.TransactionItem;
-import kakaobootcamp.backend.domains.transaction.dto.TransactionDTO.GetTransactionDTO;
+import kakaobootcamp.backend.domains.transaction.dto.TransactionDTO.GetTransactionResponse;
 import kakaobootcamp.backend.domains.transaction.dto.TransactionDTO.SaveTransactionRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +21,7 @@ public class TransactionService {
 
 	private final TransactionRepository transactionRepository;
 
+	// 거래 저장
 	@Transactional
 	public void saveTransaction(Member member, SaveTransactionRequest saveTransactionRequest) {
 
@@ -38,16 +41,22 @@ public class TransactionService {
 		transactionRepository.save(transaction);
 	}
 
+	// 거래 삭제
 	@Transactional
 	public void deleteTransaction(Member member) {
 		transactionRepository.findByMember(member)
 			.ifPresent(transactionRepository::delete);
 	}
 
-	public GetTransactionDTO getTransaction(Member member) {
+	// 회원 거래 조회
+	public GetTransactionResponse getTransaction(Member member) {
 		Transaction transaction = transactionRepository.findByMember(member)
 			.orElseThrow(() -> ApiException.from(ErrorCode.TRANSACTION_NOT_FOUND));
 
-		return GetTransactionDTO.from(transaction);
+		return GetTransactionResponse.from(transaction);
+	}
+
+	public List<Transaction> getAllTransactions() {
+		return transactionRepository.findAll();
 	}
 }

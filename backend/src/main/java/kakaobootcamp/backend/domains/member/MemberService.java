@@ -185,9 +185,7 @@ public class MemberService {
 	}
 
 	// 자동 거래 상태 확인
-	public void checkAutoTradeState(Member member) {
-		if (member.getAutoTradeState() == AutoTradeState.OFF) {
-			throw ApiException.from(ErrorCode.AUTO_TRADE_STATE_OFF);
-		}
+	public boolean isAutoTradeStateOn(Member member) {
+		return member.getAutoTradeState() == AutoTradeState.ON;
 	}
 }

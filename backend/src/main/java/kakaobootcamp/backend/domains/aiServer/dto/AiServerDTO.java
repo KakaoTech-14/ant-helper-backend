@@ -2,6 +2,8 @@ package kakaobootcamp.backend.domains.aiServer.dto;
 
 import java.util.List;
 
+import kakaobootcamp.backend.domains.transaction.domain.Transaction;
+import kakaobootcamp.backend.domains.transaction.domain.TransactionItem;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +16,17 @@ public class AiServerDTO {
 	@AllArgsConstructor
 	public static class GetOrderListRequest {
 
-		List<Element> stocks;
+		private int amount;
+
+		private List<Element> stocks;
+
+		public static GetOrderListRequest from(Transaction transaction, int amount) {
+			return new GetOrderListRequest(
+				amount,
+				transaction.getTransactionItems().stream()
+					.map(Element::from)
+					.toList());
+		}
 
 		@Getter
 		@NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -22,6 +34,12 @@ public class AiServerDTO {
 		public static class Element {
 			private String productNumber;
 			private String name;
+
+			public static Element from(TransactionItem transactionItem) {
+				return new Element(
+					transactionItem.getProductNumber(),
+					transactionItem.getName());
+			}
 		}
 	}
 
@@ -29,7 +47,7 @@ public class AiServerDTO {
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class GetOrderListResponse {
 
-		private List<Element> elements;
+		private List<Element> stocks;
 
 		@Getter
 		@NoArgsConstructor(access = AccessLevel.PRIVATE)
