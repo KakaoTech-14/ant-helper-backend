@@ -1,6 +1,4 @@
-package kakaobootcamp.backend.domains.order;
-
-import java.util.List;
+package kakaobootcamp.backend.domains.transaction;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,21 +13,22 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.dto.ErrorResponse;
 import kakaobootcamp.backend.common.util.memberLoader.MemberLoader;
 import kakaobootcamp.backend.domains.member.domain.Member;
-import kakaobootcamp.backend.domains.order.dto.OrderDTO.GetOrderResponse;
-import kakaobootcamp.backend.domains.order.dto.OrderDTO.saveOrdersRequest;
+import kakaobootcamp.backend.domains.transaction.dto.TransactionDTO.GetTransactionResponse;
+import kakaobootcamp.backend.domains.transaction.dto.TransactionDTO.SaveTransactionRequest;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "ORDER API", description = "주문에 대한 API입니다.")
+@Tag(name = "TRANSACTION API", description = "거래에 대한 API입니다.")
 @RestController
-@RequestMapping("/api/orders")
+@RequestMapping("/api/transactions")
 @RequiredArgsConstructor
-public class OrderController {
+public class TransactionController {
 
-	private final OrderService orderService;
+	private final TransactionService transactionService;
 	private final MemberLoader memberLoader;
 
 	@PostMapping
@@ -48,10 +47,10 @@ public class OrderController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> saveOrders(@RequestBody saveOrdersRequest request) {
+	public ResponseEntity<DataResponse<Void>> saveTransaction(@RequestBody @Valid SaveTransactionRequest request) {
 		Member member = memberLoader.getMember();
 
-		orderService.saveOrders(member, request);
+		transactionService.saveTransaction(member, request);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
@@ -72,12 +71,12 @@ public class OrderController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<List<GetOrderResponse>>> getOrders() {
+	public ResponseEntity<DataResponse<GetTransactionResponse>> getTransaction() {
 		Member member = memberLoader.getMember();
 
-		List<GetOrderResponse> responses = orderService.getOrders(member);
+		GetTransactionResponse response = transactionService.getTransaction(member);
 
-		return ResponseEntity.ok(DataResponse.from(responses));
+		return ResponseEntity.ok(DataResponse.from(response));
 	}
 
 	@DeleteMapping("/all")
@@ -96,10 +95,10 @@ public class OrderController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> deleteOrders() {
+	public ResponseEntity<DataResponse<Void>> deleteTransaction() {
 		Member member = memberLoader.getMember();
 
-		orderService.deleteOrders(member);
+		transactionService.deleteTransaction(member);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
