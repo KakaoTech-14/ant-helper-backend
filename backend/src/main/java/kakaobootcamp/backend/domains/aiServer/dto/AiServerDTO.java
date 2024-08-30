@@ -14,12 +14,12 @@ public class AiServerDTO {
 	@AllArgsConstructor
 	public static class GetOrderListRequest {
 
-		List<StockOrderDTO> stocks;
+		List<Element> stocks;
 
 		@Getter
 		@NoArgsConstructor(access = AccessLevel.PRIVATE)
 		@AllArgsConstructor
-		public static class StockOrderDTO {
+		public static class Element {
 			private String productNumber;
 			private String name;
 		}
@@ -29,15 +29,15 @@ public class AiServerDTO {
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class GetOrderListResponse {
 
-		private List<Output> outputs;
+		private List<Element> elements;
 
 		@Getter
 		@NoArgsConstructor(access = AccessLevel.PRIVATE)
 		@AllArgsConstructor
-		public static class Output {
+		public static class Element {
 			private String productNumber;
 			private String name;
-			private int percentage;
+			private int quantity;
 		}
 	}
 }
