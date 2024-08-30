@@ -36,7 +36,7 @@ public class StockController {
 	public ResponseEntity<DataResponse<Void>> buyStock(OrderStockRequest request) {
 		Member member = memberLoader.getMember();
 
-		stockService.orderStock(request, member);
+		stockService.orderStock(member, request);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
@@ -45,7 +45,7 @@ public class StockController {
 	public ResponseEntity<DataResponse<Void>> sellStock(OrderStockRequest request) {
 		Member member = memberLoader.getMember();
 
-		stockService.sellStock(request, member);
+		stockService.sellStock(member, request);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
