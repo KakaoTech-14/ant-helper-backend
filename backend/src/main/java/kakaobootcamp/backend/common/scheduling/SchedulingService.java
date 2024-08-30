@@ -1,20 +1,22 @@
 package kakaobootcamp.backend.common.scheduling;
 
-import java.time.LocalDateTime;
-
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
+import kakaobootcamp.backend.domains.autoTrade.AutoTradeService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class SchedulingService {
 
-	@Transactional(readOnly = false)
+	private final AutoTradeService autoTradeService;
+
+	@Transactional
 	@Async
 	@Scheduled(cron = "0 0 11 * * MON-FRI")
-	public void autoOrder() {
+	public void doAutoTrade() {
+		autoTradeService.doAutoTradeForAutoTradeMembers();
 	}
 }
