@@ -16,6 +16,8 @@ public class StockDTO {
 	@Getter
 	@Setter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	@Builder
+	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class OrderStockRequest {
 
 		@JsonProperty("PDNO")

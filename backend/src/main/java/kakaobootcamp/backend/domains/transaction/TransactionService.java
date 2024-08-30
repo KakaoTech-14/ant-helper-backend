@@ -1,7 +1,5 @@
 package kakaobootcamp.backend.domains.transaction;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,7 +8,7 @@ import kakaobootcamp.backend.common.exception.ErrorCode;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.transaction.domain.Transaction;
 import kakaobootcamp.backend.domains.transaction.domain.TransactionItem;
-import kakaobootcamp.backend.domains.transaction.dto.TransactionDTO.GetTransactionResponse;
+import kakaobootcamp.backend.domains.transaction.dto.TransactionDTO.GetTransactionDTO;
 import kakaobootcamp.backend.domains.transaction.dto.TransactionDTO.SaveTransactionRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -46,10 +44,10 @@ public class TransactionService {
 			.ifPresent(transactionRepository::delete);
 	}
 
-	public GetTransactionResponse getTransaction(Member member) {
+	public GetTransactionDTO getTransaction(Member member) {
 		Transaction transaction = transactionRepository.findByMember(member)
 			.orElseThrow(() -> ApiException.from(ErrorCode.TRANSACTION_NOT_FOUND));
 
-		return GetTransactionResponse.from(transaction);
+		return GetTransactionDTO.from(transaction);
 	}
 }

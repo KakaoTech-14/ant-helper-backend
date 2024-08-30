@@ -38,15 +38,15 @@ public class TransactionDTO {
 
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class GetTransactionResponse {
+	public static class GetTransactionDTO {
 
 		private int amount;
 
 		@Size(min = 1, max = 10, message = "주문은 최소 {min}개, 최대 {max}개까지 가능합니다.")
 		private List<Element> transactionItems;
 
-		public static GetTransactionResponse from(Transaction transaction) {
-			return new GetTransactionResponse(
+		public static GetTransactionDTO from(Transaction transaction) {
+			return new GetTransactionDTO(
 				transaction.getAmount(),
 				transaction.getTransactionItems().stream()
 					.map(Element::from)

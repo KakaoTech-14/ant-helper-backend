@@ -1,5 +1,6 @@
 package kakaobootcamp.backend.domains.member;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -176,5 +177,17 @@ public class MemberService {
 	@Transactional
 	public void updateAutoTradeState(Member member, AutoTradeState autoTradeState) {
 		member.setAutoTradeState(autoTradeState);
+	}
+
+	// 자동 거래를 ON한 모든 멤버 조회
+	public List<Member> findAllAutoTradeOnMember() {
+		return memberRepository.findAllByAutoTradeState(AutoTradeState.ON);
+	}
+
+	// 자동 거래 상태 확인
+	public void checkAutoTradeState(Member member) {
+		if (member.getAutoTradeState() == AutoTradeState.OFF) {
+			throw ApiException.from(ErrorCode.AUTO_TRADE_STATE_OFF);
+		}
 	}
 }
