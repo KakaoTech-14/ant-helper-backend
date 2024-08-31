@@ -35,6 +35,14 @@ jobs:
       run: ./gradlew clean build -x test
       working-directory: backend
 
+    - name: Verify RDS Configuration
+      run: |
+        # 간단한 데이터베이스 연결 테스트
+        ./gradlew verifyRdsConnection -Dspring.datasource.url=${{ secrets.RDS_URL }} \
+        -Dspring.datasource.username=${{ secrets.RDS_USERNAME }} \
+        -Dspring.datasource.password=${{ secrets.RDS_PASSWORD }}
+      working-directory: backend
+
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
