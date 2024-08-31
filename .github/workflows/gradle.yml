@@ -35,6 +35,11 @@ jobs:
       run: ./gradlew clean build -x test
       working-directory: backend
 
+    - name: Verify RDS Configuration
+      run: |
+        # application-dev.properties 파일이 제대로 생성되었는지 확인
+        cat backend/src/main/resources/application-dev.properties
+
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
@@ -60,13 +65,6 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
-
-    - name: Install MySQL client
-      run: sudo apt-get install -y mysql-client
-
-    - name: Create database on RDS
-      run: |
-        mysql -h "${{ secrets.RDS_HOST }}" -u "${{ secrets.RDS_USERNAME }}" -p"${{ secrets.RDS_PASSWORD }}" -e "CREATE DATABASE IF NOT EXISTS ant_helper"
 
     - name: Upload and Deploy JAR to EC2
       env:
