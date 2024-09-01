@@ -1,4 +1,4 @@
-package kakaobootcamp.backend.domains.watchList;
+package kakaobootcamp.backend.domains.watchList.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,7 +22,28 @@ public class WatchList {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(nullable = false)
+	private String productNumber;
+
+	@Column(nullable = false)
+	private String name;
+
+	@Column(nullable = false)
+	private String industry;
+
 	@ManyToOne
-	@JoinColumn(name = "watch_list_id")
+	@JoinColumn(name = "member_id")
 	private Member member;
+
+	private WatchList(String productNumber, String name, String industry, Member member) {
+		this.productNumber = productNumber;
+		this.name = name;
+		this.industry = industry;
+		setMember(member);
+	}
+
+	private void setMember(Member member) {
+		this.member = member;
+		member.getWatchLists().add(this);
+	}
 }
