@@ -1,11 +1,12 @@
 package kakaobootcamp.backend.domains.autoTrade;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kakaobootcamp.backend.common.dto.DataResponse;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "AUTO TRADE API", description = "자동거래에 대한 API입니다.")
@@ -14,15 +15,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AutoTradeController {
 
-	@PostMapping("/start")
-	public ResponseEntity<?> startAutoTrade() {
+	private final AutoTradeService autoTradeService;
 
-		return ResponseEntity.ok().build();
-	}
+	@GetMapping
+	public ResponseEntity<DataResponse<Void>> get() {
 
-	@PostMapping("/end")
-	public ResponseEntity<?> endAutoTrade() {
+		autoTradeService.executeAutoTradeForAllMembers();
 
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 }
