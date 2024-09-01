@@ -1,13 +1,19 @@
 package kakaobootcamp.backend.domains.member.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.OneToMany;
+import kakaobootcamp.backend.domains.transaction.domain.Transaction;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -45,14 +51,24 @@ public class Member extends BaseEntity {
 	@Setter
 	private String approvalKey;
 
-	@NotBlank
+	@Column(nullable = false)
 	private String appKeySalt;
 
 	@Column(nullable = false)
 	private String secretKeySalt;
 
+	@Column(nullable = false)
 	private String comprehensiveAccountNumber;
+
+	@Column(nullable = false)
 	private String accountProductCode;
+
+	@Enumerated(EnumType.STRING)
+	@Setter
+	private AutoTradeState autoTradeState;
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Transaction> transactions = new ArrayList<>();
 
 	@Builder
 	private Member(
@@ -63,9 +79,9 @@ public class Member extends BaseEntity {
 		String secretKey,
 		String appKeySalt,
 		String secretKeySalt,
+		AutoTradeState autoTradeState,
 		String comprehensiveAccountNumber,
-		String accountProductCode)
-	{
+		String accountProductCode) {
 		this.email = email;
 		this.pw = pw;
 		this.memberRole = memberRole;
@@ -73,6 +89,7 @@ public class Member extends BaseEntity {
 		this.secretKey = secretKey;
 		this.appKeySalt = appKeySalt;
 		this.secretKeySalt = secretKeySalt;
+		this.autoTradeState = autoTradeState;
 		this.comprehensiveAccountNumber = comprehensiveAccountNumber;
 		this.accountProductCode = accountProductCode;
 	}

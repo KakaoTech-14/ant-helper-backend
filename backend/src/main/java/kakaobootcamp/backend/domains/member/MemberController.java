@@ -4,6 +4,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,10 +22,13 @@ import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.dto.ErrorResponse;
 import kakaobootcamp.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import kakaobootcamp.backend.common.util.memberLoader.MemberLoader;
+import kakaobootcamp.backend.domains.member.domain.AutoTradeState;
 import kakaobootcamp.backend.domains.member.domain.Member;
+import kakaobootcamp.backend.domains.member.dto.MemberDTO;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.LoginRequest;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.SendVerificationCodeRequest;
+import kakaobootcamp.backend.domains.member.dto.MemberDTO.UpdateAutoTradeStateRequest;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.VerifyEmailCodeRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -177,20 +181,45 @@ public class MemberController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
-	@GetMapping("/stocks/purchases")
-	public ResponseEntity<?> getPurchases() {
+	@GetMapping("/stocks/watchlist")
+	public ResponseEntity<?> getWatchList() {
 
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/stocks/purchases")
-	public ResponseEntity<?> addPurchase() {
+	@PostMapping("/stocks/watchlist")
+	public ResponseEntity<?> addWatchList() {
 
 		return ResponseEntity.ok().build();
 	}
 
-	@DeleteMapping("stocks/purchases/{purchaseId}")
-	public ResponseEntity<?> deletePurchase(@PathVariable("purchaseId") Long purchaseId) {
+	@DeleteMapping("stocks/watchlist/{watchListId}")
+	public ResponseEntity<?> deleteWatchList(@PathVariable("watchListId") Long watchListId) {
+
+		return ResponseEntity.ok().build();
+	}
+
+	@PatchMapping("/auto-trade")
+	@Operation(
+		summary = "자동거래 상태 변경",
+		description = "자동거래 상태 변경",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "유효하지 않은 액세스 토큰입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<?> updateAutoTradeState(@RequestBody UpdateAutoTradeStateRequest request) {
+		Member member = memberLoader.getMember();
+		AutoTradeState autoTradeState = request.getAutoTradeState();
+
+		memberService.updateAutoTradeState(member, autoTradeState);
 
 		return ResponseEntity.ok().build();
 	}
