@@ -11,6 +11,7 @@ import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.transaction.domain.Transaction;
 import kakaobootcamp.backend.domains.transaction.domain.TransactionItem;
 import kakaobootcamp.backend.domains.transaction.dto.TransactionDTO.GetTransactionResponse;
+import kakaobootcamp.backend.domains.transaction.dto.TransactionDTO.GetTransactionResponse.Element;
 import kakaobootcamp.backend.domains.transaction.dto.TransactionDTO.SaveTransactionRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +25,8 @@ public class TransactionService {
 	// 거래 저장
 	@Transactional
 	public void saveTransaction(Member member, SaveTransactionRequest saveTransactionRequest) {
+		// 거래 존재 확인
+		checkTransactionExistence(member);
 
 		Transaction transaction = Transaction.builder()
 			.amount(saveTransactionRequest.getAmount())
@@ -35,10 +38,20 @@ public class TransactionService {
 			.forEach(element -> TransactionItem.builder()
 				.productNumber(element.getProductNumber())
 				.name(element.getName())
+				.industry(element.getIndustry())
 				.transaction(transaction)
 				.build());
 
 		transactionRepository.save(transaction);
+	}
+
+	// 거래 존재 확인
+	private void checkTransactionExistence(Member member) {
+		boolean existence = transactionRepository.existsByMember(member);
+
+		if (existence) {
+			throw ApiException.from(ErrorCode.TRANSACTION_DUPLICATE);
+		}
 	}
 
 	// 거래 삭제
@@ -50,10 +63,14 @@ public class TransactionService {
 
 	// 회원 거래 조회
 	public GetTransactionResponse getTransaction(Member member) {
-		Transaction transaction = transactionRepository.findByMember(member)
-			.orElseThrow(() -> ApiException.from(ErrorCode.TRANSACTION_NOT_FOUND));
-
-		return GetTransactionResponse.from(transaction);
+		return transactionRepository.findByMember(member)
+			.map(transaction -> {
+				List<Element> elements = transaction.getTransactionItems().stream()
+					.map(Element::from)
+					.toList();
+				return GetTransactionResponse.of(true, transaction.getAmount(), elements);
+			})
+			.orElseGet(() -> GetTransactionResponse.of(false, null, null));
 	}
 
 	public List<Transaction> getAllTransactions() {

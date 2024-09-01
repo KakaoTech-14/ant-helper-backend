@@ -2,10 +2,11 @@ package kakaobootcamp.backend.domains.transaction.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import kakaobootcamp.backend.domains.transaction.domain.Transaction;
 import kakaobootcamp.backend.domains.transaction.domain.TransactionItem;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -33,24 +34,27 @@ public class TransactionDTO {
 
 			@NotBlank(message = "name은 비어있을 수 없습니다.")
 			private String name;
+
+			@NotBlank(message = "industry는 비어있을 수 없습니다.")
+			private String industry;
 		}
 	}
 
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+
 	public static class GetTransactionResponse {
 
-		private int amount;
-
-		@Size(min = 1, max = 10, message = "주문은 최소 {min}개, 최대 {max}개까지 가능합니다.")
+		private boolean existence;
+		private Integer amount;
 		private List<Element> transactionItems;
 
-		public static GetTransactionResponse from(Transaction transaction) {
+		public static GetTransactionResponse of(boolean existence, Integer amount, List<Element> items) {
 			return new GetTransactionResponse(
-				transaction.getAmount(),
-				transaction.getTransactionItems().stream()
-					.map(Element::from)
-					.toList());
+				existence,
+				amount,
+				items);
 		}
 
 		@Getter
@@ -63,11 +67,14 @@ public class TransactionDTO {
 
 			private String name;
 
+			private String industry;
+
 			public static Element from(TransactionItem transactionItem) {
 				return new Element(
 					transactionItem.getId(),
 					transactionItem.getProductNumber(),
-					transactionItem.getName());
+					transactionItem.getName(),
+					transactionItem.getIndustry());
 			}
 		}
 	}
