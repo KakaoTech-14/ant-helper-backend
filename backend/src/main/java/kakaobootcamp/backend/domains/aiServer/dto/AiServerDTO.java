@@ -34,11 +34,13 @@ public class AiServerDTO {
 		public static class Element {
 			private String productNumber;
 			private String name;
+			private String industry;
 
 			public static Element from(TransactionItem transactionItem) {
 				return new Element(
 					transactionItem.getProductNumber(),
-					transactionItem.getName());
+					transactionItem.getName(),
+					transactionItem.getIndustry());
 			}
 		}
 	}
