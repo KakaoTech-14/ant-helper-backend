@@ -9,4 +9,6 @@ import kakaobootcamp.backend.domains.transaction.domain.Transaction;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 	Optional<Transaction> findByMember(Member member);
+
+	boolean existsByMember(Member member);
 }

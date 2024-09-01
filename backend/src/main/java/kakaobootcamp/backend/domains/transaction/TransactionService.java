@@ -24,6 +24,8 @@ public class TransactionService {
 	// 거래 저장
 	@Transactional
 	public void saveTransaction(Member member, SaveTransactionRequest saveTransactionRequest) {
+		// 거래 존재 확인
+		checkTransactionExistence(member);
 
 		Transaction transaction = Transaction.builder()
 			.amount(saveTransactionRequest.getAmount())
@@ -39,6 +41,15 @@ public class TransactionService {
 				.build());
 
 		transactionRepository.save(transaction);
+	}
+
+	// 거래 존재 확인
+	private void checkTransactionExistence(Member member) {
+		boolean existence = transactionRepository.existsByMember(member);
+
+		if (existence) {
+			throw ApiException.from(ErrorCode.TRANSACTION_DUPLICATE);
+		}
 	}
 
 	// 거래 삭제

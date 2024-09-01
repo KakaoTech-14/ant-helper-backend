@@ -31,6 +31,7 @@ public enum ErrorCode {
 
 	//409
 	EMAIL_DUPLICATE(HttpStatus.CONFLICT, "이미 가입된 이메일입니다."),
+	TRANSACTION_DUPLICATE(HttpStatus.CONFLICT, "이미 거래가 존재합니다"),
 
 	//500
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에서 에러가 발생하였습니다."),
