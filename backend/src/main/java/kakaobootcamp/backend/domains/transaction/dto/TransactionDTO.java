@@ -2,6 +2,8 @@ package kakaobootcamp.backend.domains.transaction.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -40,12 +42,12 @@ public class TransactionDTO {
 
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+
 	public static class GetTransactionResponse {
 
 		private boolean existence;
-
 		private Integer amount;
-
 		private List<Element> transactionItems;
 
 		public static GetTransactionResponse of(boolean existence, Integer amount, List<Element> items) {
