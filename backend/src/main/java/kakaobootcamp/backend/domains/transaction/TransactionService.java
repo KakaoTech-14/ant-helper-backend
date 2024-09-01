@@ -37,6 +37,7 @@ public class TransactionService {
 			.forEach(element -> TransactionItem.builder()
 				.productNumber(element.getProductNumber())
 				.name(element.getName())
+				.industry(element.getIndustry())
 				.transaction(transaction)
 				.build());
 

@@ -28,14 +28,18 @@ public class TransactionItem {
 	@Column(nullable = false)
 	private String name;
 
+	@Column(nullable = false)
+	private String industry;
+
 	@ManyToOne
 	@JoinColumn(name = "transaction_id")
 	private Transaction transaction;
 
 	@Builder
-	private TransactionItem(String productNumber, String name, Transaction transaction) {
+	private TransactionItem(String productNumber, String name, String industry, Transaction transaction) {
 		this.productNumber = productNumber;
 		this.name = name;
+		this.industry = industry;
 		setTransaction(transaction);
 	}
 

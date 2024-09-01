@@ -33,6 +33,9 @@ public class TransactionDTO {
 
 			@NotBlank(message = "name은 비어있을 수 없습니다.")
 			private String name;
+
+			@NotBlank(message = "industry는 비어있을 수 없습니다.")
+			private String industry;
 		}
 	}
 
@@ -63,11 +66,14 @@ public class TransactionDTO {
 
 			private String name;
 
+			private String industry;
+
 			public static Element from(TransactionItem transactionItem) {
 				return new Element(
 					transactionItem.getId(),
 					transactionItem.getProductNumber(),
-					transactionItem.getName());
+					transactionItem.getName(),
+					transactionItem.getIndustry());
 			}
 		}
 	}
