@@ -1,8 +1,9 @@
 package kakaobootcamp.backend.domains.watchList.dto;
 
-import kakaobootcamp.backend.domains.watchList.WatchList;
+import kakaobootcamp.backend.domains.watchList.domain.WatchList;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,11 +12,17 @@ public class WatchListDTO {
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class FindWatchListsResponse {
+	public static class FindWatchListResponse {
 
-		public static FindWatchListsResponse of(WatchList watchList) {
-			//이 클래스 내용 추가되어야 함.
-			return new FindWatchListsResponse();
+		private String productNumber;
+		private String name;
+		private String industry;
+
+		public static FindWatchListResponse from(WatchList watchList) {
+			return new FindWatchListResponse(
+				watchList.getProductNumber(),
+				watchList.getName(),
+				watchList.getIndustry());
 		}
 	}
 }

@@ -6,7 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kakaobootcamp.backend.domains.member.domain.Member;
-import kakaobootcamp.backend.domains.watchList.dto.WatchListDTO.FindWatchListsResponse;
+import kakaobootcamp.backend.domains.watchList.domain.WatchList;
+import kakaobootcamp.backend.domains.watchList.dto.WatchListDTO.FindWatchListResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -16,14 +17,10 @@ public class WatchListService {
 
 	private final WatchListRepository watchListRepository;
 
-	@Transactional
-	public void deleteWatchList(Long watchListId) {
-		watchListRepository.deleteById(watchListId);
-	}
-
-	public Page<FindWatchListsResponse> findWatchLists(Member member, Pageable pageable) {
+	// 관심 목록 조회
+	public Page<FindWatchListResponse> findWatchLists(Member member, Pageable pageable) {
 		Page<WatchList> watchLists = watchListRepository.findAllByMember(member, pageable);
 
-		return watchLists.map(FindWatchListsResponse::of);
+		return watchLists.map(FindWatchListResponse::from);
 	}
 }
