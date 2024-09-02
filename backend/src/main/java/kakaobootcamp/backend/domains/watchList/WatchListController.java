@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import kakaobootcamp.backend.common.dto.DataResponse;
@@ -84,7 +85,7 @@ public class WatchListController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> addWatchList(@RequestBody AddWatchListRequest request) {
+	public ResponseEntity<DataResponse<Void>> addWatchList(@RequestBody @Valid AddWatchListRequest request) {
 		Member member = memberLoader.getMember();
 
 		watchListService.addWatchList(member, request);
