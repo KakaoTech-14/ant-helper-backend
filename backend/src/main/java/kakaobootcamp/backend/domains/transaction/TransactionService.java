@@ -28,6 +28,8 @@ public class TransactionService {
 	public void saveTransaction(Member member, SaveTransactionRequest saveTransactionRequest) {
 		// 거래 존재 확인
 		checkTransactionExistence(member);
+		// TransactionItem 중복 확인
+		checkProductNumberDuplication(saveTransactionRequest.getTransactionItems());
 
 		Transaction transaction = Transaction.builder()
 			.amount(saveTransactionRequest.getAmount())
@@ -52,6 +54,18 @@ public class TransactionService {
 
 		if (existence) {
 			throw ApiException.from(ErrorCode.TRANSACTION_DUPLICATE);
+		}
+	}
+
+	// TransactionItem의 productNumber 중복 확인
+	private void checkProductNumberDuplication(List<SaveTransactionRequest.Element> transactionItems) {
+		int count = (int)transactionItems.stream()
+			.map(SaveTransactionRequest.Element::getProductNumber)
+			.distinct()
+			.count();
+
+		if (count != transactionItems.size()) {
+			throw ApiException.from(ErrorCode.PRODUCT_NUMBER_DUPLICATE);
 		}
 	}
 
