@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.dto.ErrorResponse;
@@ -42,6 +43,7 @@ public class WatchListController {
 		description = """
 			관심목록을 페이지네이션으로 가져온다.
 
+			size는 최소 1, 최대 10이다.
 			page는 0부터 시작한다.""",
 		responses = {
 			@ApiResponse(
@@ -56,8 +58,8 @@ public class WatchListController {
 		}
 	)
 	public ResponseEntity<DataResponse<Page<FindWatchListResponse>>> findWatchLists(
-		@RequestParam("size") int size,
-		@RequestParam("page") @Min(0) int page) {
+		@RequestParam("size") @Min(value = 1, message = "size는 1이상이어야 합니다.") @Max(value = 10, message = "size는 10이하이어야 합니다.") int size,
+		@RequestParam("page") @Min(value = 0, message = "page는 0이상이어야 합니다.") int page) {
 		Member member = memberLoader.getMember();
 		Pageable pageable = PageRequest.of(page, size);
 
