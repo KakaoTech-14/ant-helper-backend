@@ -4,7 +4,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -84,6 +86,28 @@ public class WatchListController {
 		Member member = memberLoader.getMember();
 
 		watchListService.addWatchList(member, request);
+
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@DeleteMapping("/{watchListId}")
+	@Operation(
+		summary = "관심목록 삭제",
+		description = "관심목록을 삭제한다.",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "유효하지 않은 액세스 토큰입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Void>> deleteWatchList(@PathVariable("watchListId") Long watchListId) {
+		watchListService.deleteWatchList(watchListId);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}

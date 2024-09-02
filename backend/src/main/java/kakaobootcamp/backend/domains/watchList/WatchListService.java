@@ -32,4 +32,10 @@ public class WatchListService {
 
 		watchListRepository.save(watchList);
 	}
+
+	// 관심 목록 삭제
+	@Transactional
+	public void deleteWatchList(Long watchListId) {
+		watchListRepository.deleteById(watchListId);
+	}
 }
