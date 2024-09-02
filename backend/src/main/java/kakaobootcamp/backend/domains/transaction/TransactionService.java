@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.exception.ErrorCode;
+import kakaobootcamp.backend.domains.member.domain.AutoTradeState;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.transaction.domain.Transaction;
 import kakaobootcamp.backend.domains.transaction.domain.TransactionItem;
@@ -73,7 +74,8 @@ public class TransactionService {
 			.orElseGet(() -> GetTransactionResponse.of(false, null, null));
 	}
 
-	public List<Transaction> getAllTransactions() {
-		return transactionRepository.findAll();
+	// 멤버의 자동거래 상태에 따른 거래 조회
+	public List<Transaction> getAllTransactionsByMemberAutoTrade(AutoTradeState autoTradeState) {
+		return transactionRepository.findAllByMember_AutoTradeState(autoTradeState);
 	}
 }
