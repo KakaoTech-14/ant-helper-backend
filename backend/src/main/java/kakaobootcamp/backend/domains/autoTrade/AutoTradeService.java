@@ -32,6 +32,7 @@ public class AutoTradeService {
 	private final StockService stockService;
 	private final TransactionService transactionService;
 	private final MemberService memberService;
+	private final BrokerService  brokerService;
 
 	// 자동 거래를 ON한 멤버들에 대해 자동 거래를 수행
 	public void executeAutoTradeForAllMembers() {
@@ -41,6 +42,9 @@ public class AutoTradeService {
 
 	private void executeAutoTradeForTransaction(Transaction transaction) {
 		Member member = transaction.getMember();
+
+		// accessToken 재발급
+		brokerService.getAndSaveAccessToken(member);
 
 		// 자동 거래 상태가 아니면 반환
 		if (!memberService.isAutoTradeStateOn(member)) {
