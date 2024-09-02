@@ -18,7 +18,7 @@ import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.dto.ErrorResponse;
 import kakaobootcamp.backend.common.util.memberLoader.MemberLoader;
 import kakaobootcamp.backend.domains.member.domain.Member;
-import kakaobootcamp.backend.domains.transaction.dto.TransactionDTO.GetTransactionResponse;
+import kakaobootcamp.backend.domains.transaction.dto.TransactionDTO.FindTransactionResponse;
 import kakaobootcamp.backend.domains.transaction.dto.TransactionDTO.SaveTransactionRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -71,10 +71,10 @@ public class TransactionController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<GetTransactionResponse>> getTransaction() {
+	public ResponseEntity<DataResponse<FindTransactionResponse>> findTransaction() {
 		Member member = memberLoader.getMember();
 
-		GetTransactionResponse response = transactionService.getTransaction(member);
+		FindTransactionResponse response = transactionService.findTransaction(member);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}

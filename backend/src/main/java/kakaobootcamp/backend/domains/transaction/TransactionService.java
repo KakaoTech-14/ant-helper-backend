@@ -11,8 +11,8 @@ import kakaobootcamp.backend.domains.member.domain.AutoTradeState;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.transaction.domain.Transaction;
 import kakaobootcamp.backend.domains.transaction.domain.TransactionItem;
-import kakaobootcamp.backend.domains.transaction.dto.TransactionDTO.GetTransactionResponse;
-import kakaobootcamp.backend.domains.transaction.dto.TransactionDTO.GetTransactionResponse.Element;
+import kakaobootcamp.backend.domains.transaction.dto.TransactionDTO.FindTransactionResponse;
+import kakaobootcamp.backend.domains.transaction.dto.TransactionDTO.FindTransactionResponse.Element;
 import kakaobootcamp.backend.domains.transaction.dto.TransactionDTO.SaveTransactionRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -63,15 +63,15 @@ public class TransactionService {
 	}
 
 	// 회원 거래 조회
-	public GetTransactionResponse getTransaction(Member member) {
+	public FindTransactionResponse findTransaction(Member member) {
 		return transactionRepository.findByMember(member)
 			.map(transaction -> {
 				List<Element> elements = transaction.getTransactionItems().stream()
 					.map(Element::from)
 					.toList();
-				return GetTransactionResponse.of(true, transaction.getAmount(), elements);
+				return FindTransactionResponse.of(true, transaction.getAmount(), elements);
 			})
-			.orElseGet(() -> GetTransactionResponse.of(false, null, null));
+			.orElseGet(() -> FindTransactionResponse.of(false, null, null));
 	}
 
 	// 멤버의 자동거래 상태에 따른 거래 조회
