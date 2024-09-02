@@ -5,6 +5,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +21,7 @@ import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.dto.ErrorResponse;
 import kakaobootcamp.backend.common.util.memberLoader.MemberLoader;
 import kakaobootcamp.backend.domains.member.domain.Member;
+import kakaobootcamp.backend.domains.watchList.dto.WatchListDTO.AddWatchListRequest;
 import kakaobootcamp.backend.domains.watchList.dto.WatchListDTO.FindWatchListResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -59,5 +62,29 @@ public class WatchListController {
 		Page<FindWatchListResponse> response = watchListService.findWatchLists(member, pageable);
 
 		return ResponseEntity.ok(DataResponse.from(response));
+	}
+
+	@PostMapping
+	@Operation(
+		summary = "관심목록 추가",
+		description = "관심목록을 추가한다.",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "유효하지 않은 액세스 토큰입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Void>> addWatchList(@RequestBody AddWatchListRequest request) {
+		Member member = memberLoader.getMember();
+
+		watchListService.addWatchList(member, request);
+
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 }

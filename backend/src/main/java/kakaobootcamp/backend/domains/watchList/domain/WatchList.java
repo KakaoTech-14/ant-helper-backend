@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -35,6 +36,7 @@ public class WatchList {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
+	@Builder
 	private WatchList(String productNumber, String name, String industry, Member member) {
 		this.productNumber = productNumber;
 		this.name = name;

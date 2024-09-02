@@ -1,9 +1,9 @@
 package kakaobootcamp.backend.domains.watchList.dto;
 
+import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.watchList.domain.WatchList;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,6 +23,23 @@ public class WatchListDTO {
 				watchList.getProductNumber(),
 				watchList.getName(),
 				watchList.getIndustry());
+		}
+	}
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class AddWatchListRequest {
+		private String productNumber;
+		private String name;
+		private String industry;
+
+		public WatchList toEntity(Member member) {
+			return WatchList.builder()
+				.productNumber(productNumber)
+				.name(name)
+				.industry(industry)
+				.member(member)
+				.build();
 		}
 	}
 }
