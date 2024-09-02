@@ -1,5 +1,7 @@
 package kakaobootcamp.backend.domains.transaction;
 
+import java.util.Locale;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,6 +46,11 @@ public class TransactionController {
 			@ApiResponse(
 				responseCode = "401",
 				description = "유효하지 않은 액세스 토큰입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "409",
+				description = "주문 아이템이 중복됩니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
@@ -92,6 +99,11 @@ public class TransactionController {
 			@ApiResponse(
 				responseCode = "401",
 				description = "유효하지 않은 액세스 토큰입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "409",
+				description = "주문 아이템이 중복됩니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
