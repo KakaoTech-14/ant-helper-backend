@@ -14,12 +14,14 @@ public class WatchListDTO {
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class FindWatchListResponse {
 
+		private Long id;
 		private String productNumber;
 		private String name;
 		private String industry;
 
 		public static FindWatchListResponse from(WatchList watchList) {
 			return new FindWatchListResponse(
+				watchList.getId(),
 				watchList.getProductNumber(),
 				watchList.getName(),
 				watchList.getIndustry());
