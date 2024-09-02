@@ -55,13 +55,6 @@ public class TransactionService {
 		}
 	}
 
-	// 거래 삭제
-	@Transactional
-	public void deleteTransaction(Member member) {
-		transactionRepository.findByMember(member)
-			.ifPresent(transactionRepository::delete);
-	}
-
 	// 회원 거래 조회
 	public FindTransactionResponse findTransaction(Member member) {
 		return transactionRepository.findByMember(member)
@@ -78,4 +71,20 @@ public class TransactionService {
 	public List<Transaction> getAllTransactionsByMemberAutoTrade(AutoTradeState autoTradeState) {
 		return transactionRepository.findAllByMember_AutoTradeState(autoTradeState);
 	}
+
+	// 거래 수정
+	@Transactional
+	public void updateTransaction(Member member, SaveTransactionRequest request) {
+		transactionRepository.deleteAllByMember(member);
+
+		saveTransaction(member, request);
+	}
+
+	// 거래 삭제
+	@Transactional
+	public void deleteTransaction(Member member) {
+		transactionRepository.findByMember(member)
+			.ifPresent(transactionRepository::delete);
+	}
+
 }

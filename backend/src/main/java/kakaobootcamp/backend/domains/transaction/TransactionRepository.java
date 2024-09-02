@@ -15,4 +15,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 	boolean existsByMember(Member member);
 
 	List<Transaction> findAllByMember_AutoTradeState(AutoTradeState autoTradeState);
+
+	void deleteAllByMember(Member member);
 }
