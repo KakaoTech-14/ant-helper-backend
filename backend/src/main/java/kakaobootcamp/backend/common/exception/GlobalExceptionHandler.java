@@ -1,5 +1,6 @@
 package kakaobootcamp.backend.common.exception;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -41,8 +43,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		NoResourceFoundException ex,
 		HttpHeaders headers,
 		HttpStatusCode status,
-		WebRequest request) {
-
+		WebRequest request)
+	{
 		log.warn("handleNoResourceFoundException", ex);
 
 		ErrorCode errorCode = ErrorCode.RESOURCE_NOT_FOUND;
@@ -55,8 +57,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		MethodArgumentNotValidException e,
 		HttpHeaders headers,
 		HttpStatusCode status,
-		WebRequest request) {
-
+		WebRequest request)
+	{
 		log.warn("handleIllegalArgument", e);
 
 		List<String> messages = e.getBindingResult().getFieldErrors()
@@ -73,12 +75,28 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		HttpMessageNotReadableException ex,
 		HttpHeaders headers,
 		HttpStatusCode status,
-		WebRequest request) {
-
+		WebRequest request)
+	{
 		log.warn("handleHttpMessageNotReadableException", ex);
 
 		ErrorCode errorCode = ErrorCode.BAD_REQUEST;
 		return makeErrorResponseEntity(errorCode);
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleHandlerMethodValidationException(
+		HandlerMethodValidationException ex,
+		HttpHeaders headers,
+		HttpStatusCode status,
+		WebRequest request)
+	{
+		log.warn("handleHandlerMethodValidationException", ex);
+		List<String> messages = Arrays.stream(ex.getDetailMessageArguments())
+			.map(Object::toString)
+			.toList();
+
+		ErrorCode errorCode = ErrorCode.INVALID_PARAMETER;
+		return makeErrorResponseEntity(errorCode, messages);
 	}
 
 	@ExceptionHandler({Exception.class})
