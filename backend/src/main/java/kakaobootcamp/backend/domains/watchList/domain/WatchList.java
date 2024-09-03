@@ -1,4 +1,4 @@
-package kakaobootcamp.backend.domains.transaction.domain;
+package kakaobootcamp.backend.domains.watchList.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,8 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import kakaobootcamp.backend.domains.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,12 +16,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(uniqueConstraints = {
-	@UniqueConstraint(name = "NAME_ROOM_UNIQUE", columnNames = {"transaction_id", "product_number"})})
-public class TransactionItem {
+public class WatchList {
 
 	@Id
-	@Column(name = "transaction_item_id")
+	@Column(name = "watch_list_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
@@ -36,19 +33,19 @@ public class TransactionItem {
 	private String industry;
 
 	@ManyToOne
-	@JoinColumn(name = "transaction_id")
-	private Transaction transaction;
+	@JoinColumn(name = "member_id")
+	private Member member;
 
 	@Builder
-	private TransactionItem(String productNumber, String name, String industry, Transaction transaction) {
+	private WatchList(String productNumber, String name, String industry, Member member) {
 		this.productNumber = productNumber;
 		this.name = name;
 		this.industry = industry;
-		setTransaction(transaction);
+		setMember(member);
 	}
 
-	public void setTransaction(Transaction transaction) {
-		this.transaction = transaction;
-		transaction.getTransactionItems().add(this);
+	private void setMember(Member member) {
+		this.member = member;
+		member.getWatchLists().add(this);
 	}
 }
