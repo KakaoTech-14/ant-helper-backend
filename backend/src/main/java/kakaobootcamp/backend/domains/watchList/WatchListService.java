@@ -5,6 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kakaobootcamp.backend.common.exception.ApiException;
+import kakaobootcamp.backend.common.exception.ErrorCode;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.watchList.domain.WatchList;
 import kakaobootcamp.backend.domains.watchList.dto.WatchListDTO.AddWatchListRequest;
@@ -17,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class WatchListService {
 
 	private final WatchListRepository watchListRepository;
+	private static final int WATCH_LIST_MAX_COUNT = 50;
 
 	// 관심 목록 조회
 	public Page<FindWatchListResponse> findWatchLists(Member member, Pageable pageable) {
@@ -28,9 +31,19 @@ public class WatchListService {
 	// 관심 목록 추가
 	@Transactional
 	public void addWatchList(Member member, AddWatchListRequest request) {
+		checkWatchListCount(member);
+
 		WatchList watchList = request.toEntity(member);
 
 		watchListRepository.save(watchList);
+	}
+
+	private void checkWatchListCount(Member member) {
+		int watchListCount = watchListRepository.countByMember(member);
+
+		if (watchListCount > WATCH_LIST_MAX_COUNT) {
+			throw ApiException.from(ErrorCode.TOO_MANY_WATCH_LIST);
+		}
 	}
 
 	// 관심 목록 삭제

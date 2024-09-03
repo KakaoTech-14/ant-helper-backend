@@ -34,6 +34,9 @@ public enum ErrorCode {
 	TRANSACTION_DUPLICATE(HttpStatus.CONFLICT, "이미 거래가 존재합니다"),
 	PRODUCT_NUMBER_DUPLICATE(HttpStatus.CONFLICT, "Product Number가 중복됩니다."),
 
+	//429
+	TOO_MANY_WATCH_LIST(HttpStatus.TOO_MANY_REQUESTS, "관심 목록의 최대 개수를 초과하였습니다."),
+
 	//500
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에서 에러가 발생하였습니다."),
 	AUTO_TRADE_STATE_OFF(HttpStatus.INTERNAL_SERVER_ERROR, "자동 거래 상태가 꺼져 있습니다."),

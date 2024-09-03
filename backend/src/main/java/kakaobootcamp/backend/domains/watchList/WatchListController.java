@@ -82,6 +82,11 @@ public class WatchListController {
 				responseCode = "401",
 				description = "유효하지 않은 액세스 토큰입니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "429",
+				description = "관심목록이 50개를 초과했습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
