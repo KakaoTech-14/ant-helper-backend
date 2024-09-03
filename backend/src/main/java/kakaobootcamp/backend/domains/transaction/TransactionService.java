@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kakaobootcamp.backend.common.exception.ApiException;
+import kakaobootcamp.backend.common.exception.CustomException;
 import kakaobootcamp.backend.common.exception.ErrorCode;
 import kakaobootcamp.backend.domains.member.domain.AutoTradeState;
 import kakaobootcamp.backend.domains.member.domain.Member;
@@ -87,7 +88,7 @@ public class TransactionService {
 	}
 
 	// 거래 수정
-	@Transactional
+	@Transactional(rollbackFor = CustomException.class)
 	public void updateTransaction(Member member, SaveTransactionRequest request) {
 		transactionRepository.deleteAllByMember(member);
 
