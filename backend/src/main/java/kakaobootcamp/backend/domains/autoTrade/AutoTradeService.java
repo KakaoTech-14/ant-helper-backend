@@ -11,7 +11,9 @@ import kakaobootcamp.backend.domains.aiServer.AiServerService;
 import kakaobootcamp.backend.domains.aiServer.dto.AiServerDTO.GetOrderListRequest;
 import kakaobootcamp.backend.domains.aiServer.dto.AiServerDTO.GetOrderListResponse;
 import kakaobootcamp.backend.domains.aiServer.dto.AiServerDTO.GetOrderListResponse.Element;
+import kakaobootcamp.backend.domains.broker.service.BrokerService;
 import kakaobootcamp.backend.domains.member.MemberService;
+import kakaobootcamp.backend.domains.member.domain.AutoTradeState;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.stock.StockService;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
@@ -30,15 +32,19 @@ public class AutoTradeService {
 	private final StockService stockService;
 	private final TransactionService transactionService;
 	private final MemberService memberService;
+	private final BrokerService  brokerService;
 
 	// 자동 거래를 ON한 멤버들에 대해 자동 거래를 수행
 	public void executeAutoTradeForAllMembers() {
-		transactionService.getAllTransactions()
+		transactionService.getAllTransactionsByMemberAutoTrade(AutoTradeState.ON)
 			.forEach(this::executeAutoTradeForTransaction);
 	}
 
 	private void executeAutoTradeForTransaction(Transaction transaction) {
 		Member member = transaction.getMember();
+
+		// accessToken 재발급
+		brokerService.getAndSaveAccessToken(member);
 
 		// 자동 거래 상태가 아니면 반환
 		if (!memberService.isAutoTradeStateOn(member)) {

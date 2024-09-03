@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import kakaobootcamp.backend.common.dto.DataResponse;
@@ -81,10 +82,15 @@ public class WatchListController {
 				responseCode = "401",
 				description = "유효하지 않은 액세스 토큰입니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "429",
+				description = "관심목록이 50개를 초과했습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> addWatchList(@RequestBody AddWatchListRequest request) {
+	public ResponseEntity<DataResponse<Void>> addWatchList(@RequestBody @Valid AddWatchListRequest request) {
 		Member member = memberLoader.getMember();
 
 		watchListService.addWatchList(member, request);

@@ -1,5 +1,6 @@
 package kakaobootcamp.backend.domains.watchList.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.watchList.domain.WatchList;
 import lombok.AccessLevel;
@@ -31,8 +32,14 @@ public class WatchListDTO {
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class AddWatchListRequest {
+
+		@NotBlank(message = "productNumber는 비어있을 수 없습니다.")
 		private String productNumber;
+
+		@NotBlank(message = "name은 비어있을 수 없습니다.")
 		private String name;
+
+		@NotBlank(message = "industry는 비어있을 수 없습니다.")
 		private String industry;
 
 		public WatchList toEntity(Member member) {

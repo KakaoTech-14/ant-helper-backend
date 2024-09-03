@@ -44,14 +44,14 @@ public class TransactionDTO {
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 
-	public static class GetTransactionResponse {
+	public static class FindTransactionResponse {
 
 		private boolean existence;
 		private Integer amount;
 		private List<Element> transactionItems;
 
-		public static GetTransactionResponse of(boolean existence, Integer amount, List<Element> items) {
-			return new GetTransactionResponse(
+		public static FindTransactionResponse of(boolean existence, Integer amount, List<Element> items) {
+			return new FindTransactionResponse(
 				existence,
 				amount,
 				items);
