@@ -17,6 +17,7 @@ import org.springframework.util.MultiValueMap;
 
 import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.exception.CustomException;
+import kakaobootcamp.backend.common.exception.ErrorCode;
 import kakaobootcamp.backend.common.properties.KisProperties;
 import kakaobootcamp.backend.common.properties.PublicDataPortalProperties;
 import kakaobootcamp.backend.common.util.webClient.WebClientUtil;
@@ -215,6 +216,10 @@ public class StockService {
 
 		checkResponse(response);
 
+		// 이름 설정
+		String name = findDomesticStockByProductNumber(productNumber).getName();
+		response.getOutput().setName(name);
+
 		return response;
 	}
 
@@ -300,6 +305,12 @@ public class StockService {
 		return domesticStocks.stream()
 			.map(FindSuggestedKeywordResponse::from)
 			.toList();
+	}
+
+	// 국내 주식 조회
+	private DomesticStock findDomesticStockByProductNumber(String productNumber) {
+		return domesticStockRepository.findByProductNumber(productNumber)
+			.orElseThrow(() -> ApiException.from(STOCK_NOT_FOUND));
 	}
 }
 

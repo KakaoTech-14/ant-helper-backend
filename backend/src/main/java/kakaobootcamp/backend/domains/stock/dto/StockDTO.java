@@ -2,6 +2,7 @@ package kakaobootcamp.backend.domains.stock.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.constraints.NotBlank;
@@ -238,7 +239,11 @@ public class StockDTO {
 
 		@Getter
 		@NoArgsConstructor(access = AccessLevel.PRIVATE)
+		@JsonInclude(JsonInclude.Include.NON_NULL)
 		public static class Output {
+
+			@Setter
+			private String name; // 주식 이름
 			private String iscd_stat_cls_code; // 종목 상태 구분 코드
 			private String marg_rate; // 증거금 비율
 			private String rprs_mrkt_kor_name; // 대표 시장 한글 명
