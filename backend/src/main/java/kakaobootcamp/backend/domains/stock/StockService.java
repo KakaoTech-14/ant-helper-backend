@@ -75,6 +75,7 @@ public class StockService {
 
 	}
 
+	// 주식 사기
 	public void orderStock(Member member, OrderStockRequest request) {
 		String uri = "/uapi/domestic-stock/v1/trading/order-cash";
 
@@ -94,6 +95,7 @@ public class StockService {
 		checkResponse(response);
 	}
 
+	// 주식 팔기
 	public void sellStock(Member member, OrderStockRequest request) {
 		String uri = "/uapi/domestic-stock/v1/trading/order-cash";
 
@@ -216,7 +218,7 @@ public class StockService {
 		return response;
 	}
 
-
+	// 국내 주식 목록 가져오기
 	public GetSuggestedKeywordsDTO getDomesticStocks(int size, int page, String keyword, String day) {
 		String uri = "/1160100/service/GetKrxListedInfoService/getItemInfo";
 
