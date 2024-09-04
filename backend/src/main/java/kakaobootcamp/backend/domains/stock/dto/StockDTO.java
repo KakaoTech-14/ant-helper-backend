@@ -4,7 +4,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetSuggestedKeywordsDTO.Response.Body.Items.Item;
+import jakarta.validation.constraints.NotBlank;
+import kakaobootcamp.backend.domains.stock.domain.DomesticStock;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -364,31 +365,26 @@ public class StockDTO {
 					@NoArgsConstructor(access = AccessLevel.PRIVATE)
 					public static class Item {
 						private String basDt;
+
+						@NotBlank
 						private String srtnCd;
 						private String isinCd;
 						private String mrktCtg;
+
+						@NotBlank
 						private String itmsNm;
 						private String crno;
 						private String corpNm;
+
+						public static DomesticStock toEntity(Item item) {
+							return DomesticStock.builder()
+								.productNumber(item.getSrtnCd().substring(1))
+								.name(item.getItmsNm())
+								.build();
+						}
 					}
 				}
 			}
-		}
-	}
-
-	@Getter
-	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	@AllArgsConstructor(access = AccessLevel.PRIVATE)
-	@Builder
-	public static class GetSuggestedKeywordResponse {
-		String productNumber;
-		String name;
-
-		public static GetSuggestedKeywordResponse from(Item item) {
-			return GetSuggestedKeywordResponse.builder()
-				.productNumber(item.getIsinCd())
-				.name(item.getItmsNm())
-				.build();
 		}
 	}
 }
