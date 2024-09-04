@@ -181,24 +181,6 @@ public class MemberController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
-	@GetMapping("/stocks/watchlist")
-	public ResponseEntity<?> getWatchList() {
-
-		return ResponseEntity.ok().build();
-	}
-
-	@PostMapping("/stocks/watchlist")
-	public ResponseEntity<?> addWatchList() {
-
-		return ResponseEntity.ok().build();
-	}
-
-	@DeleteMapping("stocks/watchlist/{watchListId}")
-	public ResponseEntity<?> deleteWatchList(@PathVariable("watchListId") Long watchListId) {
-
-		return ResponseEntity.ok().build();
-	}
-
 	@PatchMapping("/auto-trade")
 	@Operation(
 		summary = "자동거래 상태 변경",
