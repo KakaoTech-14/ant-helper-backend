@@ -1,5 +1,7 @@
 package kakaobootcamp.backend.domains.stock;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +21,7 @@ import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceRealizedProfitAndLossResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockPriceResponse;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.FindSuggestedKeywordResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -167,5 +170,40 @@ public class StockController {
 		GetStockPriceResponse response = stockService.getStockPrice(member, productNumber);
 
 		return ResponseEntity.ok(DataResponse.from(response));
+	}
+
+	@GetMapping("/suggested-keywords")
+	@Operation(
+		summary = "주식 추천 키워드 조회",
+		description = """
+			주식 추천 키워드 조회 api 입니다.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 오류입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "유효하지 않은 액세스 토큰입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "500",
+				description = "요청 오류입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<List<FindSuggestedKeywordResponse>>> findSuggestedKeywords(
+		@RequestParam("keyword") String keyword)
+	{
+		List<FindSuggestedKeywordResponse> responses = stockService.findSuggestedKeywords(keyword);
+
+		return ResponseEntity.ok(DataResponse.from(responses));
 	}
 }

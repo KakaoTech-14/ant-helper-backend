@@ -88,7 +88,7 @@ public class TransactionService {
 	}
 
 	// 거래 수정
-	@Transactional(rollbackFor = CustomException.class)
+	@Transactional(rollbackFor = {ApiException.class, CustomException.class})
 	public void updateTransaction(Member member, SaveTransactionRequest request) {
 		transactionRepository.deleteAllByMember(member);
 

@@ -2,29 +2,40 @@ package kakaobootcamp.backend.domains.stock;
 
 import static kakaobootcamp.backend.common.exception.ErrorCode.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.exception.CustomException;
 import kakaobootcamp.backend.common.properties.KisProperties;
+import kakaobootcamp.backend.common.properties.PublicDataPortalProperties;
 import kakaobootcamp.backend.common.util.webClient.WebClientUtil;
 import kakaobootcamp.backend.domains.broker.KisAccessToken;
 import kakaobootcamp.backend.domains.broker.service.KisAccessTokenService;
 import kakaobootcamp.backend.domains.member.MemberService;
 import kakaobootcamp.backend.domains.member.domain.Member;
+import kakaobootcamp.backend.domains.stock.domain.DomesticStock;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceRealizedProfitAndLossResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockPriceResponse;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.FindSuggestedKeywordResponse;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetSuggestedKeywordsDTO;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetSuggestedKeywordsDTO.Response.Body.Items.Item;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.KisBaseResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.KisOrderStockRequest;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockResponse;
+import kakaobootcamp.backend.domains.stock.repository.DomesticStockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,6 +48,9 @@ public class StockService {
 	private final KisAccessTokenService kisAccessTokenService;
 	private final MemberService memberService;
 	private final WebClientUtil webClientUtil;
+	private final PublicDataPortalProperties publicDataPortalProperties;
+	private final DomesticStockRepository domesticStockRepository;
+	private final static int GET_SUGGESTED_KEYWORDS_SIZE = 200;
 
 	// 헤더 설정
 	private Map<String, String> makeHeaders(Member member, String trId) {
@@ -61,6 +75,7 @@ public class StockService {
 
 	}
 
+	// 주식 사기
 	public void orderStock(Member member, OrderStockRequest request) {
 		String uri = "/uapi/domestic-stock/v1/trading/order-cash";
 
@@ -80,6 +95,7 @@ public class StockService {
 		checkResponse(response);
 	}
 
+	// 주식 팔기
 	public void sellStock(Member member, OrderStockRequest request) {
 		String uri = "/uapi/domestic-stock/v1/trading/order-cash";
 
@@ -200,6 +216,90 @@ public class StockService {
 		checkResponse(response);
 
 		return response;
+	}
+
+	// 국내 주식 목록 가져오기
+	public GetSuggestedKeywordsDTO getDomesticStocks(int size, int page, String keyword, String day) {
+		String uri = "/1160100/service/GetKrxListedInfoService/getItemInfo";
+
+		// 파라미터 설정
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("serviceKey", publicDataPortalProperties.getKeywordsKey());
+		params.add("resultType", "json");
+		params.add("numOfRows", String.valueOf(size));
+		params.add("pageNo", String.valueOf(page));
+		params.add("likeItmsNm", keyword); // 검색어
+		params.add("basDt", day); // 날짜
+
+		return webClientUtil.getFromPublicDataPortal(
+			new HashMap<>(),
+			uri,
+			params,
+			GetSuggestedKeywordsDTO.class);
+
+	}
+
+	// 국내 주식 목록 업데이트
+	@Transactional(rollbackFor = {CustomException.class})
+	public void updateDomesticStocks() {
+		String yesterday = getYesterday();
+
+		// 주식 전체 개수 가져오기
+		int totalCount = getDomesticStocks(1, 1, "", yesterday)
+			.getResponse()
+			.getBody()
+			.getTotalCount();
+
+		if (totalCount == 0) { // 전 날이 휴일이면 저장 x
+			return;
+		}
+
+		// 주식 전체 삭제
+		domesticStockRepository.deleteAll();
+
+		// 전체 페이지 개수 계산하기
+		int totalPage = calculateTotalPage(totalCount);
+
+		for (int i = 1; i <= totalPage; i++) {
+			List<DomesticStock> domesticStocks = getDomesticStocks(GET_SUGGESTED_KEYWORDS_SIZE, i, "", yesterday)
+				.getResponse()
+				.getBody()
+				.getItems()
+				.getItem()
+				.stream()
+				.map(Item::toEntity)
+				.toList();
+
+			saveDomesticStocks(domesticStocks);
+		}
+	}
+
+
+	// 주식 목록 저장
+	private void saveDomesticStocks(List<DomesticStock> domesticStocks) {
+		domesticStockRepository.saveAll(domesticStocks);
+	}
+
+	// 전 날을 String으로 가져오기
+	private String getYesterday() {
+		LocalDate yesterday = LocalDate.now().minusDays(1);
+		return yesterday.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+	}
+
+	// 전체 페이지 개수 계산하기
+	private int calculateTotalPage(int totalCount) {
+		return (totalCount + GET_SUGGESTED_KEYWORDS_SIZE - 1) / GET_SUGGESTED_KEYWORDS_SIZE;
+	}
+
+	// 주식 추천 검색어 검색하기
+	public List<FindSuggestedKeywordResponse> findSuggestedKeywords(String keyword) {
+		List<DomesticStock> domesticStocks = domesticStockRepository.findAllByKeyword(
+			keyword,
+			PageRequest.of(0, 10));
+
+		return domesticStocks.stream()
+			.map(FindSuggestedKeywordResponse::from)
+			.toList();
 	}
 }
 

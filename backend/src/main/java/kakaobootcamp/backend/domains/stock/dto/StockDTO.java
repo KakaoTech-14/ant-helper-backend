@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.constraints.NotBlank;
+import kakaobootcamp.backend.domains.stock.domain.DomesticStock;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -320,4 +322,86 @@ public class StockDTO {
 			private String sltr_yn; // 정리매매여부
 		}
 	}
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class GetSuggestedKeywordsDTO {
+
+		private Response response;
+
+		// Getters and Setters
+
+		@Getter
+		@NoArgsConstructor(access = AccessLevel.PRIVATE)
+		public static class Response {
+			private Header header;
+			private Body body;
+
+			// Getters and Setters
+
+			@Getter
+			@NoArgsConstructor(access = AccessLevel.PRIVATE)
+			public static class Header {
+				private String resultCode;
+				private String resultMsg;
+
+				// Getters and Setters
+			}
+
+			@Getter
+			@NoArgsConstructor(access = AccessLevel.PRIVATE)
+			public static class Body {
+				private int numOfRows;
+				private int pageNo;
+				private int totalCount;
+				private Items items;
+
+				@Getter
+				@NoArgsConstructor(access = AccessLevel.PRIVATE)
+				public static class Items {
+					private List<Item> item;
+
+					@Getter
+					@NoArgsConstructor(access = AccessLevel.PRIVATE)
+					public static class Item {
+						private String basDt;
+
+						@NotBlank
+						private String srtnCd;
+						private String isinCd;
+						private String mrktCtg;
+
+						@NotBlank
+						private String itmsNm;
+						private String crno;
+						private String corpNm;
+
+						public static DomesticStock toEntity(Item item) {
+							return DomesticStock.builder()
+								.productNumber(item.getSrtnCd().substring(1))
+								.name(item.getItmsNm())
+								.build();
+						}
+					}
+				}
+			}
+		}
+	}
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	@Builder
+	public static class FindSuggestedKeywordResponse {
+		private String productNumber;
+		private String name;
+
+		public static FindSuggestedKeywordResponse from(DomesticStock domesticStock) {
+			return FindSuggestedKeywordResponse.builder()
+				.productNumber(domesticStock.getProductNumber())
+				.name(domesticStock.getName())
+				.build();
+		}
+	}
 }
+
