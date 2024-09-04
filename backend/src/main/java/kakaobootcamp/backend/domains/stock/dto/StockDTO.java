@@ -387,5 +387,21 @@ public class StockDTO {
 			}
 		}
 	}
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	@Builder
+	public static class FindSuggestedKeywordResponse {
+		private String productNumber;
+		private String name;
+
+		public static FindSuggestedKeywordResponse from(DomesticStock domesticStock) {
+			return FindSuggestedKeywordResponse.builder()
+				.productNumber(domesticStock.getProductNumber())
+				.name(domesticStock.getName())
+				.build();
+		}
+	}
 }
 

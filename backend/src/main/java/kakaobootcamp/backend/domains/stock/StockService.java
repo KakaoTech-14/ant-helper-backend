@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ import kakaobootcamp.backend.domains.stock.domain.DomesticStock;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceRealizedProfitAndLossResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockPriceResponse;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.FindSuggestedKeywordResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetSuggestedKeywordsDTO;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetSuggestedKeywordsDTO.Response.Body.Items.Item;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.KisBaseResponse;
@@ -214,12 +216,9 @@ public class StockService {
 		return response;
 	}
 
-	// 주식 자동 검색어 조회
-	public GetSuggestedKeywordsDTO getSuggestedKeywords(int size, int page, String keyword, String day) {
-		String uri = "/1160100/service/GetKrxListedInfoService/getItemInfo";
-		// 헤더 설정
 
-		// 키워드가 숫자면 isin 검색
+	public GetSuggestedKeywordsDTO getDomesticStocks(int size, int page, String keyword, String day) {
+		String uri = "/1160100/service/GetKrxListedInfoService/getItemInfo";
 
 		// 파라미터 설정
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -238,12 +237,13 @@ public class StockService {
 
 	}
 
+	// 국내 주식 목록 업데이트
 	@Transactional(rollbackFor = {CustomException.class})
 	public void updateDomesticStocks() {
 		String yesterday = getYesterday();
 
 		// 주식 전체 개수 가져오기
-		int totalCount = getSuggestedKeywords(1, 1, "", yesterday)
+		int totalCount = getDomesticStocks(1, 1, "", yesterday)
 			.getResponse()
 			.getBody()
 			.getTotalCount();
@@ -259,7 +259,7 @@ public class StockService {
 		int totalPage = calculateTotalPage(totalCount);
 
 		for (int i = 1; i <= totalPage; i++) {
-			List<DomesticStock> domesticStocks = getSuggestedKeywords(GET_SUGGESTED_KEYWORDS_SIZE, i, "", yesterday)
+			List<DomesticStock> domesticStocks = getDomesticStocks(GET_SUGGESTED_KEYWORDS_SIZE, i, "", yesterday)
 				.getResponse()
 				.getBody()
 				.getItems()
@@ -287,6 +287,17 @@ public class StockService {
 	// 전체 페이지 개수 계산하기
 	private int calculateTotalPage(int totalCount) {
 		return (totalCount + GET_SUGGESTED_KEYWORDS_SIZE - 1) / GET_SUGGESTED_KEYWORDS_SIZE;
+	}
+
+	// 주식 추천 검색어 검색하기
+	public List<FindSuggestedKeywordResponse> findSuggestedKeywords(String keyword) {
+		List<DomesticStock> domesticStocks = domesticStockRepository.findAllByKeyword(
+			keyword,
+			PageRequest.of(0, 10));
+
+		return domesticStocks.stream()
+			.map(FindSuggestedKeywordResponse::from)
+			.toList();
 	}
 }
 

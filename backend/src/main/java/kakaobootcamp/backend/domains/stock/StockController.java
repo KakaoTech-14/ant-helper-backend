@@ -18,12 +18,10 @@ import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.dto.ErrorResponse;
 import kakaobootcamp.backend.common.util.memberLoader.MemberLoader;
 import kakaobootcamp.backend.domains.member.domain.Member;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceRealizedProfitAndLossResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockPriceResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetSuggestedKeywordResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetSuggestedKeywordsDTO;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.FindSuggestedKeywordResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -201,13 +199,11 @@ public class StockController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<List<GetSuggestedKeywordResponse>>> getSuggestedKeywords(
+	public ResponseEntity<DataResponse<List<FindSuggestedKeywordResponse>>> findSuggestedKeywords(
 		@RequestParam("keyword") String keyword)
 	{
-
-		List<GetSuggestedKeywordResponse> responses = stockService.getSuggestedKeywords(keyword);
+		List<FindSuggestedKeywordResponse> responses = stockService.findSuggestedKeywords(keyword);
 
 		return ResponseEntity.ok(DataResponse.from(responses));
-
 	}
 }
