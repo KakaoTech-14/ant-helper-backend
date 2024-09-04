@@ -28,6 +28,7 @@ public enum ErrorCode {
 	APP_KEY_OR_SECRET_KEY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 앱키 또는 시크릿키를 찾을 수 없습니다."),
 	KIS_ACCESS_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "한국 투자 증권 api의 액세스 토큰을 찾을 수 없습니다."),
 	TRANSACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 거래를 찾을 수 없습니다."),
+	STOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 주식을 찾을 수 없습니다."),
 
 	//409
 	EMAIL_DUPLICATE(HttpStatus.CONFLICT, "이미 가입된 이메일입니다."),
