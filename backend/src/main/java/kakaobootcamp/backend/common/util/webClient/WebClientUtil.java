@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.exception.CustomException;
+import kakaobootcamp.backend.common.exception.ErrorCode;
 import kakaobootcamp.backend.domains.broker.dto.BrokerDTO.KisErrorResponse;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -23,6 +25,9 @@ public class WebClientUtil {
 
 	@Qualifier("aiServerWebClient")
 	private final WebClient aiServerWebClient;
+
+	@Qualifier("publicDataPortalWebClient")
+	private final WebClient publicDataPortalWebClient;
 
 	public <T> T getFromKis(Map<String, String> headersMap, String url, MultiValueMap<String, String> params, Class<T> responseType) {
 		return kisWebClient
@@ -131,6 +136,27 @@ public class WebClientUtil {
 						(HttpStatus)response.statusCode(),
 						error.getMsg1()
 					)))
+			)
+			.bodyToMono(responseType)
+			.block();
+	}
+
+	public <T> T getFromPublicDataPortal(Map<String, String> headersMap, String url, MultiValueMap<String, String> params, Class<T> responseType) {
+		return publicDataPortalWebClient
+			.get()
+			.uri(uriBuilder -> uriBuilder
+				.path(url)
+				.queryParams(params)
+				.build())
+			.headers(headers -> headersMap.forEach(headers::set))
+			.retrieve()
+			.onStatus(
+				HttpStatusCode::is4xxClientError,
+				clientResponse -> Mono.error(ApiException.from(ErrorCode.BAD_REQUEST))
+			)
+			.onStatus(
+				HttpStatusCode::is5xxServerError,
+				clientResponse -> Mono.error(ApiException.from(ErrorCode.INTERNAL_SERVER_ERROR))
 			)
 			.bodyToMono(responseType)
 			.block();

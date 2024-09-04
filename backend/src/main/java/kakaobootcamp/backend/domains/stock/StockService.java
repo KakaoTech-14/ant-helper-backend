@@ -3,6 +3,7 @@ package kakaobootcamp.backend.domains.stock;
 import static kakaobootcamp.backend.common.exception.ErrorCode.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.util.MultiValueMap;
 import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.exception.CustomException;
 import kakaobootcamp.backend.common.properties.KisProperties;
+import kakaobootcamp.backend.common.properties.PublicDataPortalProperties;
 import kakaobootcamp.backend.common.util.webClient.WebClientUtil;
 import kakaobootcamp.backend.domains.broker.KisAccessToken;
 import kakaobootcamp.backend.domains.broker.service.KisAccessTokenService;
@@ -21,6 +23,8 @@ import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceRealizedProfitAndLossResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockPriceResponse;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetSuggestedKeywordResponse;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetSuggestedKeywordsDTO;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.KisBaseResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.KisOrderStockRequest;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
@@ -37,6 +41,7 @@ public class StockService {
 	private final KisAccessTokenService kisAccessTokenService;
 	private final MemberService memberService;
 	private final WebClientUtil webClientUtil;
+	private final PublicDataPortalProperties publicDataPortalProperties;
 
 	// 헤더 설정
 	private Map<String, String> makeHeaders(Member member, String trId) {
@@ -200,6 +205,30 @@ public class StockService {
 		checkResponse(response);
 
 		return response;
+	}
+
+	// 주식 자동 검색어 조회
+	public List<GetSuggestedKeywordResponse> getSuggestedKeywords(String keyword) {
+		String uri = "/1160100/service/GetKrxListedInfoService/getItemInfo";
+		// 헤더 설정
+
+		// 키워드가 숫자면 isin 검색
+
+		// 파라미터 설정
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("serviceKey", publicDataPortalProperties.getKeywordsKey());
+		params.add("resultType", "json");
+		params.add("likeItmsNm", keyword);
+
+		GetSuggestedKeywordsDTO getSuggestedKeywordsDTO = webClientUtil.getFromPublicDataPortal(
+			new HashMap<>(),
+			uri,
+			params,
+			GetSuggestedKeywordsDTO.class);
+
+		return getSuggestedKeywordsDTO.getResponse().getBody().getItems().getItem().stream()
+			.map(GetSuggestedKeywordResponse::from)
+			.toList();
 	}
 }
 

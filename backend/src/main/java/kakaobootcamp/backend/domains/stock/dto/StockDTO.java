@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetSuggestedKeywordsDTO.Response.Body.Items.Item;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -320,4 +321,75 @@ public class StockDTO {
 			private String sltr_yn; // 정리매매여부
 		}
 	}
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class GetSuggestedKeywordsDTO {
+
+		private Response response;
+
+		// Getters and Setters
+
+		@Getter
+		@NoArgsConstructor(access = AccessLevel.PRIVATE)
+		public static class Response {
+			private Header header;
+			private Body body;
+
+			// Getters and Setters
+
+			@Getter
+			@NoArgsConstructor(access = AccessLevel.PRIVATE)
+			public static class Header {
+				private String resultCode;
+				private String resultMsg;
+
+				// Getters and Setters
+			}
+
+			@Getter
+			@NoArgsConstructor(access = AccessLevel.PRIVATE)
+			public static class Body {
+				private int numOfRows;
+				private int pageNo;
+				private int totalCount;
+				private Items items;
+
+				@Getter
+				@NoArgsConstructor(access = AccessLevel.PRIVATE)
+				public static class Items {
+					private List<Item> item;
+
+					@Getter
+					@NoArgsConstructor(access = AccessLevel.PRIVATE)
+					public static class Item {
+						private String basDt;
+						private String srtnCd;
+						private String isinCd;
+						private String mrktCtg;
+						private String itmsNm;
+						private String crno;
+						private String corpNm;
+					}
+				}
+			}
+		}
+	}
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	@Builder
+	public static class GetSuggestedKeywordResponse {
+		String productNumber;
+		String name;
+
+		public static GetSuggestedKeywordResponse from(Item item) {
+			return GetSuggestedKeywordResponse.builder()
+				.productNumber(item.getIsinCd())
+				.name(item.getItmsNm())
+				.build();
+		}
+	}
 }
+
