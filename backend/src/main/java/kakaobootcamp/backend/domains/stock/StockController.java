@@ -2,6 +2,9 @@ package kakaobootcamp.backend.domains.stock;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +17,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.dto.ErrorResponse;
 import kakaobootcamp.backend.common.util.memberLoader.MemberLoader;
@@ -23,6 +28,9 @@ import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockPriceResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.FindSuggestedKeywordResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
+import kakaobootcamp.backend.domains.watchList.domain.WatchList;
+import kakaobootcamp.backend.domains.watchList.dto.WatchListDTO;
+import kakaobootcamp.backend.domains.watchList.dto.WatchListDTO.FindWatchListResponse;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "STOCK API", description = "주식에 대한 API입니다.")
@@ -54,9 +62,22 @@ public class StockController {
 	}
 
 	@GetMapping("/recommendations")
-	public ResponseEntity<?> getStockRecommendations() {
+	public ResponseEntity<DataResponse<List<FindWatchListResponse>>> getStockRecommendations(
+		@RequestParam("size") @Min(value = 1, message = "size는 1이상이어야 합니다.") @Max(value = 10, message = "size는 10이하이어야 합니다.") int size,
+		@RequestParam("page") @Min(value = 0, message = "page는 0이상이어야 합니다.") int page)
+	{
+		Pageable pageable = PageRequest.of(page, size);
 
-		return ResponseEntity.ok().build();
+		// 더미 데이터
+		Member member = memberLoader.getMember();
+		List<WatchList> watchLists = member.getWatchLists();
+		List<FindWatchListResponse> responses = watchLists.stream()
+			.map(FindWatchListResponse::from)
+			.toList();
+
+		new PageImpl<>(responses, pageable, watchLists.size());
+
+		return ResponseEntity.ok(DataResponse.from(responses));
 	}
 
 	@GetMapping("/balance")
