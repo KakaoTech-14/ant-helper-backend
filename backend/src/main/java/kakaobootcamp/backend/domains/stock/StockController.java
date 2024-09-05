@@ -206,4 +206,11 @@ public class StockController {
 
 		return ResponseEntity.ok(DataResponse.from(responses));
 	}
+
+	@GetMapping("/update/removed")
+	public ResponseEntity<?> updateRemovedStocks() {
+		stockService.updateDomesticStocks();
+
+		return ResponseEntity.ok().build();
+	}
 }

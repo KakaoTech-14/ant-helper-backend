@@ -22,7 +22,7 @@ public class SchedulingService {
 	}
 
 	@Async
-	@Scheduled(cron = "0 0 6 * * MON-SAT")
+	@Scheduled(cron = "0 0 20 * * MON-SAT")
 	public void updateSuggestedKeywords() {
 		stockService.updateDomesticStocks();
 	}
