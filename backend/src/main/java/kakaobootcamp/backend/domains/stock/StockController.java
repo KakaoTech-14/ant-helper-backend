@@ -1,5 +1,17 @@
 package kakaobootcamp.backend.domains.stock;
 
+import java.util.List;
+
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,18 +24,15 @@ import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.dto.ErrorResponse;
 import kakaobootcamp.backend.common.util.memberLoader.MemberLoader;
 import kakaobootcamp.backend.domains.member.domain.Member;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.*;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.FindDomesticStockPriceChartResponse;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.FindSuggestedKeywordResponse;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceRealizedProfitAndLossResponse;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockPriceResponse;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
 import kakaobootcamp.backend.domains.watchList.domain.WatchList;
 import kakaobootcamp.backend.domains.watchList.dto.WatchListDTO.FindWatchListResponse;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "STOCK API", description = "주식에 대한 API입니다.")
 @RestController
@@ -212,8 +221,7 @@ public class StockController {
 		}
 	)
 	public ResponseEntity<DataResponse<List<FindSuggestedKeywordResponse>>> findSuggestedKeywords(
-		@RequestParam("keyword") String keyword)
-	{
+		@RequestParam("keyword") String keyword) {
 		List<FindSuggestedKeywordResponse> responses = stockService.findSuggestedKeywords(keyword);
 
 		return ResponseEntity.ok(DataResponse.from(responses));
@@ -254,15 +262,14 @@ public class StockController {
 			)
 		}
 	)
-	public ResponseEntity<ResponseEntity<FindDomesticStockPriceChartResponse>> findDomesticStockPriceChart(
+	public ResponseEntity<DataResponse<FindDomesticStockPriceChartResponse>> findDomesticStockPriceChart(
 		@RequestParam("productNumber") String productNumber,
-		@Pattern(regexp = "D|W|M|Y", message = "periodCode는 D, W, M, Y 중 하나여야 합니다.") @RequestParam("periodCode") String periodCode)
-	{
+		@Pattern(regexp = "D|W|M|Y", message = "periodCode는 D, W, M, Y 중 하나여야 합니다.") @RequestParam("periodCode") String periodCode) {
 		Member member = memberLoader.getMember();
 
 		FindDomesticStockPriceChartResponse response = stockService.findDomesticStockPriceChart(member, productNumber,
 			periodCode);
 
-		return ResponseEntity.ok(ResponseEntity.ok(response));
+		return ResponseEntity.ok(DataResponse.from(response));
 	}
 }
