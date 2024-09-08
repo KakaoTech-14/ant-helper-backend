@@ -254,7 +254,7 @@ public class StockController {
 			)
 		}
 	)
-	public ResponseEntity<FindDomesticStockPriceChartResponse> findDomesticStockPriceChart(
+	public ResponseEntity<ResponseEntity<FindDomesticStockPriceChartResponse>> findDomesticStockPriceChart(
 		@RequestParam("productNumber") String productNumber,
 		@Pattern(regexp = "D|W|M|Y", message = "periodCode는 D, W, M, Y 중 하나여야 합니다.") @RequestParam("periodCode") String periodCode)
 	{
@@ -263,6 +263,6 @@ public class StockController {
 		FindDomesticStockPriceChartResponse response = stockService.findDomesticStockPriceChart(member, productNumber,
 			periodCode);
 
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok(ResponseEntity.ok(response));
 	}
 }
