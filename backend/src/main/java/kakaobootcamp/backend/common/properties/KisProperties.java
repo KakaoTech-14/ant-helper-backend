@@ -16,4 +16,5 @@ public class KisProperties {
 	private String getBalanceTrId;
 	private String getBalanceRealizedProfitAndLossTrId;
 	private String getPriceTrId;
+	private String findDomesticStockPriceChartId;
 }
