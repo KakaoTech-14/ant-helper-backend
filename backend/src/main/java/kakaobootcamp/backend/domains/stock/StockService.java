@@ -2,6 +2,7 @@ package kakaobootcamp.backend.domains.stock;
 
 import static kakaobootcamp.backend.common.exception.ErrorCode.*;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -17,7 +18,6 @@ import org.springframework.util.MultiValueMap;
 
 import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.exception.CustomException;
-import kakaobootcamp.backend.common.exception.ErrorCode;
 import kakaobootcamp.backend.common.properties.KisProperties;
 import kakaobootcamp.backend.common.properties.PublicDataPortalProperties;
 import kakaobootcamp.backend.common.util.webClient.WebClientUtil;
@@ -26,10 +26,11 @@ import kakaobootcamp.backend.domains.broker.service.KisAccessTokenService;
 import kakaobootcamp.backend.domains.member.MemberService;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.stock.domain.DomesticStock;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.FindDomesticStockPriceChartResponse;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.FindSuggestedKeywordResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceRealizedProfitAndLossResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockPriceResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.FindSuggestedKeywordResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetSuggestedKeywordsDTO;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetSuggestedKeywordsDTO.Response.Body.Items.Item;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.KisBaseResponse;
@@ -279,7 +280,6 @@ public class StockService {
 		}
 	}
 
-
 	// 주식 목록 저장
 	private void saveDomesticStocks(List<DomesticStock> domesticStocks) {
 		domesticStockRepository.saveAll(domesticStocks);
@@ -311,6 +311,60 @@ public class StockService {
 	private DomesticStock findDomesticStockByProductNumber(String productNumber) {
 		return domesticStockRepository.findByProductNumber(productNumber)
 			.orElseThrow(() -> ApiException.from(STOCK_NOT_FOUND));
+	}
+
+	// 국내 주식 기간별 시세 조회
+	public FindDomesticStockPriceChartResponse findDomesticStockPriceChart(Member member, String productNumber,
+		String periodCode) {
+		String uri = "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice";
+		LocalDate today = LocalDate.now();
+		String startDate = makeDateToString(calculateStartDate(today, periodCode));
+		String endDate = makeDateToString(today);
+
+		// 헤더 설정
+		Map<String, String> headers = makeHeaders(member, kisProperties.getFindDomesticStockPriceChartId());
+
+		// 파라미터 설정
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("FID_COND_MRKT_DIV_CODE", "J"); // 'J': 주식, ETF, ETN / 'W': ELW
+		params.add("FID_INPUT_ISCD", productNumber); // FID 입력 종목코드: 6자리 종목번호 또는 ETN의 경우 'Q'로 시작하는 코드
+		params.add("FID_INPUT_DATE_1", startDate);
+		params.add("FID_INPUT_DATE_2", endDate);
+		params.add("FID_PERIOD_DIV_CODE", periodCode);
+		params.add("FID_ORG_ADJ_PRC", "1");
+
+		FindDomesticStockPriceChartResponse response = webClientUtil.getFromKis(
+			headers,
+			uri,
+			params,
+			FindDomesticStockPriceChartResponse.class);
+
+		checkResponse(response);
+
+		return response;
+	}
+
+	private LocalDate calculateStartDate(LocalDate day, String periodCode) {
+		LocalDate startDate;
+
+		if (periodCode.equals("D")) { // 일봉: 저번 달
+			startDate = day.minusMonths(1);
+		} else if (periodCode.equals("W")) { // 주봉: 이번 주의 첫 영업일 (월요일)
+			startDate = day.minusMonths(3).with(DayOfWeek.MONDAY);
+		} else if (periodCode.equals("M")) { // 월봉: 작년 이날
+			startDate = day.minusYears(1).withDayOfMonth(1);
+		} else if (periodCode.equals("Y")) { // 저번 해
+			startDate = day.minusYears(10).withDayOfYear(1);
+		} else {
+			throw ApiException.from(BAD_REQUEST);
+		}
+
+		return startDate;
+	}
+
+	private String makeDateToString(LocalDate date) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+		return date.format(formatter);
 	}
 }
 
