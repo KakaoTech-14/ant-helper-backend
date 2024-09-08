@@ -1,17 +1,5 @@
 package kakaobootcamp.backend.domains.stock;
 
-import java.util.List;
-
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,19 +7,23 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.dto.ErrorResponse;
 import kakaobootcamp.backend.common.util.memberLoader.MemberLoader;
 import kakaobootcamp.backend.domains.member.domain.Member;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceRealizedProfitAndLossResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockPriceResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.FindSuggestedKeywordResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.*;
 import kakaobootcamp.backend.domains.watchList.domain.WatchList;
-import kakaobootcamp.backend.domains.watchList.dto.WatchListDTO;
 import kakaobootcamp.backend.domains.watchList.dto.WatchListDTO.FindWatchListResponse;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "STOCK API", description = "주식에 대한 API입니다.")
 @RestController
@@ -64,8 +56,7 @@ public class StockController {
 	@GetMapping("/recommendations")
 	public ResponseEntity<DataResponse<List<FindWatchListResponse>>> getStockRecommendations(
 		@RequestParam("size") @Min(value = 1, message = "size는 1이상이어야 합니다.") @Max(value = 10, message = "size는 10이하이어야 합니다.") int size,
-		@RequestParam("page") @Min(value = 0, message = "page는 0이상이어야 합니다.") int page)
-	{
+		@RequestParam("page") @Min(value = 0, message = "page는 0이상이어야 합니다.") int page) {
 		Pageable pageable = PageRequest.of(page, size);
 
 		// 더미 데이터
@@ -233,5 +224,45 @@ public class StockController {
 		stockService.updateDomesticStocks();
 
 		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/price-chart")
+	@Operation(
+		summary = "주식 가격 차트 조회",
+		description = """
+			주식 가격 차트 조회 api 입니다.
+			periodCode는 D, W, M, Y 중 하나여야 합니다.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 오류입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "유효하지 않은 액세스 토큰입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "500",
+				description = "요청 오류입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<FindDomesticStockPriceChartResponse> findDomesticStockPriceChart(
+		@RequestParam("productNumber") String productNumber,
+		@Pattern(regexp = "D|W|M|Y", message = "periodCode는 D, W, M, Y 중 하나여야 합니다.") @RequestParam("periodCode") String periodCode)
+	{
+		Member member = memberLoader.getMember();
+
+		FindDomesticStockPriceChartResponse response = stockService.findDomesticStockPriceChart(member, productNumber,
+			periodCode);
+
+		return ResponseEntity.ok(response);
 	}
 }
