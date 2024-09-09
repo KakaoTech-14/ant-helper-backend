@@ -350,11 +350,11 @@ public class StockService {
 		if (periodCode.equals("D")) { // 일봉: 저번 달
 			startDate = day.minusMonths(1);
 		} else if (periodCode.equals("W")) { // 주봉: 이번 주의 첫 영업일 (월요일)
-			startDate = day.minusMonths(3).with(DayOfWeek.MONDAY);
+			startDate = day.minusMonths(6).with(DayOfWeek.MONDAY);
 		} else if (periodCode.equals("M")) { // 월봉: 작년 이날
-			startDate = day.minusYears(1).withDayOfMonth(1);
+			startDate = day.minusYears(3).withDayOfMonth(1);
 		} else if (periodCode.equals("Y")) { // 저번 해
-			startDate = day.minusYears(10).withDayOfYear(1);
+			startDate = day.minusYears(20).withDayOfYear(1);
 		} else {
 			throw ApiException.from(BAD_REQUEST);
 		}
