@@ -5,7 +5,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
 import kakaobootcamp.backend.domains.autoTrade.AutoTradeService;
-import kakaobootcamp.backend.domains.stock.StockService;
+import kakaobootcamp.backend.domains.stock.service.StockService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
