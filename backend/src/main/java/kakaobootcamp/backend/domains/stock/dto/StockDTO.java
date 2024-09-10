@@ -411,7 +411,7 @@ public class StockDTO {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class FindDomesticStockPriceChartResponse extends KisBaseResponse{
+	public static class FindDomesticStockPriceChartResponse extends KisBaseResponse {
 
 		private Output1 output1;  // 응답 상세
 		private List<Output2> output2;  // 일별 데이터 배열
@@ -468,6 +468,44 @@ public class StockDTO {
 			private String prdy_vrss;  // 전일 대비
 			private String revl_issu_reas;  // 재평가사유코드
 		}
+	}
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class GetDomesticStockPopularChartResponse extends KisBaseResponse {
+		private List<Output> output;
+
+		@Getter
+		@NoArgsConstructor(access = AccessLevel.PRIVATE)
+		public static class Output {
+			private String htsKorIsnm;  // 종목명
+			private String mkscShrnIscd;  // 종목 코드
+			private String dataRank;  // 데이터 순위
+			private String stckPrpr;  // 현재가
+			private String prdyVrssSign;  // 전일 대비 기호
+			private String prdyVrss;  // 전일 대비 가격
+			private String prdyCtrt;  // 전일 대비 등락률
+			private String acmlVol;  // 누적 거래량
+			private String prdyVol;  // 전일 거래량
+			private String lstnStcn;  // 상장 주식 수
+			private String avrgVol;  // 평균 거래량
+			private String nBefrClprVrssPrprRate;  // 전날 종가 대비 현재가 등락률
+			private String volInrt;  // 거래량 증가율
+			private String volTnrt;  // 거래량 회전율
+			private String ndayVolTnrt;  // N일 거래량 회전율
+			private String avrgTrPbmn;  // 평균 거래 대금
+			private String trPbmnTnrt;  // 거래 대금 회전율
+			private String ndayTrPbmnTnrt;  // N일 거래 대금 회전율
+			private String acmlTrPbmn;  // 누적 거래 대금
+		}
+	}
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	@AllArgsConstructor
+	public static class FindDomesticStockPopularChartResponse {
+		private String name;
+		private String productNumber;
 	}
 }
 

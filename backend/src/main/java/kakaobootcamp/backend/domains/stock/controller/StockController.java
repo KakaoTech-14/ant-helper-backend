@@ -1,5 +1,6 @@
 package kakaobootcamp.backend.domains.stock.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.PageImpl;
@@ -24,6 +25,7 @@ import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.dto.ErrorResponse;
 import kakaobootcamp.backend.common.util.memberLoader.MemberLoader;
 import kakaobootcamp.backend.domains.member.domain.Member;
+import kakaobootcamp.backend.domains.stock.dto.StockDTO.FindDomesticStockPopularChartResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.FindDomesticStockPriceChartResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.FindSuggestedKeywordResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceRealizedProfitAndLossResponse;
@@ -31,8 +33,6 @@ import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockPriceResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
 import kakaobootcamp.backend.domains.stock.service.StockService;
-import kakaobootcamp.backend.domains.watchList.domain.WatchList;
-import kakaobootcamp.backend.domains.watchList.dto.WatchListDTO.FindWatchListResponse;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "STOCK API", description = "주식에 대한 API입니다.")
@@ -64,21 +64,27 @@ public class StockController {
 	}
 
 	@GetMapping("/recommendations")
-	public ResponseEntity<DataResponse<List<FindWatchListResponse>>> getStockRecommendations(
+	public ResponseEntity<DataResponse<List<FindDomesticStockPopularChartResponse>>> getStockRecommendations(
 		@RequestParam("size") @Min(value = 1, message = "size는 1이상이어야 합니다.") @Max(value = 10, message = "size는 10이하이어야 합니다.") int size,
 		@RequestParam("page") @Min(value = 0, message = "page는 0이상이어야 합니다.") int page) {
 		Pageable pageable = PageRequest.of(page, size);
 
-		// 더미 데이터
-		Member member = memberLoader.getMember();
-		List<WatchList> watchLists = member.getWatchLists();
-		List<FindWatchListResponse> responses = watchLists.stream()
-			.map(FindWatchListResponse::from)
-			.toList();
+		List<FindDomesticStockPopularChartResponse> popularStocks = new ArrayList<>();
 
-		new PageImpl<>(responses, pageable, watchLists.size());
+		popularStocks.add(new FindDomesticStockPopularChartResponse("삼성전자", "005930"));
+		popularStocks.add(new FindDomesticStockPopularChartResponse("SK하이닉스", "000660"));
+		popularStocks.add(new FindDomesticStockPopularChartResponse("이엔셀", "190380"));
+		popularStocks.add(new FindDomesticStockPopularChartResponse("에코프로비엠", "247540"));
+		popularStocks.add(new FindDomesticStockPopularChartResponse("에코프로", "086520"));
+		popularStocks.add(new FindDomesticStockPopularChartResponse("금양", "001570"));
+		popularStocks.add(new FindDomesticStockPopularChartResponse("HLB", "028300"));
+		popularStocks.add(new FindDomesticStockPopularChartResponse("한미반도체", "042700"));
+		popularStocks.add(new FindDomesticStockPopularChartResponse("유한양행", "000100"));
+		popularStocks.add(new FindDomesticStockPopularChartResponse("카카오", "035720"));
 
-		return ResponseEntity.ok(DataResponse.from(responses));
+		new PageImpl<>(popularStocks, pageable, popularStocks.size());
+
+		return ResponseEntity.ok(DataResponse.from(popularStocks));
 	}
 
 	@GetMapping("/balance")
