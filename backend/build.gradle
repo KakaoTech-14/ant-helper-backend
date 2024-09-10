@@ -49,6 +49,8 @@ dependencies {
     testImplementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-api', version: '2.5.0'
     //email
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+    //aop
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
 }
 
 tasks.named('test') {

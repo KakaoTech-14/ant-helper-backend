@@ -1,4 +1,4 @@
-package kakaobootcamp.backend.domains.stock;
+package kakaobootcamp.backend.domains.stock.controller;
 
 import java.util.List;
 
@@ -30,6 +30,7 @@ import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceRealizedP
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockPriceResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
+import kakaobootcamp.backend.domains.stock.service.StockService;
 import kakaobootcamp.backend.domains.watchList.domain.WatchList;
 import kakaobootcamp.backend.domains.watchList.dto.WatchListDTO.FindWatchListResponse;
 import lombok.RequiredArgsConstructor;
