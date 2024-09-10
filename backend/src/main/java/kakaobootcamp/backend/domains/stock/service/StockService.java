@@ -1,4 +1,4 @@
-package kakaobootcamp.backend.domains.stock;
+package kakaobootcamp.backend.domains.stock.service;
 
 import static kakaobootcamp.backend.common.exception.ErrorCode.*;
 
