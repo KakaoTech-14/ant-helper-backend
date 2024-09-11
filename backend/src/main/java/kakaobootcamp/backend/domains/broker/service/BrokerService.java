@@ -50,18 +50,17 @@ public class BrokerService {
 	public void getAndSaveAccessToken(Member member) {
 		String BEARER = "Bearer ";
 
-		// 임시로 계속 재발급하도록 변경
+		// 기존 accessToken이 없으면 재발급
 		KisAccessToken kisAccessToken = kisAccessTokenService.findKisAccessToken(member.getId()).orElse(null);
-		if (kisAccessToken != null) {
-			kisAccessTokenService.deleteKisAccessToken(kisAccessToken);
+		if (kisAccessToken == null) {
+			String appKey = memberService.getDecryptedAppKey(member);
+			String secretKey = memberService.getDecryptedSecretKey(member);
+
+			String accessToken = BEARER + getAccessToken(appKey, secretKey).getAccess_token();
+			kisAccessToken = new KisAccessToken(member.getId(), accessToken);
+
+			kisAccessTokenService.saveKisAccessToken(kisAccessToken);
 		}
-		String appKey = memberService.getDecryptedAppKey(member);
-		String secretKey = memberService.getDecryptedSecretKey(member);
-
-		String accessToken = BEARER + getAccessToken(appKey, secretKey).getAccess_token();
-		kisAccessToken = new KisAccessToken(member.getId(), accessToken);
-
-		kisAccessTokenService.saveKisAccessToken(kisAccessToken);
 	}
 
 	// Access Token을 받아오는 메서드

@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
-@RedisHash(value = "kisAccessToken", timeToLive = 7776000)
+@RedisHash(value = "kisAccessToken", timeToLive = 86400)
 public class KisAccessToken {
 	@Id
 	private Long memberId;
