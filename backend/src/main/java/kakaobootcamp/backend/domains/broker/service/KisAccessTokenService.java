@@ -23,4 +23,8 @@ public class KisAccessTokenService {
 	public void saveKisAccessToken(KisAccessToken kisAccessToken) {
 		kisAccessTokenRepository.save(kisAccessToken);
 	}
+
+	public void deleteKisAccessToken(KisAccessToken kisAccessToken) {
+		kisAccessTokenRepository.delete(kisAccessToken);
+	}
 }
