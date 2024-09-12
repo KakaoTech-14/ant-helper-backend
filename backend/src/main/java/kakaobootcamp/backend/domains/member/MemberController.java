@@ -197,12 +197,12 @@ public class MemberController {
 			)
 		}
 	)
-	public ResponseEntity<?> updateAutoTradeState(@RequestBody UpdateAutoTradeStateRequest request) {
+	public ResponseEntity<DataResponse<Void>> updateAutoTradeState(@RequestBody UpdateAutoTradeStateRequest request) {
 		Member member = memberLoader.getMember();
 		AutoTradeState autoTradeState = request.getAutoTradeState();
 
 		memberService.updateAutoTradeState(member, autoTradeState);
 
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 }
