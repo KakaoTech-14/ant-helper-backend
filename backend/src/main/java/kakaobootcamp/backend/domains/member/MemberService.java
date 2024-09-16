@@ -120,8 +120,7 @@ public class MemberService {
 		Long memberId = member.getId();
 
 		// 회원의 refreshToken 삭제
-		RefreshToken refreshToken = refreshTokenRepository.findByMemberId(memberId).orElse(null);
-		refreshTokenRepository.deleteById(refreshToken.getRefreshToken());
+		refreshTokenRepository.deleteByMemberId(memberId);
 
 		// 같은 accessToken으로 다시 로그인하지 못하도록 블랙리스트에 저장
 		logoutRepository.save(new LogoutToken(UUID.randomUUID().toString(), accessToken));
