@@ -3,12 +3,11 @@ package kakaobootcamp.backend.domains.member;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,9 +23,7 @@ import kakaobootcamp.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import kakaobootcamp.backend.common.util.memberLoader.MemberLoader;
 import kakaobootcamp.backend.domains.member.domain.AutoTradeState;
 import kakaobootcamp.backend.domains.member.domain.Member;
-import kakaobootcamp.backend.domains.member.dto.MemberDTO;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
-import kakaobootcamp.backend.domains.member.dto.MemberDTO.LoginRequest;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.SendVerificationCodeRequest;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.UpdateAutoTradeStateRequest;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.VerifyEmailCodeRequest;
@@ -127,7 +124,9 @@ public class MemberController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> loginMember(LoginRequest request) {
+	public ResponseEntity<DataResponse<Void>> loginMember(
+		@RequestParam("email") String email,
+		@RequestParam("pw") String pw) {
 		// 이 메소드는 실제로 실행되지 않습니다. 문서용도로만 사용됩니다.
 		return ResponseEntity.ok(DataResponse.ok());
 	}
