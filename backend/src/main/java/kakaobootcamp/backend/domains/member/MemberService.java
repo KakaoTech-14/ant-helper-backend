@@ -13,7 +13,6 @@ import kakaobootcamp.backend.common.exception.ErrorCode;
 import kakaobootcamp.backend.common.util.encoder.EncryptUtil;
 import kakaobootcamp.backend.common.util.encoder.PasswordEncoderUtil;
 import kakaobootcamp.backend.domains.email.EmailService;
-import kakaobootcamp.backend.domains.email.repository.EmailCodeRepository;
 import kakaobootcamp.backend.domains.member.domain.AutoTradeState;
 import kakaobootcamp.backend.domains.member.domain.LogoutToken;
 import kakaobootcamp.backend.domains.member.domain.Member;
@@ -36,12 +35,8 @@ public class MemberService {
 	private final PasswordEncoderUtil passwordEncoderUtil;
 
 	private final EmailService emailService;
-	private final EmailCodeRepository emailCodeRepository;
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final LogoutRepository logoutRepository;
-
-	private static final String EMAIL_TITLE = "ANT HELPER 이메일 인증 코드";
-	private static final String EMAIL_TEXT = "인증 코드는 %d 입니다.";
 
 	// 회원가입하기
 	@Transactional(rollbackFor = ApiException.class)
