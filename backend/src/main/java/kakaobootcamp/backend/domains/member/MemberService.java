@@ -1,7 +1,6 @@
 package kakaobootcamp.backend.domains.member;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 import javax.crypto.SecretKey;
@@ -11,19 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.exception.ErrorCode;
+import kakaobootcamp.backend.common.util.encoder.EncryptUtil;
 import kakaobootcamp.backend.common.util.encoder.PasswordEncoderUtil;
 import kakaobootcamp.backend.domains.email.EmailService;
-import kakaobootcamp.backend.domains.email.domain.EmailCode;
 import kakaobootcamp.backend.domains.email.repository.EmailCodeRepository;
-import kakaobootcamp.backend.common.util.encoder.EncryptUtil;
 import kakaobootcamp.backend.domains.member.domain.AutoTradeState;
 import kakaobootcamp.backend.domains.member.domain.LogoutToken;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.member.domain.MemberRole;
 import kakaobootcamp.backend.domains.member.domain.RefreshToken;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
-import kakaobootcamp.backend.domains.member.dto.MemberDTO.SendVerificationCodeRequest;
-import kakaobootcamp.backend.domains.member.dto.MemberDTO.VerifyEmailCodeRequest;
 import kakaobootcamp.backend.domains.member.repository.LogoutRepository;
 import kakaobootcamp.backend.domains.member.repository.MemberRepository;
 import kakaobootcamp.backend.domains.member.repository.RefreshTokenRepository;
@@ -67,7 +63,6 @@ public class MemberService {
 		SecretKey secretKeySalt = EncryptUtil.generateKey();
 		String encryptedSecretKey = EncryptUtil.encrypt(request.getSecretKey(), secretKeySalt);
 
-		log.info(encryptedSecretKey);
 		// 회원 저장
 		Member member = Member.builder()
 			.email(email)
@@ -89,47 +84,11 @@ public class MemberService {
 	}
 
 	// 이메일 중복 조회
-	private void validateDuplicatedEmail(String email) {
+	public void validateDuplicatedEmail(String email) {
 		boolean isDuplicated = memberRepository.existsByEmail(email);
 		if (isDuplicated) {
 			throw ApiException.from(ErrorCode.EMAIL_DUPLICATE);
 		}
-	}
-
-	// 이메일 인증번호 보내기
-	@Transactional(rollbackFor = ApiException.class)
-	public void validateEmailAndSendEmailVerification(SendVerificationCodeRequest request) {
-		String email = request.getEmail();
-
-		validateDuplicatedEmail(email);
-
-		// 본문
-		Integer verificationCode = emailService.createVerificationCode();
-		String text = String.format(EMAIL_TEXT, verificationCode);
-
-		// 이메일 보내기
-		emailService.sendEmail(email, EMAIL_TITLE, text);
-
-		// 이메일 코드 저장
-		emailService.checkEmailCodeDuplicationAndSaveEmailCode(email, verificationCode);
-	}
-
-	// 이메일 인증 확인
-	@Transactional(rollbackFor = ApiException.class)
-	public boolean verityEmailCode(VerifyEmailCodeRequest request) {
-		String email = request.getEmail();
-		Integer requestCode = request.getCode();
-
-		// 이메일로 인증 코드 검색
-		EmailCode emailCode = emailCodeRepository.findByEmail(email)
-			.orElseThrow(() -> ApiException.from(ErrorCode.UNAUTHENTICATED_EMAIL));
-
-		// 인증 코드 비교 후 인증된 이메일 저장
-		if (Objects.equals(emailCode.getCode(), requestCode)) {
-			emailService.saveVerifiedEmail(email);
-			return true;
-		}
-		return false;
 	}
 
 	// 회원 삭제하기

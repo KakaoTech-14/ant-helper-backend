@@ -24,9 +24,7 @@ import kakaobootcamp.backend.common.util.memberLoader.MemberLoader;
 import kakaobootcamp.backend.domains.member.domain.AutoTradeState;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.CreateMemberRequest;
-import kakaobootcamp.backend.domains.member.dto.MemberDTO.SendVerificationCodeRequest;
 import kakaobootcamp.backend.domains.member.dto.MemberDTO.UpdateAutoTradeStateRequest;
-import kakaobootcamp.backend.domains.member.dto.MemberDTO.VerifyEmailCodeRequest;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "MEMBER API", description = "회원에 대한 API입니다.")
@@ -59,53 +57,6 @@ public class MemberController {
 		memberService.createMember(request);
 
 		return ResponseEntity.ok(DataResponse.ok());
-	}
-
-	@PostMapping("/email/verification-request")
-	@Operation(
-		summary = "email 인증 요청",
-		description = "email 인증을 위한 이메일을 전송",
-		responses = {
-			@ApiResponse(
-				responseCode = "200",
-				description = "성공"
-			),
-			@ApiResponse(
-				responseCode = "409",
-				description = "이미 가입된 이메일입니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			)
-		}
-	)
-	public ResponseEntity<DataResponse<Void>> sendVerificationCode(
-		@RequestBody @Valid SendVerificationCodeRequest request) {
-		memberService.validateEmailAndSendEmailVerification(request);
-
-		return ResponseEntity.ok(DataResponse.ok());
-	}
-
-	@PostMapping("/email/verification")
-	@Operation(
-		summary = "email 인증 확인",
-		description = """
-			인증 요청을 한 email이 없으면 401
-			code가 일치하면 true, 일치하지 않으면 false를 반환한다.""",
-		responses = {
-			@ApiResponse(
-				responseCode = "200",
-				description = "성공"
-			),
-			@ApiResponse(
-				responseCode = "401",
-				description = "이메일 인증을 시도해주세요.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			)
-		}
-	)
-	public ResponseEntity<DataResponse<Boolean>> verifyEmailCode(@RequestBody @Valid VerifyEmailCodeRequest request) {
-		boolean isVerified = memberService.verityEmailCode(request);
-
-		return ResponseEntity.ok(DataResponse.from(isVerified));
 	}
 
 	@PostMapping(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
