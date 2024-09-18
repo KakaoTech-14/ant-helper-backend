@@ -17,6 +17,9 @@ public class MemberDTO {
 	@AllArgsConstructor
 	public static class CreateMemberRequest {
 
+		@NotBlank(message = "token은 비어있을 수 없습니다.")
+		private String token;
+
 		@NotBlank(message = "email은 비어있을 수 없습니다.")
 		@Email(message = "email 형식이 올바르지 않습니다.")
 		private String email;

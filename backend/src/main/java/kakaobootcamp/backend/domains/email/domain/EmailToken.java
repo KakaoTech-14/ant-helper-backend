@@ -8,9 +8,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-@RedisHash(value = "memberEmail", timeToLive =60*60)
-public class VerifiedEmail {
+@RedisHash(value = "emailToken", timeToLive =60*60)
+public class EmailToken {
 
 	@Id
-	private String email;
+	private String token;
 }

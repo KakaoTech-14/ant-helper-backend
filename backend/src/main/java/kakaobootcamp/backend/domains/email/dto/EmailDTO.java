@@ -29,4 +29,11 @@ public class EmailDTO {
 
 		private Integer code;
 	}
+
+	@Getter
+	@AllArgsConstructor
+	public static class VerifyEmailCodeResponse {
+
+		private String token;
+	}
 }
