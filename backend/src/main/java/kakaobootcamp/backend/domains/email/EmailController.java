@@ -16,6 +16,7 @@ import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.dto.ErrorResponse;
 import kakaobootcamp.backend.domains.email.dto.EmailDTO.SendVerificationCodeRequest;
 import kakaobootcamp.backend.domains.email.dto.EmailDTO.VerifyEmailCodeRequest;
+import kakaobootcamp.backend.domains.email.dto.EmailDTO.VerifyEmailCodeResponse;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "EMAIL API", description = "이메일에 대한 API입니다.")
@@ -43,7 +44,8 @@ public class EmailController {
 		}
 	)
 	public ResponseEntity<DataResponse<Void>> sendVerificationCode(
-		@RequestBody @Valid SendVerificationCodeRequest request) {
+		@RequestBody @Valid SendVerificationCodeRequest request
+	) {
 		emailService.validateEmailAndSendEmailVerification(request);
 
 		return ResponseEntity.ok(DataResponse.ok());
@@ -61,15 +63,22 @@ public class EmailController {
 				description = "성공"
 			),
 			@ApiResponse(
+				responseCode = "400",
+				description = "유효하지 않은 이메일 코드입니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
 				responseCode = "401",
 				description = "이메일 인증을 시도해주세요.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Boolean>> verifyEmailCode(@RequestBody @Valid VerifyEmailCodeRequest request) {
-		boolean isVerified = emailService.verityEmailCode(request);
+	public ResponseEntity<DataResponse<VerifyEmailCodeResponse>> verifyEmailCode(
+		@RequestBody @Valid VerifyEmailCodeRequest request
+	) {
+		VerifyEmailCodeResponse response = emailService.verifyEmailCode(request);
 
-		return ResponseEntity.ok(DataResponse.from(isVerified));
+		return ResponseEntity.ok(DataResponse.from(response));
 	}
 }

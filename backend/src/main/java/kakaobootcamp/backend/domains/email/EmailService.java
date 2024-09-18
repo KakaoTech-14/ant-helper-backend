@@ -5,6 +5,7 @@ import static kakaobootcamp.backend.domains.email.dto.EmailDTO.*;
 
 import java.util.Objects;
 import java.util.Random;
+import java.util.UUID;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -14,12 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.exception.ErrorCode;
 import kakaobootcamp.backend.domains.email.domain.EmailCode;
-import kakaobootcamp.backend.domains.email.domain.VerifiedEmail;
-import kakaobootcamp.backend.domains.email.dto.EmailDTO;
+import kakaobootcamp.backend.domains.email.domain.EmailToken;
 import kakaobootcamp.backend.domains.email.repository.EmailCodeRepository;
-import kakaobootcamp.backend.domains.email.repository.VerifiedEmailRepository;
+import kakaobootcamp.backend.domains.email.repository.EmailTokenRepository;
 import kakaobootcamp.backend.domains.member.MemberService;
-import kakaobootcamp.backend.domains.member.dto.MemberDTO;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -28,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class EmailService {
 
 	private final JavaMailSender emailSender;
-	private final VerifiedEmailRepository verifiedEmailRepository;
+	private final EmailTokenRepository emailTokenRepository;
 	private final EmailCodeRepository emailCodeRepository;
 	private final MemberService memberService;
 
@@ -55,7 +54,7 @@ public class EmailService {
 
 	// 이메일 인증 확인
 	@Transactional(rollbackFor = ApiException.class)
-	public boolean verityEmailCode(VerifyEmailCodeRequest request) {
+	public VerifyEmailCodeResponse verifyEmailCode(VerifyEmailCodeRequest request) {
 		String email = request.getEmail();
 		Integer requestCode = request.getCode();
 
@@ -64,18 +63,22 @@ public class EmailService {
 			.orElseThrow(() -> ApiException.from(ErrorCode.UNAUTHENTICATED_EMAIL));
 
 		// 인증 코드 비교 후 인증된 이메일 저장
-		if (Objects.equals(emailCode.getCode(), requestCode)) {
-			saveVerifiedEmail(email);
-			return true;
+		if (!Objects.equals(emailCode.getCode(), requestCode)) {
+			throw ApiException.from(ErrorCode.INVALID_EMAIL_CODE);
 		}
-		return false;
+
+		// 토큰 발급
+		String token = UUID.randomUUID().toString();
+		saveEmailToken(token);
+		return new VerifyEmailCodeResponse(token);
 	}
 
 	// 이메일 보내기
 	private void sendEmail(
 		String toEmail,
 		String title,
-		String text) {
+		String text
+	) {
 		SimpleMailMessage emailForm = createEmailForm(toEmail, title, text);
 
 		// 이메일 전송
@@ -90,7 +93,8 @@ public class EmailService {
 	private SimpleMailMessage createEmailForm(
 		String toEmail,
 		String title,
-		String text) {
+		String text
+	) {
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setTo(toEmail);
 		message.setSubject(title);
@@ -101,23 +105,9 @@ public class EmailService {
 
 	// 인증된 이메일 저장
 	@Transactional
-	private void saveVerifiedEmail(String email) {
-		VerifiedEmail verifiedEmail = new VerifiedEmail(email);
-		verifiedEmailRepository.save(verifiedEmail);
-	}
-
-	// 인증된 이메일 삭제
-	@Transactional
-	public void deleteVerifiedEmail(String email) {
-		verifiedEmailRepository.deleteById(email);
-	}
-
-	// 인증된 이메일인지 확인
-	public void validateVerifiedEmail(String email) {
-		boolean isPresent = verifiedEmailRepository.findByEmail(email).isPresent();
-		if (!isPresent) {
-			throw ApiException.from(ErrorCode.UNAUTHENTICATED_EMAIL);
-		}
+	public void saveEmailToken(String token) {
+		EmailToken emailToken = new EmailToken(token);
+		emailTokenRepository.save(emailToken);
 	}
 
 	// 인증 코드 생성
@@ -129,7 +119,7 @@ public class EmailService {
 
 	// 이메일 코드 중복 확인 및 저장
 	@Transactional
-	private void checkEmailCodeDuplicationAndSaveEmailCode(String email, Integer verificationCode) {
+	public void checkEmailCodeDuplicationAndSaveEmailCode(String email, Integer verificationCode) {
 		EmailCode emailCode = emailCodeRepository.findByEmail(email).orElse(null);
 
 		// 1. 이미 저장된 emailCode가 있으면 code만 변경
