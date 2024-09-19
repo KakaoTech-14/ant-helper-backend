@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
-@RedisHash(value = "emailCode", timeToLive =5*60)
+@RedisHash(value = "emailCode", timeToLive = 5 * 60)
 public class EmailCode {
 
 	@Id

@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-@RedisHash(value= "blacklist", timeToLive = 60*60)
+@RedisHash(value = "blacklist", timeToLive = 60 * 60)
 public class LogoutToken {
 
 	@Id

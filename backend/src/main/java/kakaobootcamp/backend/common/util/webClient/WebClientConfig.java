@@ -24,7 +24,7 @@ public class WebClientConfig {
 	private final AiServerProperties aiServerProperties;
 	private final PublicDataPortalProperties publicDataPortalProperties;
 
-	private HttpClient httpClient = HttpClient.create()
+	private final HttpClient httpClient = HttpClient.create()
 		.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000); // 5초
 
 	@Bean

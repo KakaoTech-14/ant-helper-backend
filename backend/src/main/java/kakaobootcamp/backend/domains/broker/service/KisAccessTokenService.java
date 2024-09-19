@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class KisAccessTokenService {
 
-	 private final KisAccessTokenRepository kisAccessTokenRepository;
+	private final KisAccessTokenRepository kisAccessTokenRepository;
 
 	public Optional<KisAccessToken> findKisAccessToken(Long memberId) {
 		return kisAccessTokenRepository.findById(memberId);

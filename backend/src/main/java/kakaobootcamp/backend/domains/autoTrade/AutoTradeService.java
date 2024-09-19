@@ -15,10 +15,10 @@ import kakaobootcamp.backend.domains.broker.service.BrokerService;
 import kakaobootcamp.backend.domains.member.MemberService;
 import kakaobootcamp.backend.domains.member.domain.AutoTradeState;
 import kakaobootcamp.backend.domains.member.domain.Member;
-import kakaobootcamp.backend.domains.stock.service.StockService;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse.Output1;
 import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
+import kakaobootcamp.backend.domains.stock.service.StockService;
 import kakaobootcamp.backend.domains.transaction.TransactionService;
 import kakaobootcamp.backend.domains.transaction.domain.Transaction;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class AutoTradeService {
 	private final StockService stockService;
 	private final TransactionService transactionService;
 	private final MemberService memberService;
-	private final BrokerService  brokerService;
+	private final BrokerService brokerService;
 
 	// 자동 거래를 ON한 멤버들에 대해 자동 거래를 수행
 	public void executeAutoTradeForAllMembers() {

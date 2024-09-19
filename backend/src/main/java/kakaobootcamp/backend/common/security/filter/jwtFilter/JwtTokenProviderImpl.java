@@ -27,14 +27,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.properties.JwtProperties;
-import kakaobootcamp.backend.domains.member.repository.LogoutRepository;
-import kakaobootcamp.backend.domains.member.domain.RefreshToken;
-import kakaobootcamp.backend.domains.member.repository.RefreshTokenRepository;
 import kakaobootcamp.backend.common.security.filter.jwtFilter.JwtDTO.AccessAndRefreshTokenResponse;
 import kakaobootcamp.backend.common.security.filter.jwtFilter.JwtDTO.AccessTokenResponse;
 import kakaobootcamp.backend.common.util.responseWriter.ResponseWriter;
-import kakaobootcamp.backend.domains.member.repository.MemberRepository;
 import kakaobootcamp.backend.domains.member.domain.Member;
+import kakaobootcamp.backend.domains.member.domain.RefreshToken;
+import kakaobootcamp.backend.domains.member.repository.LogoutRepository;
+import kakaobootcamp.backend.domains.member.repository.MemberRepository;
+import kakaobootcamp.backend.domains.member.repository.RefreshTokenRepository;
 import lombok.extern.slf4j.Slf4j;
 
 @Transactional(readOnly = true)

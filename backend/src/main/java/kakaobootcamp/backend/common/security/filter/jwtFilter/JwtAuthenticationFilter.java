@@ -49,8 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(
 		HttpServletRequest request,
 		HttpServletResponse response,
-		FilterChain filterChain) throws ServletException, IOException, ApiException
-	{
+		FilterChain filterChain) throws ServletException, IOException, ApiException {
 
 		final String refreshToken = jwtTokenProvider.extractRefreshToken(request).orElse(null);
 		final String accessToken = jwtTokenProvider.extractAccessToken(request).orElse(null);
@@ -60,13 +59,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		//3. access토큰이 존재하며, accessToken이 유효하면 인증
 		//4. access토큰이 존재하며, accesToken이 유효하지 않으면 에러 리턴
 		//5. 그 외 모든 경우는 에러 리턴
-		 if (refreshToken != null && jwtTokenProvider.isTokenValid(refreshToken)) {
+		if (refreshToken != null && jwtTokenProvider.isTokenValid(refreshToken)) {
 			log.info("refresh토큰 인증 성공");
 			jwtTokenProvider.checkRefreshTokenAndReIssueAccessAndRefreshToken(response, refreshToken);
 		} else if (refreshToken != null && !jwtTokenProvider.isTokenValid(refreshToken)) {
-			 log.info("refresh토큰 인증 실패");
-			 throw ApiException.from(INVALID_REFRESH_TOKEN);
-		 } else if (accessToken != null && jwtTokenProvider.isTokenValid(accessToken)) {
+			log.info("refresh토큰 인증 실패");
+			throw ApiException.from(INVALID_REFRESH_TOKEN);
+		} else if (accessToken != null && jwtTokenProvider.isTokenValid(accessToken)) {
 
 			//토큰이 logout된 토큰인지 검사
 			if (jwtTokenProvider.isLogout(accessToken)) {
