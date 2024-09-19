@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-@RedisHash(value = "emailToken", timeToLive =60*60)
+@RedisHash(value = "emailToken", timeToLive = 60 * 60)
 public class EmailToken {
 
 	@Id

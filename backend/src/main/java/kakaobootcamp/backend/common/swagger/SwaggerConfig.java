@@ -1,6 +1,7 @@
 package kakaobootcamp.backend.common.swagger;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +24,7 @@ public class SwaggerConfig {
 
 		return new OpenAPI()
 			.components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
-			.security(Arrays.asList(securityRequirement))
+			.security(Collections.singletonList(securityRequirement))
 			.info(apiInfo());
 	}
 

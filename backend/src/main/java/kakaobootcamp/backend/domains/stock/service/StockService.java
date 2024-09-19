@@ -17,7 +17,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import kakaobootcamp.backend.common.exception.ApiException;
-import kakaobootcamp.backend.common.exception.CustomException;
 import kakaobootcamp.backend.common.properties.KisProperties;
 import kakaobootcamp.backend.common.properties.PublicDataPortalProperties;
 import kakaobootcamp.backend.common.util.webClient.WebClientUtil;
@@ -72,7 +71,7 @@ public class StockService {
 	// 응답 확인
 	private void checkResponse(KisBaseResponse response) {
 		if (!response.getRt_cd().equals("0")) {
-			throw CustomException.from(HttpStatus.BAD_REQUEST, response.getMsg1());
+			throw ApiException.of(HttpStatus.BAD_REQUEST, response.getMsg1());
 		}
 
 	}
@@ -246,7 +245,7 @@ public class StockService {
 	}
 
 	// 국내 주식 목록 업데이트
-	@Transactional(rollbackFor = {CustomException.class})
+	@Transactional(rollbackFor = {ApiException.class})
 	public void updateDomesticStocks() {
 		String yesterday = getYesterday();
 

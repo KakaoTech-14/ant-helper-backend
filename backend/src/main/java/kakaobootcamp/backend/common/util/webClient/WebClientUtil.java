@@ -10,7 +10,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import kakaobootcamp.backend.common.exception.ApiException;
-import kakaobootcamp.backend.common.exception.CustomException;
 import kakaobootcamp.backend.common.exception.ErrorCode;
 import kakaobootcamp.backend.domains.broker.dto.BrokerDTO.KisErrorResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,8 @@ public class WebClientUtil {
 	@Qualifier("publicDataPortalWebClient")
 	private final WebClient publicDataPortalWebClient;
 
-	public <T> T getFromKis(Map<String, String> headersMap, String url, MultiValueMap<String, String> params, Class<T> responseType) {
+	public <T> T getFromKis(Map<String, String> headersMap, String url, MultiValueMap<String, String> params,
+		Class<T> responseType) {
 		return kisWebClient
 			.get()
 			.uri(uriBuilder -> uriBuilder
@@ -41,7 +41,7 @@ public class WebClientUtil {
 			.onStatus(
 				HttpStatusCode::is4xxClientError,
 				response -> response.bodyToMono(KisErrorResponse.class)
-					.flatMap(error -> Mono.error(CustomException.from(
+					.flatMap(error -> Mono.error(ApiException.of(
 						(HttpStatus)response.statusCode(),
 						error.getMsg1()
 					)))
@@ -49,7 +49,7 @@ public class WebClientUtil {
 			.onStatus(
 				HttpStatusCode::is5xxServerError,
 				response -> response.bodyToMono(KisErrorResponse.class)
-					.flatMap(error -> Mono.error(CustomException.from(
+					.flatMap(error -> Mono.error(ApiException.of(
 						(HttpStatus)response.statusCode(),
 						error.getMsg1()
 					)))
@@ -68,7 +68,7 @@ public class WebClientUtil {
 			.onStatus(
 				HttpStatusCode::is4xxClientError,
 				response -> response.bodyToMono(KisErrorResponse.class)
-					.flatMap(error -> Mono.error(CustomException.from(
+					.flatMap(error -> Mono.error(ApiException.of(
 						(HttpStatus)response.statusCode(),
 						error.getMsg1()
 					)))
@@ -76,7 +76,7 @@ public class WebClientUtil {
 			.onStatus(
 				HttpStatusCode::is5xxServerError,
 				response -> response.bodyToMono(KisErrorResponse.class)
-					.flatMap(error -> Mono.error(CustomException.from(
+					.flatMap(error -> Mono.error(ApiException.of(
 						(HttpStatus)response.statusCode(),
 						error.getMsg1()
 					)))
@@ -85,7 +85,8 @@ public class WebClientUtil {
 			.block();
 	}
 
-	public <T> T getFromAiServer(Map<String, String> headersMap, String url, MultiValueMap<String, String> params, Class<T> responseType) {
+	public <T> T getFromAiServer(Map<String, String> headersMap, String url, MultiValueMap<String, String> params,
+		Class<T> responseType) {
 		return aiServerWebClient
 			.get()
 			.uri(uriBuilder -> uriBuilder
@@ -97,7 +98,7 @@ public class WebClientUtil {
 			.onStatus(
 				HttpStatusCode::is4xxClientError,
 				response -> response.bodyToMono(KisErrorResponse.class)
-					.flatMap(error -> Mono.error(CustomException.from(
+					.flatMap(error -> Mono.error(ApiException.of(
 						(HttpStatus)response.statusCode(),
 						error.getMsg1()
 					)))
@@ -105,7 +106,7 @@ public class WebClientUtil {
 			.onStatus(
 				HttpStatusCode::is5xxServerError,
 				response -> response.bodyToMono(KisErrorResponse.class)
-					.flatMap(error -> Mono.error(CustomException.from(
+					.flatMap(error -> Mono.error(ApiException.of(
 						(HttpStatus)response.statusCode(),
 						error.getMsg1()
 					)))
@@ -124,7 +125,7 @@ public class WebClientUtil {
 			.onStatus(
 				HttpStatusCode::is4xxClientError,
 				response -> response.bodyToMono(KisErrorResponse.class)
-					.flatMap(error -> Mono.error(CustomException.from(
+					.flatMap(error -> Mono.error(ApiException.of(
 						(HttpStatus)response.statusCode(),
 						error.getMsg1()
 					)))
@@ -132,7 +133,7 @@ public class WebClientUtil {
 			.onStatus(
 				HttpStatusCode::is5xxServerError,
 				response -> response.bodyToMono(KisErrorResponse.class)
-					.flatMap(error -> Mono.error(CustomException.from(
+					.flatMap(error -> Mono.error(ApiException.of(
 						(HttpStatus)response.statusCode(),
 						error.getMsg1()
 					)))
@@ -141,7 +142,8 @@ public class WebClientUtil {
 			.block();
 	}
 
-	public <T> T getFromPublicDataPortal(Map<String, String> headersMap, String url, MultiValueMap<String, String> params, Class<T> responseType) {
+	public <T> T getFromPublicDataPortal(Map<String, String> headersMap, String url,
+		MultiValueMap<String, String> params, Class<T> responseType) {
 		return publicDataPortalWebClient
 			.get()
 			.uri(uriBuilder -> uriBuilder
