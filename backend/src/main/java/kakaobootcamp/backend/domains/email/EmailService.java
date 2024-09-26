@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,7 @@ public class EmailService {
 	private static final String EMAIL_TEXT = "인증 코드는 %d 입니다.";
 
 	// 이메일 인증번호 보내기
+	@Async
 	@Transactional(rollbackFor = ApiException.class)
 	public void validateEmailAndSendEmailVerification(SendVerificationCodeRequest request) {
 		String email = request.getEmail();
@@ -74,7 +76,7 @@ public class EmailService {
 	}
 
 	// 이메일 보내기
-	private void sendEmail(
+	public void sendEmail(
 		String toEmail,
 		String title,
 		String text
