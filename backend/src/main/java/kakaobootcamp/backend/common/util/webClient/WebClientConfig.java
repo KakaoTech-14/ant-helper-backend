@@ -11,6 +11,7 @@ import io.netty.channel.ChannelOption;
 import kakaobootcamp.backend.common.properties.AiServerProperties;
 import kakaobootcamp.backend.common.properties.KisProperties;
 import kakaobootcamp.backend.common.properties.PublicDataPortalProperties;
+import kakaobootcamp.backend.common.properties.RecaptchaProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.netty.http.client.HttpClient;
@@ -23,8 +24,9 @@ public class WebClientConfig {
 	private final KisProperties kisProperties;
 	private final AiServerProperties aiServerProperties;
 	private final PublicDataPortalProperties publicDataPortalProperties;
+	private final RecaptchaProperties recaptchaProperties;
 
-	private HttpClient httpClient = HttpClient.create()
+	private final HttpClient httpClient = HttpClient.create()
 		.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000); // 5초
 
 	@Bean
@@ -53,6 +55,17 @@ public class WebClientConfig {
 	public WebClient publicDataPortalWebClient() {
 		return WebClient.builder()
 			.baseUrl(publicDataPortalProperties.getUrl())
+			.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
+			.codecs(configurer -> configurer.defaultCodecs()
+				.maxInMemorySize(2 * 1024 * 1024)) // 응답 payload가 클 경우 나는 에러 방지, 최대 2MB
+			.clientConnector(new ReactorClientHttpConnector(httpClient))
+			.build();
+	}
+
+	@Bean
+	public WebClient recaptchaWebClient() {
+		return WebClient.builder()
+			.baseUrl(recaptchaProperties.getUrl())
 			.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
 			.codecs(configurer -> configurer.defaultCodecs()
 				.maxInMemorySize(2 * 1024 * 1024)) // 응답 payload가 클 경우 나는 에러 방지, 최대 2MB

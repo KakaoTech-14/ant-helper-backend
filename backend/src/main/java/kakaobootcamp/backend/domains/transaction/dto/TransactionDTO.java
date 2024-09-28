@@ -43,7 +43,6 @@ public class TransactionDTO {
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-
 	public static class FindTransactionResponse {
 
 		private boolean existence;

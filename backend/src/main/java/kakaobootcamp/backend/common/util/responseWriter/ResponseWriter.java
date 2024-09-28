@@ -14,7 +14,7 @@ public class ResponseWriter {
 
 	private static final String CONTENT_TYPE = "application/json";
 	private static final String CHARACTER_ENCODING = "utf-8";
-	private static ObjectMapper objectMapper = new ObjectMapper();
+	private static final ObjectMapper objectMapper = new ObjectMapper();
 
 	public static void writeResponse(HttpServletResponse response, BaseResponse dataResponse,
 		HttpStatusCode statusCode) {

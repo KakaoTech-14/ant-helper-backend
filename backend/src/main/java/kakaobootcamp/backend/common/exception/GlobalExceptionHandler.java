@@ -24,18 +24,11 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(CustomException.class)
-	public ResponseEntity<Object> handleCustomException(CustomException e) {
-		log.warn("handleApiException", e);
-
-		return makeErrorResponseEntity(e.getHttpStatus(), e.getMessage());
-	}
-
 	@ExceptionHandler(ApiException.class)
 	public ResponseEntity<Object> handleApiException(ApiException e) {
 		log.warn("handleApiException", e);
 
-		return makeErrorResponseEntity(e.getErrorCode());
+		return makeErrorResponseEntity(e.getHttpStatus(), e.getMessage());
 	}
 
 	@Override
@@ -43,8 +36,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		NoResourceFoundException ex,
 		HttpHeaders headers,
 		HttpStatusCode status,
-		WebRequest request)
-	{
+		WebRequest request) {
 		log.warn("handleNoResourceFoundException", ex);
 
 		ErrorCode errorCode = ErrorCode.RESOURCE_NOT_FOUND;
@@ -57,8 +49,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		MethodArgumentNotValidException e,
 		HttpHeaders headers,
 		HttpStatusCode status,
-		WebRequest request)
-	{
+		WebRequest request) {
 		log.warn("handleIllegalArgument", e);
 
 		List<String> messages = e.getBindingResult().getFieldErrors()
@@ -75,8 +66,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		HttpMessageNotReadableException ex,
 		HttpHeaders headers,
 		HttpStatusCode status,
-		WebRequest request)
-	{
+		WebRequest request) {
 		log.warn("handleHttpMessageNotReadableException", ex);
 
 		ErrorCode errorCode = ErrorCode.BAD_REQUEST;
@@ -88,8 +78,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		HandlerMethodValidationException ex,
 		HttpHeaders headers,
 		HttpStatusCode status,
-		WebRequest request)
-	{
+		WebRequest request) {
 		log.warn("handleHandlerMethodValidationException", ex);
 		List<String> messages = Arrays.stream(ex.getDetailMessageArguments())
 			.map(Object::toString)

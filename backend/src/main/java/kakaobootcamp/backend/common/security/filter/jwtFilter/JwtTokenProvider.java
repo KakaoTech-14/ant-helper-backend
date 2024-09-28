@@ -7,7 +7,6 @@ import org.springframework.security.core.Authentication;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kakaobootcamp.backend.domains.member.domain.MemberRole;
 
 public interface JwtTokenProvider {
 

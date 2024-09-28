@@ -17,8 +17,8 @@ import kakaobootcamp.backend.common.dto.DataResponse;
 import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import kakaobootcamp.backend.common.util.responseWriter.ResponseWriter;
-import kakaobootcamp.backend.domains.member.repository.MemberRepository;
 import kakaobootcamp.backend.domains.member.domain.Member;
+import kakaobootcamp.backend.domains.member.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -58,8 +58,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		FilterChain chain,
-		Authentication authResult)
-	{
+		Authentication authResult) {
 		String email = extractEmail(authResult);
 
 		// 회원 id 찾기
@@ -82,8 +81,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	protected void unsuccessfulAuthentication(
 		HttpServletRequest request,
 		HttpServletResponse response,
-		AuthenticationException failed)
-	{
+		AuthenticationException failed) {
 		String email = obtainEmail(request);
 		log.info("로그인 실패: {}", email);
 

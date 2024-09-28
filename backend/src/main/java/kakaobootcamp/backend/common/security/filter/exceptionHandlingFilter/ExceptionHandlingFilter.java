@@ -21,15 +21,15 @@ public class ExceptionHandlingFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(
 		HttpServletRequest request,
 		HttpServletResponse response,
-		FilterChain filterChain) throws ServletException, IOException
-	{
+		FilterChain filterChain) throws ServletException, IOException {
+
 		try {
 			filterChain.doFilter(request, response);
 		} catch (ApiException e) {
 			log.warn("ExceptionHandlingFilter: {}", e.getMessage());
 
-			ErrorResponse errorResponse = ErrorResponse.from(e.getErrorCode());
-			ResponseWriter.writeResponse(response, errorResponse, e.getErrorCode().getHttpStatus());
+			ErrorResponse errorResponse = ErrorResponse.of(e.getHttpStatus(), e.getMessage());
+			ResponseWriter.writeResponse(response, errorResponse, e.getHttpStatus());
 		} catch (Exception e) {
 			log.warn("ExceptionHandlingFilter: {}", e.getMessage());
 			ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
