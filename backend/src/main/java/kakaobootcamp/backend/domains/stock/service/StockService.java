@@ -73,7 +73,6 @@ public class StockService {
 		if (!response.getRt_cd().equals("0")) {
 			throw ApiException.of(HttpStatus.BAD_REQUEST, response.getMsg1());
 		}
-
 	}
 
 	// 주식 사기
