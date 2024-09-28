@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -83,10 +84,27 @@ public class EmailService {
 	) {
 		SimpleMailMessage emailForm = createEmailForm(toEmail, title, text);
 
-		// 이메일 전송
-		try {
-			emailSender.send(emailForm);
-		} catch (RuntimeException e) {
+		int maxRetries = 3;
+		int retryCount = 0;
+		boolean success = false;
+
+		// 이메일 전송 및 실패시 재시도
+		while (retryCount < maxRetries && !success) {
+			try {
+				emailSender.send(emailForm);  // 이메일 전송
+				success = true;
+			} catch (MailException ex) {
+				retryCount++;
+				try {
+					Thread.sleep(5000);  // 5초 대기 후 재시도
+				} catch (InterruptedException ie) {
+					Thread.currentThread().interrupt();
+				}
+			}
+		}
+
+		// 3번 시도 후 실패시 에러 발생
+		if (!success) {
 			throw ApiException.from(EMAIL_BAD_GATEWAY);
 		}
 	}
