@@ -28,16 +28,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EmailService {
 
-	private final JavaMailSender emailSender;
 	private final EmailTokenRepository emailTokenRepository;
 	private final EmailCodeRepository emailCodeRepository;
 	private final MemberService memberService;
+	private final EmailUtil emailUtil;
 
 	private static final String EMAIL_TITLE = "ANT HELPER 이메일 인증 코드";
 	private static final String EMAIL_TEXT = "인증 코드는 %d 입니다.";
 
 	// 이메일 인증번호 보내기
-	@Async
 	@Transactional(rollbackFor = ApiException.class)
 	public void validateEmailAndSendEmailVerification(SendVerificationCodeRequest request) {
 		String email = request.getEmail();
@@ -48,11 +47,11 @@ public class EmailService {
 		Integer verificationCode = createVerificationCode();
 		String text = String.format(EMAIL_TEXT, verificationCode);
 
-		// 이메일 보내기
-		sendEmail(email, EMAIL_TITLE, text);
-
 		// 이메일 코드 저장
 		checkEmailCodeDuplicationAndSaveEmailCode(email, verificationCode);
+
+		// 이메일 보내기
+		emailUtil.sendEmail(email, EMAIL_TITLE, text);
 	}
 
 	// 이메일 인증 확인
@@ -76,52 +75,9 @@ public class EmailService {
 		return new VerifyEmailCodeResponse(token);
 	}
 
-	// 이메일 보내기
-	public void sendEmail(
-		String toEmail,
-		String title,
-		String text
-	) {
-		SimpleMailMessage emailForm = createEmailForm(toEmail, title, text);
 
-		int maxRetries = 3;
-		int retryCount = 0;
-		boolean success = false;
 
-		// 이메일 전송 및 실패시 재시도
-		while (retryCount < maxRetries && !success) {
-			try {
-				emailSender.send(emailForm);  // 이메일 전송
-				success = true;
-			} catch (MailException ex) {
-				retryCount++;
-				try {
-					Thread.sleep(5000);  // 5초 대기 후 재시도
-				} catch (InterruptedException ie) {
-					Thread.currentThread().interrupt();
-				}
-			}
-		}
 
-		// 3번 시도 후 실패시 에러 발생
-		if (!success) {
-			throw ApiException.from(EMAIL_BAD_GATEWAY);
-		}
-	}
-
-	// 발신할 이메일 데이터 세팅
-	private SimpleMailMessage createEmailForm(
-		String toEmail,
-		String title,
-		String text
-	) {
-		SimpleMailMessage message = new SimpleMailMessage();
-		message.setTo(toEmail);
-		message.setSubject(title);
-		message.setText(text);
-
-		return message;
-	}
 
 	// 인증된 이메일 저장
 	@Transactional
