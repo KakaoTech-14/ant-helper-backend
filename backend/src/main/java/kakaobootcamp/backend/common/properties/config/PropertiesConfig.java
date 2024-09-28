@@ -9,6 +9,7 @@ import kakaobootcamp.backend.common.properties.EmailProperties;
 import kakaobootcamp.backend.common.properties.JwtProperties;
 import kakaobootcamp.backend.common.properties.KisProperties;
 import kakaobootcamp.backend.common.properties.PublicDataPortalProperties;
+import kakaobootcamp.backend.common.properties.RecaptchaProperties;
 import kakaobootcamp.backend.common.properties.RedisProperties;
 import kakaobootcamp.backend.common.properties.SecurityProperties;
 
@@ -21,7 +22,8 @@ import kakaobootcamp.backend.common.properties.SecurityProperties;
 	CorsProperties.class,
 	EmailProperties.class,
 	AiServerProperties.class,
-	PublicDataPortalProperties.class
+	PublicDataPortalProperties.class,
+	RecaptchaProperties.class
 })
 public class PropertiesConfig {
 }
