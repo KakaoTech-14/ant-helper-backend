@@ -17,6 +17,7 @@ import kakaobootcamp.backend.common.dto.ErrorResponse;
 import kakaobootcamp.backend.domains.email.dto.EmailDTO.SendVerificationCodeRequest;
 import kakaobootcamp.backend.domains.email.dto.EmailDTO.VerifyEmailCodeRequest;
 import kakaobootcamp.backend.domains.email.dto.EmailDTO.VerifyEmailCodeResponse;
+import kakaobootcamp.backend.domains.email.service.EmailVerificationService;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "EMAIL API", description = "이메일에 대한 API입니다.")
@@ -25,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EmailController {
 
-	private final EmailService emailService;
+	private final EmailVerificationService emailVerificationService;
 
 	@PostMapping("/verification-request")
 	@Operation(
@@ -46,7 +47,7 @@ public class EmailController {
 	public ResponseEntity<DataResponse<Void>> sendVerificationCode(
 		@RequestBody @Valid SendVerificationCodeRequest request
 	) {
-		emailService.validateEmailAndSendEmailVerification(request);
+		emailVerificationService.validateEmailAndSendEmailVerification(request);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
@@ -77,7 +78,7 @@ public class EmailController {
 	public ResponseEntity<DataResponse<VerifyEmailCodeResponse>> verifyEmailCode(
 		@RequestBody @Valid VerifyEmailCodeRequest request
 	) {
-		VerifyEmailCodeResponse response = emailService.verifyEmailCode(request);
+		VerifyEmailCodeResponse response = emailVerificationService.verifyEmailCode(request);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}

@@ -12,7 +12,7 @@ import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.exception.ErrorCode;
 import kakaobootcamp.backend.common.util.encoder.EncryptUtil;
 import kakaobootcamp.backend.common.util.encoder.PasswordEncoderUtil;
-import kakaobootcamp.backend.domains.email.EmailVerificationService;
+import kakaobootcamp.backend.domains.email.service.EmailTokenService;
 import kakaobootcamp.backend.domains.member.domain.AutoTradeState;
 import kakaobootcamp.backend.domains.member.domain.LogoutToken;
 import kakaobootcamp.backend.domains.member.domain.Member;
@@ -33,7 +33,7 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoderUtil passwordEncoderUtil;
 
-	private final EmailVerificationService emailVerificationService;
+	private final EmailTokenService emailTokenService;
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final LogoutRepository logoutRepository;
 
@@ -42,7 +42,7 @@ public class MemberService {
 	public void createMember(CreateMemberRequest request) {
 		// 이메일 검증
 		validateDuplicatedEmail(request.getEmail());
-		emailVerificationService.verifyEmailToken(request.getToken());
+		emailTokenService.verifyEmailToken(request.getToken());
 
 		// 비밀번호 암호화
 		String password = passwordEncoderUtil.encodePassword(request.getPw());
