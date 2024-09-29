@@ -1,34 +1,28 @@
-package kakaobootcamp.backend.domains.email;
+package kakaobootcamp.backend.domains.email.service;
 
-import static kakaobootcamp.backend.common.exception.ErrorCode.*;
 import static kakaobootcamp.backend.domains.email.dto.EmailDTO.*;
 
 import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kakaobootcamp.backend.common.exception.ApiException;
 import kakaobootcamp.backend.common.exception.ErrorCode;
+import kakaobootcamp.backend.domains.email.EmailUtil;
 import kakaobootcamp.backend.domains.email.domain.EmailCode;
-import kakaobootcamp.backend.domains.email.domain.EmailToken;
 import kakaobootcamp.backend.domains.email.repository.EmailCodeRepository;
-import kakaobootcamp.backend.domains.email.repository.EmailTokenRepository;
 import kakaobootcamp.backend.domains.member.MemberService;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class EmailService {
+public class EmailVerificationService {
 
-	private final EmailTokenRepository emailTokenRepository;
+	private final EmailTokenService emailTokenService;
 	private final EmailCodeRepository emailCodeRepository;
 	private final MemberService memberService;
 	private final EmailUtil emailUtil;
@@ -71,19 +65,8 @@ public class EmailService {
 
 		// 토큰 발급
 		String token = UUID.randomUUID().toString();
-		saveEmailToken(token);
+		emailTokenService.saveEmailToken(token);
 		return new VerifyEmailCodeResponse(token);
-	}
-
-
-
-
-
-	// 인증된 이메일 저장
-	@Transactional
-	public void saveEmailToken(String token) {
-		EmailToken emailToken = new EmailToken(token);
-		emailTokenRepository.save(emailToken);
 	}
 
 	// 인증 코드 생성
