@@ -27,13 +27,12 @@ import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.stock.domain.DomesticStock;
 import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindStockPriceChartResponse;
 import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindSuggestedKeywordResponse;
-import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetStockBalanceRealizedProfitAndLossResponse;
-import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetStockBalanceResponse;
-import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetStockPriceResponse;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindStockBalanceRealizedProfitAndLossResponse;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindStockBalanceResponse;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindStockPriceResponse;
 import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetSuggestedKeywordsDTO;
 import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetSuggestedKeywordsDTO.Response.Body.Items.Item;
 import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.KisBaseResponse;
-import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.KisOrderStockRequest;
 import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.OrderStockRequest;
 import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.OrderStockResponse;
 import kakaobootcamp.backend.domains.stock.repository.DomesticStockRepository;
@@ -75,51 +74,40 @@ public class DomesticStockService {
 		}
 	}
 
-	// 주식 사기
-	public void orderStock(Member member, OrderStockRequest request) {
+	// TrId 조회
+	private String getTrId(boolean isBuy) {
+		if (isBuy) {
+			return kisProperties.getBuyTrId();
+		} else {
+			return kisProperties.getSellTrId();
+		}
+	}
+
+	// 주식 매매
+	public void orderStock(Member member, OrderStockRequest request, boolean isBuy) {
 		String uri = "/uapi/domestic-stock/v1/trading/order-cash";
+		String trId = getTrId(isBuy);
 
 		// 헤더 설정
-		Map<String, String> headers = makeHeaders(member, kisProperties.getOrderTrId());
+		Map<String, String> headers = makeHeaders(member, trId);
 
 		// 본문 설정
-		KisOrderStockRequest kisOrderStockRequest = makeKisOrderStockRequestFromOrderStockRequestAndMember(member,
+		OrderStockRequest orderStockRequest = makeKisOrderStockRequestFromOrderStockRequestAndMember(member,
 			request);
 
 		OrderStockResponse response = webClientUtil.postFromKis(
 			headers,
 			uri,
-			kisOrderStockRequest,
-			OrderStockResponse.class);
-
-		checkResponse(response);
-	}
-
-	// 주식 팔기
-	public void sellStock(Member member, OrderStockRequest request) {
-		String uri = "/uapi/domestic-stock/v1/trading/order-cash";
-
-		// 헤더 설정
-		Map<String, String> headers = makeHeaders(member, kisProperties.getSellTrId());
-
-		// 본문 설정
-		KisOrderStockRequest kisOrderStockRequest = makeKisOrderStockRequestFromOrderStockRequestAndMember(member,
-			request
-		);
-
-		OrderStockResponse response = webClientUtil.postFromKis(
-			headers,
-			uri,
-			kisOrderStockRequest,
+			orderStockRequest,
 			OrderStockResponse.class);
 
 		checkResponse(response);
 	}
 
 	// KisOrderStockRequest를 OrderStockRequest와 Member로 만들어주는 메서드
-	private KisOrderStockRequest makeKisOrderStockRequestFromOrderStockRequestAndMember(Member member,
+	private OrderStockRequest makeKisOrderStockRequestFromOrderStockRequestAndMember(Member member,
 		OrderStockRequest request) {
-		return KisOrderStockRequest.builder()
+		return OrderStockRequest.builder()
 			.CANO(member.getComprehensiveAccountNumber())
 			.ACNT_PRDT_CD(member.getAccountProductCode())
 			.PDNO(request.getPDNO())
@@ -130,11 +118,11 @@ public class DomesticStockService {
 	}
 
 	// 주식 잔고 조회
-	public GetStockBalanceResponse getStockBalance(Member member, String fk, String nk) {
+	public FindStockBalanceResponse findStockBalance(Member member, String fk, String nk) {
 		String uri = "/uapi/domestic-stock/v1/trading/inquire-balance";
 
 		// 헤더 설정
-		Map<String, String> headers = makeHeaders(member, kisProperties.getGetBalanceTrId());
+		Map<String, String> headers = makeHeaders(member, kisProperties.getFindBalanceTrId());
 
 		// 파라미터 설정
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -150,11 +138,11 @@ public class DomesticStockService {
 		params.add("CTX_AREA_FK100", fk); // 연속 조회 검색 조건 100 (최초 조회 시 공란)
 		params.add("CTX_AREA_NK100", nk); // 연속 조회 키 100 (최초 조회 시 공란)
 
-		GetStockBalanceResponse response = webClientUtil.getFromKis(
+		FindStockBalanceResponse response = webClientUtil.getFromKis(
 			headers,
 			uri,
 			params,
-			GetStockBalanceResponse.class);
+			FindStockBalanceResponse.class);
 
 		checkResponse(response);
 
@@ -162,11 +150,11 @@ public class DomesticStockService {
 	}
 
 	// 주식잔고조회_실현손익
-	public GetStockBalanceRealizedProfitAndLossResponse getBalanceRealizedProfitAndLoss(Member member) {
+	public FindStockBalanceRealizedProfitAndLossResponse findBalanceRealizedProfitAndLoss(Member member) {
 		String uri = "/uapi/domestic-stock/v1/trading/inquire-balance-rlz-pl";
 
 		// 헤더 설정
-		Map<String, String> headers = makeHeaders(member, kisProperties.getGetBalanceRealizedProfitAndLossTrId());
+		Map<String, String> headers = makeHeaders(member, kisProperties.getFindBalanceRealizedProfitAndLossTrId());
 		headers.put("custtype", "P"); // 고객타입(P: 개인, B: 기업)
 
 		// 파라미터 설정
@@ -184,11 +172,11 @@ public class DomesticStockService {
 		params.add("CTX_AREA_FK100", ""); // 연속조회검색조건100 (최초 조회시 공란)
 		params.add("CTX_AREA_NK100", ""); // 연속조회키100 (최초 조회시 공란)
 
-		GetStockBalanceRealizedProfitAndLossResponse response = webClientUtil.getFromKis(
+		FindStockBalanceRealizedProfitAndLossResponse response = webClientUtil.getFromKis(
 			headers,
 			uri,
 			params,
-			GetStockBalanceRealizedProfitAndLossResponse.class);
+			FindStockBalanceRealizedProfitAndLossResponse.class);
 
 		checkResponse(response);
 
@@ -196,22 +184,22 @@ public class DomesticStockService {
 	}
 
 	// 주식 현재가 조회
-	public GetStockPriceResponse getStockPrice(Member member, String productNumber) {
+	public FindStockPriceResponse findStockPrice(Member member, String productNumber) {
 		String uri = "/uapi/domestic-stock/v1/quotations/inquire-price";
 
 		// 헤더 설정
-		Map<String, String> headers = makeHeaders(member, kisProperties.getGetPriceTrId());
+		Map<String, String> headers = makeHeaders(member, kisProperties.getFindPriceTrId());
 
 		// 파라미터 설정
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("FID_COND_MRKT_DIV_CODE", "J"); // 'J': 주식, ETF, ETN / 'W': ELW
 		params.add("FID_INPUT_ISCD", productNumber); // FID 입력 종목코드: 6자리 종목번호 또는 ETN의 경우 'Q'로 시작하는 코드
 
-		GetStockPriceResponse response = webClientUtil.getFromKis(
+		FindStockPriceResponse response = webClientUtil.getFromKis(
 			headers,
 			uri,
 			params,
-			GetStockPriceResponse.class);
+			FindStockPriceResponse.class);
 
 		checkResponse(response);
 

@@ -15,8 +15,8 @@ import kakaobootcamp.backend.domains.broker.service.BrokerService;
 import kakaobootcamp.backend.domains.member.MemberService;
 import kakaobootcamp.backend.domains.member.domain.AutoTradeState;
 import kakaobootcamp.backend.domains.member.domain.Member;
-import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetStockBalanceResponse;
-import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetStockBalanceResponse.Output1;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindStockBalanceResponse;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindStockBalanceResponse.Output1;
 import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.OrderStockRequest;
 import kakaobootcamp.backend.domains.stock.service.DomesticStockService;
 import kakaobootcamp.backend.domains.transaction.TransactionService;
@@ -52,7 +52,7 @@ public class AutoTradeService {
 		}
 
 		// 현재 보유 주식량 및 예수금 조회
-		GetStockBalanceResponse stockBalanceResponse = domesticStockService.getStockBalance(member, "", "");
+		FindStockBalanceResponse stockBalanceResponse = domesticStockService.findStockBalance(member, "", "");
 
 		// 거래 가능 금액 계산
 		int availableBalance = calculateAvailableBalance(
@@ -127,9 +127,9 @@ public class AutoTradeService {
 			.build();
 
 		if (isBuy) {
-			domesticStockService.orderStock(member, request);
+			domesticStockService.orderStock(member, request, true);
 		} else {
-			domesticStockService.sellStock(member, request);
+			domesticStockService.orderStock(member, request, false);
 		}
 	}
 }

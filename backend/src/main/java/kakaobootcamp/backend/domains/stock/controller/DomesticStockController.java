@@ -26,11 +26,11 @@ import kakaobootcamp.backend.common.dto.ErrorResponse;
 import kakaobootcamp.backend.common.util.memberLoader.MemberLoader;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindDomesticStockPopularChartResponse;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindStockBalanceRealizedProfitAndLossResponse;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindStockBalanceResponse;
 import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindStockPriceChartResponse;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindStockPriceResponse;
 import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindSuggestedKeywordResponse;
-import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetStockBalanceRealizedProfitAndLossResponse;
-import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetStockBalanceResponse;
-import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetStockPriceResponse;
 import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.OrderStockRequest;
 import kakaobootcamp.backend.domains.stock.service.DomesticStockService;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,7 @@ public class DomesticStockController {
 	public ResponseEntity<DataResponse<Void>> buyStock(OrderStockRequest request) {
 		Member member = memberLoader.getMember();
 
-		domesticStockService.orderStock(member, request);
+		domesticStockService.orderStock(member, request, true);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
@@ -58,13 +58,13 @@ public class DomesticStockController {
 	public ResponseEntity<DataResponse<Void>> sellStock(OrderStockRequest request) {
 		Member member = memberLoader.getMember();
 
-		domesticStockService.sellStock(member, request);
+		domesticStockService.orderStock(member, request, false);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
 	@GetMapping("/recommendations")
-	public ResponseEntity<DataResponse<List<FindDomesticStockPopularChartResponse>>> getStockRecommendations(
+	public ResponseEntity<DataResponse<List<FindDomesticStockPopularChartResponse>>> findStockRecommendations(
 		@RequestParam("size") @Min(value = 1, message = "size는 1이상이어야 합니다.") @Max(value = 10, message = "size는 10이하이어야 합니다.") int size,
 		@RequestParam("page") @Min(value = 0, message = "page는 0이상이어야 합니다.") int page) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -117,12 +117,12 @@ public class DomesticStockController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<GetStockBalanceResponse>> getStockBalance(
+	public ResponseEntity<DataResponse<FindStockBalanceResponse>> findStockBalance(
 		@RequestParam(name = "CTX_AREA_FK100", defaultValue = "") String fk,
 		@RequestParam(name = "CTX_AREA_NK100", defaultValue = "") String nk) {
 		Member member = memberLoader.getMember();
 
-		GetStockBalanceResponse response = domesticStockService.getStockBalance(member, fk, nk);
+		FindStockBalanceResponse response = domesticStockService.findStockBalance(member, fk, nk);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
@@ -155,11 +155,11 @@ public class DomesticStockController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<GetStockBalanceRealizedProfitAndLossResponse>> getBalanceRealizedProfitAndLoss() {
+	public ResponseEntity<DataResponse<FindStockBalanceRealizedProfitAndLossResponse>> findBalanceRealizedProfitAndLoss() {
 		Member member = memberLoader.getMember();
 
-		GetStockBalanceRealizedProfitAndLossResponse response = domesticStockService
-			.getBalanceRealizedProfitAndLoss(member);
+		FindStockBalanceRealizedProfitAndLossResponse response = domesticStockService
+			.findBalanceRealizedProfitAndLoss(member);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
@@ -191,11 +191,11 @@ public class DomesticStockController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<GetStockPriceResponse>> getStockPrice(
+	public ResponseEntity<DataResponse<FindStockPriceResponse>> findStockPrice(
 		@RequestParam("productNumber") String productNumber) {
 		Member member = memberLoader.getMember();
 
-		GetStockPriceResponse response = domesticStockService.getStockPrice(member, productNumber);
+		FindStockPriceResponse response = domesticStockService.findStockPrice(member, productNumber);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}

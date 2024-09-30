@@ -17,26 +17,6 @@ import lombok.Setter;
 public class DomesticStockDTO {
 
 	@Getter
-	@Setter
-	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	@Builder
-	@AllArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class OrderStockRequest {
-
-		@JsonProperty("PDNO")
-		private String PDNO; // 종목코드 (6자리, 최대 12자리)
-
-		@JsonProperty("ORD_DVSN")
-		private String ORD_DVSN; // 주문구분 (2자리)
-
-		@JsonProperty("ORD_QTY")
-		private String ORD_QTY; // 주문수량 (최대 10자리)
-
-		@JsonProperty("ORD_UNPR")
-		private String ORD_UNPR; // 주문단가 (최대 19자리)
-	}
-
-	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class KisBaseResponse {
 
@@ -50,7 +30,7 @@ public class DomesticStockDTO {
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	@Builder
-	public static class KisOrderStockRequest {
+	public static class OrderStockRequest {
 
 		@JsonProperty("CANO")
 		private String CANO; // 종합계좌번호 (8자리)
@@ -94,7 +74,7 @@ public class DomesticStockDTO {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class GetStockBalanceResponse extends KisBaseResponse {
+	public static class FindStockBalanceResponse extends KisBaseResponse {
 
 		private String ctx_area_fk100; // 연속조회검색조건100
 		private String ctx_area_nk100; // 연속조회키100
@@ -164,7 +144,7 @@ public class DomesticStockDTO {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class GetStockBalanceRealizedProfitAndLossResponse extends KisBaseResponse {
+	public static class FindStockBalanceRealizedProfitAndLossResponse extends KisBaseResponse {
 
 		private List<Output1> output1; // 응답상세1 (Object Array)
 		private List<Output2> output2; // 응답상세2 (Object)
@@ -233,7 +213,7 @@ public class DomesticStockDTO {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class GetStockPriceResponse extends KisBaseResponse {
+	public static class FindStockPriceResponse extends KisBaseResponse {
 
 		private Output output; // 응답상세
 

@@ -11,10 +11,10 @@ import lombok.Setter;
 public class KisProperties {
 
 	private String url;
-	private String orderTrId;
+	private String buyTrId;
 	private String sellTrId;
-	private String getBalanceTrId;
-	private String getBalanceRealizedProfitAndLossTrId;
-	private String getPriceTrId;
+	private String findBalanceTrId;
+	private String findBalanceRealizedProfitAndLossTrId;
+	private String findPriceTrId;
 	private String findDomesticStockPriceChartId;
 }
