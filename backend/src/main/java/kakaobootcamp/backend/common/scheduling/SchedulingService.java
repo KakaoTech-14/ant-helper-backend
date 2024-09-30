@@ -5,7 +5,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
 import kakaobootcamp.backend.domains.autoTrade.AutoTradeService;
-import kakaobootcamp.backend.domains.stock.service.StockService;
+import kakaobootcamp.backend.domains.stock.service.DomesticStockService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 public class SchedulingService {
 
 	private final AutoTradeService autoTradeService;
-	private final StockService stockService;
+	private final DomesticStockService domesticStockService;
 
 	@Async
 	@Scheduled(cron = "0 0 11 * * MON-FRI")
@@ -24,6 +24,6 @@ public class SchedulingService {
 	@Async
 	@Scheduled(cron = "0 0 20 * * MON-SAT")
 	public void updateSuggestedKeywords() {
-		stockService.updateDomesticStocks();
+		domesticStockService.updateDomesticStocks();
 	}
 }

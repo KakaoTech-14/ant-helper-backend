@@ -1,6 +1,7 @@
 package kakaobootcamp.backend.domains.stock.service;
 
 import static kakaobootcamp.backend.common.exception.ErrorCode.*;
+import static kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -25,17 +26,8 @@ import kakaobootcamp.backend.domains.broker.service.KisAccessTokenService;
 import kakaobootcamp.backend.domains.member.MemberService;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.stock.domain.DomesticStock;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.FindDomesticStockPriceChartResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.FindSuggestedKeywordResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceRealizedProfitAndLossResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockPriceResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetSuggestedKeywordsDTO;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetSuggestedKeywordsDTO.Response.Body.Items.Item;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.KisBaseResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.KisOrderStockRequest;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockResponse;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetSuggestedKeywordsDTO.Response.Body.Items.Item;
+import kakaobootcamp.backend.domains.stock.dto.KisBaseResponse;
 import kakaobootcamp.backend.domains.stock.repository.DomesticStockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class StockService {
+public class DomesticStockService {
 
 	private final KisProperties kisProperties;
 	private final KisAccessTokenService kisAccessTokenService;
@@ -55,8 +47,8 @@ public class StockService {
 
 	// 헤더 설정
 	private Map<String, String> makeHeaders(Member member, String trId) {
-		KisAccessToken kisAccessToken = kisAccessTokenService.findKisAccessToken(member.getId()).
-			orElseThrow(() -> ApiException.from(KIS_ACCESS_TOKEN_NOT_FOUND));
+		KisAccessToken kisAccessToken = kisAccessTokenService.findKisAccessToken(member.getId())
+			.orElseThrow(() -> ApiException.from(KIS_ACCESS_TOKEN_NOT_FOUND));
 		String accessToken = kisAccessToken.getAccessToken();
 
 		Map<String, String> headers = new HashMap<>();
@@ -75,37 +67,26 @@ public class StockService {
 		}
 	}
 
-	// 주식 사기
-	public void orderStock(Member member, OrderStockRequest request) {
+	// TrId 조회
+	private String getTrId(boolean isBuy) {
+		if (isBuy) {
+			return kisProperties.getDomestic().getBuyTrId();
+		} else {
+			return kisProperties.getDomestic().getSellTrId();
+		}
+	}
+
+	// 주식 매매
+	public void orderStock(Member member, OrderStockRequest request, boolean isBuy) {
 		String uri = "/uapi/domestic-stock/v1/trading/order-cash";
+		String trId = getTrId(isBuy);
 
 		// 헤더 설정
-		Map<String, String> headers = makeHeaders(member, kisProperties.getOrderTrId());
+		Map<String, String> headers = makeHeaders(member, trId);
 
 		// 본문 설정
 		KisOrderStockRequest kisOrderStockRequest = makeKisOrderStockRequestFromOrderStockRequestAndMember(member,
 			request);
-
-		OrderStockResponse response = webClientUtil.postFromKis(
-			headers,
-			uri,
-			kisOrderStockRequest,
-			OrderStockResponse.class);
-
-		checkResponse(response);
-	}
-
-	// 주식 팔기
-	public void sellStock(Member member, OrderStockRequest request) {
-		String uri = "/uapi/domestic-stock/v1/trading/order-cash";
-
-		// 헤더 설정
-		Map<String, String> headers = makeHeaders(member, kisProperties.getSellTrId());
-
-		// 본문 설정
-		KisOrderStockRequest kisOrderStockRequest = makeKisOrderStockRequestFromOrderStockRequestAndMember(member,
-			request
-		);
 
 		OrderStockResponse response = webClientUtil.postFromKis(
 			headers,
@@ -130,11 +111,11 @@ public class StockService {
 	}
 
 	// 주식 잔고 조회
-	public GetStockBalanceResponse getStockBalance(Member member, String fk, String nk) {
+	public FindStockBalanceResponse findStockBalance(Member member, String fk, String nk) {
 		String uri = "/uapi/domestic-stock/v1/trading/inquire-balance";
 
 		// 헤더 설정
-		Map<String, String> headers = makeHeaders(member, kisProperties.getGetBalanceTrId());
+		Map<String, String> headers = makeHeaders(member, kisProperties.getDomestic().getFindBalanceTrId());
 
 		// 파라미터 설정
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -150,11 +131,11 @@ public class StockService {
 		params.add("CTX_AREA_FK100", fk); // 연속 조회 검색 조건 100 (최초 조회 시 공란)
 		params.add("CTX_AREA_NK100", nk); // 연속 조회 키 100 (최초 조회 시 공란)
 
-		GetStockBalanceResponse response = webClientUtil.getFromKis(
+		FindStockBalanceResponse response = webClientUtil.getFromKis(
 			headers,
 			uri,
 			params,
-			GetStockBalanceResponse.class);
+			FindStockBalanceResponse.class);
 
 		checkResponse(response);
 
@@ -162,11 +143,12 @@ public class StockService {
 	}
 
 	// 주식잔고조회_실현손익
-	public GetStockBalanceRealizedProfitAndLossResponse getBalanceRealizedProfitAndLoss(Member member) {
+	public FindStockBalanceRealizedProfitAndLossResponse findBalanceRealizedProfitAndLoss(Member member) {
 		String uri = "/uapi/domestic-stock/v1/trading/inquire-balance-rlz-pl";
 
 		// 헤더 설정
-		Map<String, String> headers = makeHeaders(member, kisProperties.getGetBalanceRealizedProfitAndLossTrId());
+		Map<String, String> headers = makeHeaders(member,
+			kisProperties.getDomestic().getFindBalanceRealizedProfitAndLossTrId());
 		headers.put("custtype", "P"); // 고객타입(P: 개인, B: 기업)
 
 		// 파라미터 설정
@@ -184,11 +166,11 @@ public class StockService {
 		params.add("CTX_AREA_FK100", ""); // 연속조회검색조건100 (최초 조회시 공란)
 		params.add("CTX_AREA_NK100", ""); // 연속조회키100 (최초 조회시 공란)
 
-		GetStockBalanceRealizedProfitAndLossResponse response = webClientUtil.getFromKis(
+		FindStockBalanceRealizedProfitAndLossResponse response = webClientUtil.getFromKis(
 			headers,
 			uri,
 			params,
-			GetStockBalanceRealizedProfitAndLossResponse.class);
+			FindStockBalanceRealizedProfitAndLossResponse.class);
 
 		checkResponse(response);
 
@@ -196,22 +178,22 @@ public class StockService {
 	}
 
 	// 주식 현재가 조회
-	public GetStockPriceResponse getStockPrice(Member member, String productNumber) {
+	public FindStockPriceResponse findStockPrice(Member member, String productNumber) {
 		String uri = "/uapi/domestic-stock/v1/quotations/inquire-price";
 
 		// 헤더 설정
-		Map<String, String> headers = makeHeaders(member, kisProperties.getGetPriceTrId());
+		Map<String, String> headers = makeHeaders(member, kisProperties.getDomestic().getFindPriceTrId());
 
 		// 파라미터 설정
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("FID_COND_MRKT_DIV_CODE", "J"); // 'J': 주식, ETF, ETN / 'W': ELW
 		params.add("FID_INPUT_ISCD", productNumber); // FID 입력 종목코드: 6자리 종목번호 또는 ETN의 경우 'Q'로 시작하는 코드
 
-		GetStockPriceResponse response = webClientUtil.getFromKis(
+		FindStockPriceResponse response = webClientUtil.getFromKis(
 			headers,
 			uri,
 			params,
-			GetStockPriceResponse.class);
+			FindStockPriceResponse.class);
 
 		checkResponse(response);
 
@@ -312,7 +294,7 @@ public class StockService {
 	}
 
 	// 국내 주식 기간별 시세 조회
-	public FindDomesticStockPriceChartResponse findDomesticStockPriceChart(Member member, String productNumber,
+	public FindStockPriceChartResponse findStockPriceChart(Member member, String productNumber,
 		String periodCode) {
 		String uri = "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice";
 		LocalDate today = LocalDate.now();
@@ -320,7 +302,8 @@ public class StockService {
 		String endDate = makeDateToString(today);
 
 		// 헤더 설정
-		Map<String, String> headers = makeHeaders(member, kisProperties.getFindDomesticStockPriceChartId());
+		Map<String, String> headers = makeHeaders(member,
+			kisProperties.getDomestic().getFindDomesticStockPriceChartId());
 
 		// 파라미터 설정
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -331,11 +314,11 @@ public class StockService {
 		params.add("FID_PERIOD_DIV_CODE", periodCode);
 		params.add("FID_ORG_ADJ_PRC", "1");
 
-		FindDomesticStockPriceChartResponse response = webClientUtil.getFromKis(
+		FindStockPriceChartResponse response = webClientUtil.getFromKis(
 			headers,
 			uri,
 			params,
-			FindDomesticStockPriceChartResponse.class);
+			FindStockPriceChartResponse.class);
 
 		checkResponse(response);
 

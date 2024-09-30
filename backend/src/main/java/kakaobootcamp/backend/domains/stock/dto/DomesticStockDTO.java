@@ -14,15 +14,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-public class StockDTO {
+public class DomesticStockDTO {
 
 	@Getter
-	@Setter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	@Builder
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	@Builder
 	public static class OrderStockRequest {
-
 		@JsonProperty("PDNO")
 		private String PDNO; // 종목코드 (6자리, 최대 12자리)
 
@@ -34,15 +32,6 @@ public class StockDTO {
 
 		@JsonProperty("ORD_UNPR")
 		private String ORD_UNPR; // 주문단가 (최대 19자리)
-	}
-
-	@Getter
-	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class KisBaseResponse {
-
-		private String rt_cd; // 응답 코드
-		private String msg_cd; // 메시지 코드
-		private String msg1; // 메시지 내용
 	}
 
 	@Getter
@@ -94,7 +83,7 @@ public class StockDTO {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class GetStockBalanceResponse extends KisBaseResponse {
+	public static class FindStockBalanceResponse extends KisBaseResponse {
 
 		private String ctx_area_fk100; // 연속조회검색조건100
 		private String ctx_area_nk100; // 연속조회키100
@@ -164,7 +153,7 @@ public class StockDTO {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class GetStockBalanceRealizedProfitAndLossResponse extends KisBaseResponse {
+	public static class FindStockBalanceRealizedProfitAndLossResponse extends KisBaseResponse {
 
 		private List<Output1> output1; // 응답상세1 (Object Array)
 		private List<Output2> output2; // 응답상세2 (Object)
@@ -233,7 +222,7 @@ public class StockDTO {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class GetStockPriceResponse extends KisBaseResponse {
+	public static class FindStockPriceResponse extends KisBaseResponse {
 
 		private Output output; // 응답상세
 
@@ -411,7 +400,7 @@ public class StockDTO {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class FindDomesticStockPriceChartResponse extends KisBaseResponse {
+	public static class FindStockPriceChartResponse extends KisBaseResponse {
 
 		private Output1 output1;  // 응답 상세
 		private List<Output2> output2;  // 일별 데이터 배열
