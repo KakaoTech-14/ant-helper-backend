@@ -1,6 +1,7 @@
 package kakaobootcamp.backend.domains.stock.service;
 
 import static kakaobootcamp.backend.common.exception.ErrorCode.*;
+import static kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -25,16 +26,7 @@ import kakaobootcamp.backend.domains.broker.service.KisAccessTokenService;
 import kakaobootcamp.backend.domains.member.MemberService;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.stock.domain.DomesticStock;
-import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindStockPriceChartResponse;
-import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindSuggestedKeywordResponse;
-import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindStockBalanceRealizedProfitAndLossResponse;
-import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindStockBalanceResponse;
-import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindStockPriceResponse;
-import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetSuggestedKeywordsDTO;
 import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetSuggestedKeywordsDTO.Response.Body.Items.Item;
-import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.KisBaseResponse;
-import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.OrderStockRequest;
-import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.OrderStockResponse;
 import kakaobootcamp.backend.domains.stock.repository.DomesticStockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -92,22 +84,22 @@ public class DomesticStockService {
 		Map<String, String> headers = makeHeaders(member, trId);
 
 		// 본문 설정
-		OrderStockRequest orderStockRequest = makeKisOrderStockRequestFromOrderStockRequestAndMember(member,
+		KisOrderStockRequest kisOrderStockRequest = makeKisOrderStockRequestFromOrderStockRequestAndMember(member,
 			request);
 
 		OrderStockResponse response = webClientUtil.postFromKis(
 			headers,
 			uri,
-			orderStockRequest,
+			kisOrderStockRequest,
 			OrderStockResponse.class);
 
 		checkResponse(response);
 	}
 
 	// KisOrderStockRequest를 OrderStockRequest와 Member로 만들어주는 메서드
-	private OrderStockRequest makeKisOrderStockRequestFromOrderStockRequestAndMember(Member member,
+	private KisOrderStockRequest makeKisOrderStockRequestFromOrderStockRequestAndMember(Member member,
 		OrderStockRequest request) {
-		return OrderStockRequest.builder()
+		return KisOrderStockRequest.builder()
 			.CANO(member.getComprehensiveAccountNumber())
 			.ACNT_PRDT_CD(member.getAccountProductCode())
 			.PDNO(request.getPDNO())
@@ -154,7 +146,8 @@ public class DomesticStockService {
 		String uri = "/uapi/domestic-stock/v1/trading/inquire-balance-rlz-pl";
 
 		// 헤더 설정
-		Map<String, String> headers = makeHeaders(member, kisProperties.getDomestic().getFindBalanceRealizedProfitAndLossTrId());
+		Map<String, String> headers = makeHeaders(member,
+			kisProperties.getDomestic().getFindBalanceRealizedProfitAndLossTrId());
 		headers.put("custtype", "P"); // 고객타입(P: 개인, B: 기업)
 
 		// 파라미터 설정
@@ -308,7 +301,8 @@ public class DomesticStockService {
 		String endDate = makeDateToString(today);
 
 		// 헤더 설정
-		Map<String, String> headers = makeHeaders(member, kisProperties.getDomestic().getFindDomesticStockPriceChartId());
+		Map<String, String> headers = makeHeaders(member,
+			kisProperties.getDomestic().getFindDomesticStockPriceChartId());
 
 		// 파라미터 설정
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
