@@ -27,6 +27,7 @@ import kakaobootcamp.backend.domains.member.MemberService;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.stock.domain.DomesticStock;
 import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetSuggestedKeywordsDTO.Response.Body.Items.Item;
+import kakaobootcamp.backend.domains.stock.dto.KisBaseResponse;
 import kakaobootcamp.backend.domains.stock.repository.DomesticStockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
