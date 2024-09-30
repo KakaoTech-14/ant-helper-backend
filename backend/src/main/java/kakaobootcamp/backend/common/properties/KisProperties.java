@@ -11,10 +11,28 @@ import lombok.Setter;
 public class KisProperties {
 
 	private String url;
-	private String buyTrId;
-	private String sellTrId;
-	private String findBalanceTrId;
-	private String findBalanceRealizedProfitAndLossTrId;
-	private String findPriceTrId;
-	private String findDomesticStockPriceChartId;
+	private Domestic domestic;
+	private International international;
+
+	@Getter
+	@Setter
+	public static class Domestic {
+		private String buyTrId;
+		private String sellTrId;
+		private String findBalanceTrId;
+		private String findBalanceRealizedProfitAndLossTrId;
+		private String findPriceTrId;
+		private String findDomesticStockPriceChartId;
+	}
+
+	@Getter
+	@Setter
+	public static class International {
+		private String buyTrId;
+		private String sellTrId;
+		private String findBalanceTrId;
+		private String findBalanceRealizedProfitAndLossTrId;
+		private String findPriceTrId;
+		private String findDomesticStockPriceChartId;
+	}
 }

@@ -54,8 +54,8 @@ public class DomesticStockService {
 
 	// 헤더 설정
 	private Map<String, String> makeHeaders(Member member, String trId) {
-		KisAccessToken kisAccessToken = kisAccessTokenService.findKisAccessToken(member.getId()).
-			orElseThrow(() -> ApiException.from(KIS_ACCESS_TOKEN_NOT_FOUND));
+		KisAccessToken kisAccessToken = kisAccessTokenService.findKisAccessToken(member.getId())
+			.orElseThrow(() -> ApiException.from(KIS_ACCESS_TOKEN_NOT_FOUND));
 		String accessToken = kisAccessToken.getAccessToken();
 
 		Map<String, String> headers = new HashMap<>();
@@ -77,9 +77,9 @@ public class DomesticStockService {
 	// TrId 조회
 	private String getTrId(boolean isBuy) {
 		if (isBuy) {
-			return kisProperties.getBuyTrId();
+			return kisProperties.getDomestic().getBuyTrId();
 		} else {
-			return kisProperties.getSellTrId();
+			return kisProperties.getDomestic().getSellTrId();
 		}
 	}
 
@@ -122,7 +122,7 @@ public class DomesticStockService {
 		String uri = "/uapi/domestic-stock/v1/trading/inquire-balance";
 
 		// 헤더 설정
-		Map<String, String> headers = makeHeaders(member, kisProperties.getFindBalanceTrId());
+		Map<String, String> headers = makeHeaders(member, kisProperties.getDomestic().getFindBalanceTrId());
 
 		// 파라미터 설정
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -154,7 +154,7 @@ public class DomesticStockService {
 		String uri = "/uapi/domestic-stock/v1/trading/inquire-balance-rlz-pl";
 
 		// 헤더 설정
-		Map<String, String> headers = makeHeaders(member, kisProperties.getFindBalanceRealizedProfitAndLossTrId());
+		Map<String, String> headers = makeHeaders(member, kisProperties.getDomestic().getFindBalanceRealizedProfitAndLossTrId());
 		headers.put("custtype", "P"); // 고객타입(P: 개인, B: 기업)
 
 		// 파라미터 설정
@@ -188,7 +188,7 @@ public class DomesticStockService {
 		String uri = "/uapi/domestic-stock/v1/quotations/inquire-price";
 
 		// 헤더 설정
-		Map<String, String> headers = makeHeaders(member, kisProperties.getFindPriceTrId());
+		Map<String, String> headers = makeHeaders(member, kisProperties.getDomestic().getFindPriceTrId());
 
 		// 파라미터 설정
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -308,7 +308,7 @@ public class DomesticStockService {
 		String endDate = makeDateToString(today);
 
 		// 헤더 설정
-		Map<String, String> headers = makeHeaders(member, kisProperties.getFindDomesticStockPriceChartId());
+		Map<String, String> headers = makeHeaders(member, kisProperties.getDomestic().getFindDomesticStockPriceChartId());
 
 		// 파라미터 설정
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
