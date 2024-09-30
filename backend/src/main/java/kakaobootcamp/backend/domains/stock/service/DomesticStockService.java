@@ -25,17 +25,17 @@ import kakaobootcamp.backend.domains.broker.service.KisAccessTokenService;
 import kakaobootcamp.backend.domains.member.MemberService;
 import kakaobootcamp.backend.domains.member.domain.Member;
 import kakaobootcamp.backend.domains.stock.domain.DomesticStock;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.FindDomesticStockPriceChartResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.FindSuggestedKeywordResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceRealizedProfitAndLossResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockPriceResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetSuggestedKeywordsDTO;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetSuggestedKeywordsDTO.Response.Body.Items.Item;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.KisBaseResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.KisOrderStockRequest;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockResponse;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindStockPriceChartResponse;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.FindSuggestedKeywordResponse;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetStockBalanceRealizedProfitAndLossResponse;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetStockBalanceResponse;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetStockPriceResponse;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetSuggestedKeywordsDTO;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetSuggestedKeywordsDTO.Response.Body.Items.Item;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.KisBaseResponse;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.KisOrderStockRequest;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.OrderStockRequest;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.OrderStockResponse;
 import kakaobootcamp.backend.domains.stock.repository.DomesticStockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class StockService {
+public class DomesticStockService {
 
 	private final KisProperties kisProperties;
 	private final KisAccessTokenService kisAccessTokenService;
@@ -312,7 +312,7 @@ public class StockService {
 	}
 
 	// 국내 주식 기간별 시세 조회
-	public FindDomesticStockPriceChartResponse findDomesticStockPriceChart(Member member, String productNumber,
+	public FindStockPriceChartResponse findStockPriceChart(Member member, String productNumber,
 		String periodCode) {
 		String uri = "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice";
 		LocalDate today = LocalDate.now();
@@ -331,11 +331,11 @@ public class StockService {
 		params.add("FID_PERIOD_DIV_CODE", periodCode);
 		params.add("FID_ORG_ADJ_PRC", "1");
 
-		FindDomesticStockPriceChartResponse response = webClientUtil.getFromKis(
+		FindStockPriceChartResponse response = webClientUtil.getFromKis(
 			headers,
 			uri,
 			params,
-			FindDomesticStockPriceChartResponse.class);
+			FindStockPriceChartResponse.class);
 
 		checkResponse(response);
 

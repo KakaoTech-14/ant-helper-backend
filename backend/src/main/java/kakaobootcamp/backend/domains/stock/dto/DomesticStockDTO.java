@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-public class StockDTO {
+public class DomesticStockDTO {
 
 	@Getter
 	@Setter
@@ -411,7 +411,7 @@ public class StockDTO {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class FindDomesticStockPriceChartResponse extends KisBaseResponse {
+	public static class FindStockPriceChartResponse extends KisBaseResponse {
 
 		private Output1 output1;  // 응답 상세
 		private List<Output2> output2;  // 일별 데이터 배열

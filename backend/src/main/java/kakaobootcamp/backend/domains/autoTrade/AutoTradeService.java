@@ -15,10 +15,10 @@ import kakaobootcamp.backend.domains.broker.service.BrokerService;
 import kakaobootcamp.backend.domains.member.MemberService;
 import kakaobootcamp.backend.domains.member.domain.AutoTradeState;
 import kakaobootcamp.backend.domains.member.domain.Member;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.GetStockBalanceResponse.Output1;
-import kakaobootcamp.backend.domains.stock.dto.StockDTO.OrderStockRequest;
-import kakaobootcamp.backend.domains.stock.service.StockService;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetStockBalanceResponse;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.GetStockBalanceResponse.Output1;
+import kakaobootcamp.backend.domains.stock.dto.DomesticStockDTO.OrderStockRequest;
+import kakaobootcamp.backend.domains.stock.service.DomesticStockService;
 import kakaobootcamp.backend.domains.transaction.TransactionService;
 import kakaobootcamp.backend.domains.transaction.domain.Transaction;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class AutoTradeService {
 
 	private final AiServerService aiServerService;
-	private final StockService stockService;
+	private final DomesticStockService domesticStockService;
 	private final TransactionService transactionService;
 	private final MemberService memberService;
 	private final BrokerService brokerService;
@@ -52,7 +52,7 @@ public class AutoTradeService {
 		}
 
 		// 현재 보유 주식량 및 예수금 조회
-		GetStockBalanceResponse stockBalanceResponse = stockService.getStockBalance(member, "", "");
+		GetStockBalanceResponse stockBalanceResponse = domesticStockService.getStockBalance(member, "", "");
 
 		// 거래 가능 금액 계산
 		int availableBalance = calculateAvailableBalance(
@@ -127,9 +127,9 @@ public class AutoTradeService {
 			.build();
 
 		if (isBuy) {
-			stockService.orderStock(member, request);
+			domesticStockService.orderStock(member, request);
 		} else {
-			stockService.sellStock(member, request);
+			domesticStockService.sellStock(member, request);
 		}
 	}
 }
